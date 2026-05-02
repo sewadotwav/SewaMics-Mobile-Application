@@ -1,0 +1,175 @@
+// ============================================================
+// SewaMics — Firestore Security Rules
+// File: firestore.rules
+//
+// COPY-PASTE INSTRUCTIONS:
+//   Firebase Console → Firestore Database → Rules tab
+//   Paste the entire content below, then click "Publish".
+//
+// ADMIN SETUP:
+//   Admin privileges are granted via Firebase custom claims.
+//   See functions/setAdminClaim.ts to assign admin: true.
+// ============================================================
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────
+    // HELPER FUNCTIONS
+    // ─────────────────────────────────────────────
+
+    // Returns true if the request comes from a signed-in user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Returns true if the signed-in user's UID matches the given uid
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // Returns true if the signed-in user has the admin custom claim
+    function isAdmin() {
+      return isAuthenticated() &&
+             request.auth.token.admin == true;
+    }
+
+    // Returns true if a field exists and is a non-empty string
+    function isNonEmptyString(field) {
+      return field is string && field.size() > 0;
+    }
+
+    // Returns true if a field is a positive number (price, stock, etc.)
+    function isPositiveNumber(field) {
+      return field is number && field >= 0;
+    }
+
+    // ─────────────────────────────────────────────
+    // USERS COLLECTION
+    // Path: /users/{userId}
+    //
+    // - Authenticated users can read/write ONLY their own document
+    // - Admins can read any user document (for order management)
+    // - No user can write another user's document
+    // ─────────────────────────────────────────────
+    match /users/{userId} {
+
+      allow read: if isOwner(userId) || isAdmin();
+
+      allow create: if isOwner(userId)
+        && isNonEmptyString(request.resource.data.uid)
+        && isNonEmptyString(request.resource.data.email)
+        && isNonEmptyString(request.resource.data.name)
+        // Ensure uid field matches the document path
+        && request.resource.data.uid == userId;
+
+      allow update: if isOwner(userId)
+        // Prevent users from changing their own uid or email via client
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email;
+
+      allow delete: if false; // Users cannot delete their own account document
+    }
+
+    // ─────────────────────────────────────────────
+    // PRODUCTS COLLECTION
+    // Path: /products/{productId}
+    //
+    // - Anyone can READ products (public catalog — no auth required)
+    // - Only admins can CREATE, UPDATE, or DELETE products
+    // ─────────────────────────────────────────────
+    match /products/{productId} {
+
+      // Public read — unauthenticated users can browse the catalog
+      allow read: if true;
+
+      // Admins only: create a new product
+      allow create: if isAdmin()
+        && isNonEmptyString(request.resource.data.name)
+        && isNonEmptyString(request.resource.data.category)
+        && isNonEmptyString(request.resource.data.description)
+        && isPositiveNumber(request.resource.data.price)
+        && isPositiveNumber(request.resource.data.stock)
+        && request.resource.data.isActive is bool;
+
+      // Admins only: update an existing product
+      allow update: if isAdmin()
+        // Prevent productId from being changed after creation
+        && request.resource.data.productId == resource.data.productId;
+
+      // Admins only: soft-delete by setting isActive: false (preferred)
+      // Hard delete is also permitted for admins
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────
+    // CARTS COLLECTION
+    // Path: /carts/{userId}
+    //
+    // - Each cart document is keyed by the user's UID
+    // - Users can only read/write their own cart
+    // - Requires authentication
+    // ─────────────────────────────────────────────
+    match /carts/{userId} {
+
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.items is list
+        && isPositiveNumber(request.resource.data.cartTotal)
+        && isPositiveNumber(request.resource.data.itemCount);
+
+      allow update: if isOwner(userId)
+        // Prevent uid field from being changed
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if isOwner(userId); // Allow cart clear on logout
+    }
+
+    // ─────────────────────────────────────────────
+    // ORDERS COLLECTION
+    // Path: /orders/{orderId}
+    //
+    // - Users can only read their own orders (filtered by userId field)
+    // - Users can CREATE an order (checkout)
+    // - Users CANNOT update or delete orders once placed
+    // - Admins can read all orders and update order/payment status
+    // ─────────────────────────────────────────────
+    match /orders/{orderId} {
+
+      // Users see only their own orders; admins see all
+      allow read: if isAdmin() ||
+                    (isAuthenticated() &&
+                     resource.data.userId == request.auth.uid);
+
+      // Authenticated users can place an order
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && isPositiveNumber(request.resource.data.subtotal)
+        && isPositiveNumber(request.resource.data.shippingFee)
+        && isPositiveNumber(request.resource.data.totalAmount)
+        && isNonEmptyString(request.resource.data.status)
+        && isNonEmptyString(request.resource.data.paymentMethod)
+        && isNonEmptyString(request.resource.data.paymentStatus)
+        // Initial status must always be 'pending'
+        && request.resource.data.status == 'pending'
+        && request.resource.data.paymentStatus == 'pending';
+
+      // Only admins can update order status and payment status
+      allow update: if isAdmin()
+        // Prevent tampering with core order fields after creation
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.totalAmount == resource.data.totalAmount
+        && request.resource.data.items == resource.data.items;
+
+      // No one can delete an order (preserve audit trail)
+      allow delete: if false;
+    }
+
+  }
+}
