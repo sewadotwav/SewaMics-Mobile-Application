@@ -1,31 +1,35 @@
-SewaMics
+# SewaMics
+
 A comprehensive e-commerce platform for fresh produce and specialty items, built with modern web technologies and cloud infrastructure.
-📋 Overview
+
+## Overview
+
 SewaMics is a full-stack e-commerce application designed to facilitate the seamless buying and selling of fresh fruits, vegetables, seafood, and specialty products. The platform emphasizes user experience, inventory management, and secure transaction handling.
-🏗️ Architecture
-Technology Stack
-Frontend
 
-React.js / Next.js
-Tailwind CSS
-Redux / Context API
+## Architecture
 
-Backend
+### Technology Stack
 
-Firebase (Firestore, Authentication, Cloud Functions)
-Node.js (optional backend services)
+**Frontend**
+- React.js / Next.js
+- Tailwind CSS
+- Redux / Context API
 
-Database
+**Backend**
+- Firebase (Firestore, Authentication, Cloud Functions)
+- Node.js (optional backend services)
 
-Firestore (NoSQL)
-Real-time synchronization
+**Database**
+- Firestore (NoSQL)
+- Real-time synchronization
 
-Hosting
+**Hosting**
+- Firebase Hosting
+- Cloud Storage
 
-Firebase Hosting
-Cloud Storage
+## Project Structure
 
-📁 Project Structure
+```
 SewaMics/
 ├── public/
 ├── src/
@@ -38,101 +42,116 @@ SewaMics/
 │   └── config.js
 ├── .env.local
 └── README.md
-🗄️ Database Collections
-Collections Schema
-users
+```
 
-User authentication and profile management
-Multiple address storage
-Notification preferences
+## Database Collections
 
-products
+### Collections Schema
 
-Product catalog with pricing and inventory
-Category classification
-Stock management
+**users**
+- User authentication and profile management
+- Multiple address storage
+- Notification preferences
 
-carts
+**products**
+- Product catalog with pricing and inventory
+- Category classification
+- Stock management
 
-User shopping carts
-Real-time item tracking
-Cart state management
+**carts**
+- User shopping carts
+- Real-time item tracking
+- Cart state management
 
-orders
+**orders**
+- Order history and tracking
+- Payment and shipping information
+- Order status management
 
-Order history and tracking
-Payment and shipping information
-Order status management
+## Features
 
-✨ Features
+- User authentication and authorization
+- Product browsing and search functionality
+- Shopping cart management
+- Order placement and tracking
+- Real-time inventory updates
+- Order status notifications
+- Secure payment processing
+- User profile management with multiple addresses
 
-User authentication and authorization
-Product browsing and search functionality
-Shopping cart management
-Order placement and tracking
-Real-time inventory updates
-Order status notifications
-Secure payment processing
-User profile management with multiple addresses
+## Getting Started
 
-🚀 Getting Started
-Prerequisites
+### Prerequisites
 
-Node.js (v14+)
-npm or yarn
-Firebase account
+- Node.js (v14+)
+- npm or yarn
+- Firebase account
 
-Installation
+### Installation
 
-Clone the repository
-
-bashgit clone https://github.com/yourusername/SewaMics.git
+1. Clone the repository
+```bash
+git clone https://github.com/sewadotwav/SewaMics.git
 cd SewaMics
+```
 
-Install dependencies
+2. Install dependencies
+```bash
+npm install
+```
 
-bashnpm install
+3. Configure environment variables
+```bash
+cp .env.example .env.local
+```
 
-Configure environment variables
+4. Update Firebase credentials in `firebase/config.js`
 
-bashcp .env.example .env.local
+5. Start the development server
+```bash
+npm start
+```
 
-Update Firebase credentials in firebase/config.js
-Start the development server
+## Available Scripts
 
-bashnpm start
-📦 Available Scripts
-bashnpm start       # Run development server
+```bash
+npm start       # Run development server
 npm build       # Build for production
 npm test        # Run tests
 npm deploy      # Deploy to Firebase Hosting
-🔐 Firebase Setup
+```
 
-Create a Firebase project
-Enable Firestore Database
-Set up Firebase Authentication
-Create required collections: users, products, carts, orders
-Configure Firestore security rules
-Add Firebase configuration to .env.local
+## Firebase Setup
 
-📝 Database Schema
-See firebase_schema.json for detailed collection structure and field definitions.
-🧪 Mock Data
-Mock data for development and testing is available in firebase_mock_data.json.
-🔒 Security
+1. Create a Firebase project
+2. Enable Firestore Database
+3. Set up Firebase Authentication
+4. Create required collections: `users`, `products`, `carts`, `orders`
+5. Configure Firestore security rules
+6. Add Firebase configuration to `.env.local`
 
-Firebase Authentication for user verification
-Firestore security rules for data protection
-Environment variables for sensitive credentials
-HTTPS for all connections
+## Database Schema
 
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-👥 Authors
+See `firebase_schema.json` for detailed collection structure and field definitions.
 
-[Your Name] - Initial development
+## Mock Data
 
-📞 Support
-For issues or questions, please open an issue on GitHub.
+Mock data for development and testing is available in `firebase_mock_data.json`.
 
-Note: This is a practice project for learning and development purposes.
+## Security
+
+- Firebase Authentication for user verification
+- Firestore security rules for data protection
+- Environment variables for sensitive credentials
+- HTTPS for all connections
+
+
+## Authors
+
+- Dimalanta, Miles C.
+
+
+
+---
+
+**Note:** This is a practice project for learning and development purposes.
