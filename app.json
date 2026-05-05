@@ -4,7 +4,8 @@
     "slug": "sewamics",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/Brand/SewaMicsIcon.png",
+    "scheme": "sewamics",
     "assetBundlePatterns": [
       "**/*"
     ],

@@ -6,9 +6,10 @@
 // ============================================================
 
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { validateEnvironment } from "./config/validateEnv";
+import { AuthProvider } from "./context/AuthContext";
+import { RootNavigator } from "./navigation/RootNavigator";
 
 export default function App() {
   useEffect(() => {
@@ -22,35 +23,9 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.title}>SewaMics</Text>
-          <Text style={styles.subtitle}>Phase 1: Ready for Auth Setup</Text>
-        </View>
-      </SafeAreaView>
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  content: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#2E7D32",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#666",
-  },
-});

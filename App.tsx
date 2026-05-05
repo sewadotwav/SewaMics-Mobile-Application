@@ -4,4 +4,5 @@
 // This re-exports the main component from src/.
 // ============================================================
 
-export { default } from "./src/App";
+import App from "./src/App";
+export default App;
