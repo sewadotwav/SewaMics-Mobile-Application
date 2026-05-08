@@ -13,8 +13,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
 import { useAuth } from "../context/AuthContext";
 
+import { BottomTabNavigator } from "./BottomTabNavigator";
+
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
 
 // --- Placeholder Screens (Will be replaced by real UI later) ---
 const PlaceholderScreen = ({ name }: { name: string }) => (
@@ -25,42 +26,7 @@ const PlaceholderScreen = ({ name }: { name: string }) => (
 
 const LoginScreen = () => <PlaceholderScreen name="Login" />;
 const SignupScreen = () => <PlaceholderScreen name="Signup" />;
-const HomeScreen = () => <PlaceholderScreen name="Home" />;
-const SearchScreen = () => <PlaceholderScreen name="Search" />;
-const CartScreen = () => <PlaceholderScreen name="Cart" />;
-const FavoritesScreen = () => <PlaceholderScreen name="Favorites" />;
-const ProfileScreen = () => <PlaceholderScreen name="Profile" />;
 // ----------------------------------------------------------------
-
-// The main application with 5 bottom tabs
-const AppStack = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: "#9d174d",
-        tabBarInactiveTintColor: "#9ca3af",
-        tabBarStyle: {
-          height: 60,
-          backgroundColor: "#ffffff",
-          borderTopColor: "#e5e7eb",
-          borderTopWidth: 1,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "500",
-          paddingBottom: 5,
-        },
-      }}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Cart" component={CartScreen} />
-      <Tab.Screen name="Favorites" component={FavoritesScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-    </Tab.Navigator>
-  );
-};
 
 // The authentication flow
 const AuthStack = () => {
@@ -105,7 +71,7 @@ export const RootNavigator = () => {
         }}
       >
         {isAuthenticated ? (
-          <Stack.Screen name="AppRoot" component={AppStack} />
+          <Stack.Screen name="AppRoot" component={BottomTabNavigator} />
         ) : (
           <Stack.Screen name="AuthRoot" component={AuthStack} />
         )}
