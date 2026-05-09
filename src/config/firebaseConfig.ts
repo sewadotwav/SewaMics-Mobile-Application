@@ -125,14 +125,18 @@ export const app: FirebaseApp = initializeFirebase();
 
 /** Firebase Authentication instance (with AsyncStorage persistence) */
 export const auth: Auth = (() => {
-  // Guard against duplicate initialization on hot reload
   const { getAuth } = require("firebase/auth");
-  if (getApps().length > 0) {
-    return getAuth(getApps()[0]);
+  const existingApp = getApps().length > 0 ? getApps()[0] : app;
+  
+  // We use initializeAuth to provide the persistence layer for React Native
+  try {
+    return initializeAuth(existingApp, {
+      persistence: getReactNativePersistence(AsyncStorage),
+    });
+  } catch (e) {
+    // If already initialized, fallback to getAuth
+    return getAuth(existingApp);
   }
-  return initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage),
-  });
 })();
 
 /** Firestore database instance */

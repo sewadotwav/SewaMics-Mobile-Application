@@ -13,6 +13,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 
 import { HomeScreen } from "../screens/home/HomeScreen";
+import { ProfileScreen } from "../screens/profile/ProfileScreen";
+import { EditProfileScreen } from "../screens/profile/EditProfileScreen";
+import { WishlistScreen } from "../screens/profile/WishlistScreen";
+import { HelpSupportScreen } from "../screens/profile/HelpSupportScreen";
 
 // ----------------------------------------------------------------
 // TEMPORARY PLACEHOLDER SCREENS
@@ -26,7 +30,6 @@ const PlaceholderScreen = ({ name }: { name: string }) => (
 const SearchScreen = () => <PlaceholderScreen name="Search" />;
 const CartScreen = () => <PlaceholderScreen name="Cart" />;
 const OrdersScreen = () => <PlaceholderScreen name="Orders" />;
-const ProfileScreen = () => <PlaceholderScreen name="Profile" />;
 
 // ----------------------------------------------------------------
 // STACK NAVIGATORS FOR EACH TAB
@@ -43,7 +46,7 @@ const defaultHeaderOptions = {
     borderBottomColor: "#e5e7eb",
     borderBottomWidth: 1,
   },
-  headerShadowVisible: false, // Removes default React Navigation shadow in favor of our border
+  headerShadowVisible: false,
 };
 
 const HomeStack = () => (
@@ -70,9 +73,13 @@ const OrdersStack = () => (
   </Stack.Navigator>
 );
 
+// Profile Stack — includes sub-screens
 const ProfileStack = () => (
-  <Stack.Navigator screenOptions={defaultHeaderOptions}>
-    <Stack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerTitle: "Profile" }} />
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="ProfileMain" component={ProfileScreen} />
+    <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+    <Stack.Screen name="Wishlist" component={WishlistScreen} />
+    <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
   </Stack.Navigator>
 );
 

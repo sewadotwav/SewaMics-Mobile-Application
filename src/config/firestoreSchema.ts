@@ -102,6 +102,7 @@ export interface UserDocument {
   email: string;
   name: string;
   phone: string;
+  profilePicture?: string;
   addresses: Address[];
   preferences: UserPreferences;
   createdAt: Timestamp;

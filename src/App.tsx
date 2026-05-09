@@ -8,10 +8,11 @@
 import React, { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar } from "react-native";
 import { useFonts } from "expo-font";
 import { validateEnvironment } from "./config/validateEnv";
 import { AuthProvider } from "./context/AuthContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import { RootNavigator } from "./navigation/RootNavigator";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
@@ -42,10 +43,12 @@ export default function App() {
     <ErrorBoundary>
       <SafeAreaProvider>
         <AuthProvider>
-          <NavigationContainer>
-            <RootNavigator />
-          </NavigationContainer>
-          <StatusBar style="dark" />
+          <WishlistProvider>
+            <NavigationContainer>
+              <RootNavigator />
+            </NavigationContainer>
+            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+          </WishlistProvider>
         </AuthProvider>
       </SafeAreaProvider>
     </ErrorBoundary>

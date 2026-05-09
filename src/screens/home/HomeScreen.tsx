@@ -22,6 +22,7 @@ import { useAuth } from "../../context/AuthContext";
 import { getUserProfile } from "../../services/userService";
 import { useProducts } from "../../hooks/useProducts";
 import { getProductImage } from "../../utils/imageMapper";
+import { useWishlist } from "../../context/WishlistContext";
 
 export const HomeScreen = ({ navigation }: any) => {
   const { user } = useAuth();
@@ -36,10 +37,10 @@ export const HomeScreen = ({ navigation }: any) => {
     refreshProducts,
   } = useProducts();
 
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [refreshing, setRefreshing] = useState(false);
   const [userName, setUserName] = useState("Guest");
   const [searchQuery, setSearchQuery] = useState("");
-  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
 
   // Fetch current user's profile
   useEffect(() => {
@@ -65,13 +66,6 @@ export const HomeScreen = ({ navigation }: any) => {
     setRefreshing(true);
     await refreshProducts();
     setRefreshing(false);
-  };
-
-  const toggleFavorite = (id: string) => {
-    setFavorites(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
   };
 
   // Locally filter products based on the search query
@@ -222,15 +216,15 @@ export const HomeScreen = ({ navigation }: any) => {
                     />
 
                     {/* Favorite Heart Icon Overlay */}
-                    <TouchableOpacity
+                    <TouchableOpacity 
                       style={styles.favoriteButton}
-                      onPress={() => toggleFavorite(item.id)}
+                      onPress={() => toggleWishlist(item)}
                       activeOpacity={0.7}
                     >
-                      <Ionicons
-                        name={favorites[item.id] ? "heart" : "heart-outline"}
-                        size={16}
-                        color={favorites[item.id] ? "#9d174d" : "#6b7280"}
+                      <Ionicons 
+                        name={isInWishlist(item.id) ? "heart" : "heart-outline"} 
+                        size={16} 
+                        color={isInWishlist(item.id) ? "#9d174d" : "#6b7280"} 
                       />
                     </TouchableOpacity>
                   </View>
@@ -366,7 +360,7 @@ const styles = StyleSheet.create({
   welcomeSubtext: {
     fontSize: 15,
     fontFamily: "Zalando-Medium", // 500 weight as product names
-    color: "#6b7280",
+    color: "#1f2937", // Updated from gray to black
     lineHeight: 20,
     textAlign: "left",
   },
@@ -437,7 +431,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   tabTextInactive: {
-    color: "#6b7280",
+    color: "#1f2937", // Updated from gray to black
   },
 
   // Product Showcase Typography
