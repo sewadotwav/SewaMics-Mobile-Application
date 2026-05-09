@@ -12,6 +12,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 
+import { HomeScreen } from "../screens/home/HomeScreen";
+
 // ----------------------------------------------------------------
 // TEMPORARY PLACEHOLDER SCREENS
 // ----------------------------------------------------------------
@@ -21,7 +23,6 @@ const PlaceholderScreen = ({ name }: { name: string }) => (
   </View>
 );
 
-const HomeScreen = () => <PlaceholderScreen name="Home" />;
 const SearchScreen = () => <PlaceholderScreen name="Search" />;
 const CartScreen = () => <PlaceholderScreen name="Cart" />;
 const OrdersScreen = () => <PlaceholderScreen name="Orders" />;
@@ -46,8 +47,8 @@ const defaultHeaderOptions = {
 };
 
 const HomeStack = () => (
-  <Stack.Navigator screenOptions={defaultHeaderOptions}>
-    <Stack.Screen name="HomeMain" component={HomeScreen} options={{ headerTitle: "Aloha" }} />
+  <Stack.Navigator screenOptions={{ ...defaultHeaderOptions, headerShown: false }}>
+    <Stack.Screen name="HomeMain" component={HomeScreen} />
   </Stack.Navigator>
 );
 
@@ -83,20 +84,25 @@ const Tab = createBottomTabNavigator();
 // Temporary mock data for cart count
 const CART_ITEM_COUNT = 2;
 
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+// ... skipping to the component ...
 export const BottomTabNavigator = () => {
+  const insets = useSafeAreaInsets();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false, // Stack Navigators handle the headers
+        headerShown: false,
         tabBarActiveTintColor: "#9d174d",
         tabBarInactiveTintColor: "#9ca3af",
         tabBarStyle: {
-          height: 60,
+          height: 60 + Math.max(insets.bottom, 16), // Dynamic height based on OS bottom buttons
           backgroundColor: "#ffffff",
           borderTopColor: "#e5e7eb",
           borderTopWidth: 1,
           paddingTop: 8,
-          paddingBottom: 8,
+          paddingBottom: Math.max(insets.bottom, 16), // Prevents OS buttons from overlapping
         },
         tabBarLabelStyle: {
           fontSize: 12,
