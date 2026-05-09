@@ -12,7 +12,9 @@
 // ============================================================
 
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
+// @ts-ignore - TS sometimes fails to find this export in Firebase v10 depending on tsconfig, but it works at runtime
+import { initializeAuth, getReactNativePersistence, Auth } from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
@@ -121,8 +123,17 @@ function initializeFirebase(): FirebaseApp {
 /** Initialized Firebase app instance */
 export const app: FirebaseApp = initializeFirebase();
 
-/** Firebase Authentication instance */
-export const auth: Auth = getAuth(app);
+/** Firebase Authentication instance (with AsyncStorage persistence) */
+export const auth: Auth = (() => {
+  // Guard against duplicate initialization on hot reload
+  const { getAuth } = require("firebase/auth");
+  if (getApps().length > 0) {
+    return getAuth(getApps()[0]);
+  }
+  return initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+})();
 
 /** Firestore database instance */
 export const db: Firestore = getFirestore(app);
@@ -134,9 +145,6 @@ export const storage: FirebaseStorage = getStorage(app);
 // NAMED FUNCTION EXPORTS
 // Use these if you need to get instances lazily.
 // ─────────────────────────────────────────────
-
-/** Returns the Firebase Auth instance */
-export { getAuth } from "firebase/auth";
 
 /** Returns the Firestore instance */
 export { getFirestore } from "firebase/firestore";

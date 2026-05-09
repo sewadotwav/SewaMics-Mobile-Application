@@ -47,7 +47,7 @@ export const AuthScreenWrapper = ({
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         {/* ── a) Back Button ── */}
         {onBackPress && (
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   logo: {
-    width: 100,
-    height: 70,
+    width: 130,
+    height: 90,
   },
 
   // ── Title ──

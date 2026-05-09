@@ -9,7 +9,7 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { LoginScreen } from "../screens/auth/LoginScreen";
 import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
 import { useAuth } from "../context/AuthContext";
 
@@ -17,16 +17,12 @@ import { BottomTabNavigator } from "./BottomTabNavigator";
 
 const Stack = createNativeStackNavigator();
 
-// --- Placeholder Screens (Will be replaced by real UI later) ---
-const PlaceholderScreen = ({ name }: { name: string }) => (
+// Placeholder for Signup (will be replaced in next step)
+const SignupScreen = () => (
   <View style={styles.placeholderContainer}>
-    <Text style={styles.placeholderText}>{name} Screen</Text>
+    <Text style={styles.placeholderText}>Signup Screen</Text>
   </View>
 );
-
-const LoginScreen = () => <PlaceholderScreen name="Login" />;
-const SignupScreen = () => <PlaceholderScreen name="Signup" />;
-// ----------------------------------------------------------------
 
 // The authentication flow
 const AuthStack = () => {
