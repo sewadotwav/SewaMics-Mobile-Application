@@ -7,10 +7,13 @@
 
 import React, { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { validateEnvironment } from "./config/validateEnv";
 import { AuthProvider } from "./context/AuthContext";
 import { RootNavigator } from "./navigation/RootNavigator";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -25,21 +28,26 @@ export default function App() {
   useEffect(() => {
     try {
       validateEnvironment();
-      console.log("Firebase environment validated.");
+      console.log("Firebase initialized");
     } catch (error) {
       console.error("Environment Validation Error:", error);
     }
   }, []);
 
   if (!fontsLoaded) {
-    return null; // Return null (or a splash screen) until fonts are ready
+    return null;
   }
 
   return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <RootNavigator />
-      </AuthProvider>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+          <StatusBar style="dark" />
+        </AuthProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }

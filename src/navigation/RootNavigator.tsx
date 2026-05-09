@@ -7,7 +7,6 @@
 // ============================================================
 
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginScreen } from "../screens/auth/LoginScreen";
 import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
@@ -49,25 +48,19 @@ export const RootNavigator = () => {
   }
 
   return (
-    <NavigationContainer
-      onUnhandledAction={(action) => {
-        console.warn("Unhandled Navigation Action:", action);
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        animation: "fade",
+        contentStyle: { backgroundColor: "#ffffff" },
       }}
     >
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          animation: "fade",
-          contentStyle: { backgroundColor: "#ffffff" },
-        }}
-      >
-        {isAuthenticated ? (
-          <Stack.Screen name="AppRoot" component={BottomTabNavigator} />
-        ) : (
-          <Stack.Screen name="AuthRoot" component={AuthStack} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+      {isAuthenticated ? (
+        <Stack.Screen name="AppRoot" component={BottomTabNavigator} />
+      ) : (
+        <Stack.Screen name="AuthRoot" component={AuthStack} />
+      )}
+    </Stack.Navigator>
   );
 };
 
