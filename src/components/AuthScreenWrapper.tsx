@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   // ── Title ──
   title: {
     fontSize: 36,
-    fontWeight: "900",
+    fontFamily: "Zalando-Bold",
     color: "#1f2937",
     textAlign: "left",
     marginTop: 20,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   // ── Subtitle ──
   subtitle: {
     fontSize: 13,
-    fontWeight: "400",
+    fontFamily: "Zalando-Light",
     color: "#6b7280",
     textAlign: "left",
     marginTop: 8,
@@ -178,13 +178,13 @@ const styles = StyleSheet.create({
   },
   bottomText: {
     fontSize: 14,
-    fontWeight: "400",
+    fontFamily: "Zalando-Regular",
     color: "#6b7280",
     textAlign: "center",
   },
   bottomLink: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "Zalando-Medium",
     color: "#9d174d",
   },
 });

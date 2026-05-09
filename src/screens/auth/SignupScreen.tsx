@@ -294,7 +294,7 @@ export const SignupScreen = ({ navigation }: SignupScreenProps) => {
 const styles = StyleSheet.create({
   label: {
     fontSize: 13,
-    fontWeight: "500",
+    fontFamily: "Zalando-Medium", // 500
     color: "#1f2937",
     marginBottom: 8,
   },
@@ -306,6 +306,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
+    fontFamily: "Zalando-Regular", // 400
     color: "#1f2937",
     backgroundColor: "#ffffff",
     marginBottom: 16,
@@ -329,6 +330,7 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     fontSize: 16,
+    fontFamily: "Zalando-Regular", // 400
     color: "#1f2937",
     height: "100%",
   },
@@ -347,12 +349,12 @@ const styles = StyleSheet.create({
   matchTextValid: {
     fontSize: 12,
     color: "#10b981",
-    fontWeight: "500",
+    fontFamily: "Zalando-Medium", // 500
   },
   matchTextInvalid: {
     fontSize: 12,
     color: "#ef4444",
-    fontWeight: "500",
+    fontFamily: "Zalando-Medium", // 500
   },
 
   // ── Remember Me ──
@@ -384,13 +386,14 @@ const styles = StyleSheet.create({
   },
   rememberText: {
     fontSize: 13,
-    fontWeight: "400",
+    fontFamily: "Zalando-Light", // 300
     color: "#1f2937",
   },
 
   // ── Error ──
   errorText: {
     fontSize: 13,
+    fontFamily: "Zalando-Regular", // 400
     color: "#ef4444",
     marginBottom: 12,
   },
@@ -410,7 +413,7 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: "#ffffff",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "Zalando-SemiBold", // 600
   },
 
   // ── OR Divider ──
@@ -426,7 +429,7 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     fontSize: 12,
-    fontWeight: "400",
+    fontFamily: "Zalando-Light", // 300
     color: "#9ca3af",
     marginHorizontal: 12,
   },
@@ -445,7 +448,7 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     fontSize: 16,
-    fontWeight: "500",
+    fontFamily: "Zalando-Medium", // 500
     color: "#1f2937",
   },
 });

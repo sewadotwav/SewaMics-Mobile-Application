@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   userPillText: {
     fontSize: 14,
-    fontWeight: "800", // Premium iOS weight
+    fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
     color: "#001b3a", 
     marginRight: 8,
@@ -337,9 +337,9 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
+    fontFamily: "Zalando-ExtraLight", // 200 for placeholder/search
     color: "#1f2937",
     padding: 0,
-    // Removed height: "100%" to allow Android to vertically center text properly
   },
   searchButton: {
     width: 44,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   },
   welcomeBannerText: {
     fontSize: 22,
-    fontWeight: "900", // Fixed from invalid 1500
+    fontFamily: "Zalando-SemiBold", // 600 as requested
     letterSpacing: -0.5,
     color: "#fb923c", // Match orange theme
   },
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 14,
-    fontWeight: "800", // Premium weight
+    fontFamily: "Zalando-SemiBold", // 600
     letterSpacing: -0.3,
   },
   tabTextActive: {
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: "800", // Premium weight
+    fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
     color: "#001b3a", 
   },
@@ -499,9 +499,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   productName: {
-    fontSize: 15, // Larger size, but still smaller than the 17px price
-    fontWeight: "800", // Bolder weight
-    lineHeight: 18, // Tight line height for clean wrapping
+    fontSize: 15, 
+    fontFamily: "Zalando-Medium", // 500 as requested
+    lineHeight: 18, 
     letterSpacing: -0.2,
     color: "#1f2937", 
   },
@@ -515,13 +515,13 @@ const styles = StyleSheet.create({
     marginRight: 2,
   },
   ratingText: {
-    fontSize: 14, // Bigger rating text
-    fontWeight: "700",
+    fontSize: 14, 
+    fontFamily: "Zalando-Bold", // 700 for importance
     color: "#6b7280",
   },
   productPrice: {
-    fontSize: 17, // Significantly bigger
-    fontWeight: "900", // Maximum boldness
+    fontSize: 17, 
+    fontFamily: "Zalando-SemiBold", // 600 as requested
     letterSpacing: -0.5,
     color: "#1f2937", 
   },
@@ -541,5 +541,6 @@ const styles = StyleSheet.create({
   emptyText: {
     color: "#6b7280",
     fontSize: 14,
+    fontFamily: "Zalando-Light", // 300
   },
 });
