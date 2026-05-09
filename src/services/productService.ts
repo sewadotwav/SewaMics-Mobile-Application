@@ -35,20 +35,26 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
     
     const products: Product[] = [];
     snapshot.forEach((doc) => {
-      const data = doc.data() as DocumentData;
+      if (!doc.exists()) return;
+      const rawData = doc.data() as DocumentData;
+      
+      // Support common field name variants including a trailing space found in logs
+      const priceValue = rawData.price ?? rawData.Price ?? rawData["price "] ?? 0;
+      const finalPrice = Number(priceValue);
+
       products.push({
         id: doc.id,
-        category: data.category || "Uncategorized",
-        currency: data.currency || "₱",
-        description: data.description || "",
-        imageKey: data.imageKey || "",
-        isActive: data.isActive !== false,
-        name: data.name || "Unknown Product",
-        price: data.price || 0,
-        productID: data.productID || doc.id,
-        rating: data.rating || 0,
-        reviews: data.reviews || 0,
-        stock: data.stock || 0,
+        category: rawData.category || "Uncategorized",
+        currency: rawData.currency || "₱",
+        description: rawData.description || "",
+        imageKey: rawData.imageKey || "",
+        isActive: rawData.isActive !== false,
+        name: rawData.name || "Unknown Product",
+        price: finalPrice,
+        productID: rawData.productID || doc.id,
+        rating: rawData.rating || 0,
+        reviews: rawData.reviews || 0,
+        stock: rawData.stock || 0,
       });
     });
     

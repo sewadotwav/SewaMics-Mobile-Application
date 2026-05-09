@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontFamily: "Zalando-Bold",
-    color: "#1f2937",
+    color: "#9d174d", // Updated to brand purple
     textAlign: "left",
     marginTop: 20,
     marginHorizontal: 16,

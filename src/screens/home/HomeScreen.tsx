@@ -26,7 +26,7 @@ import { getProductImage } from "../../utils/imageMapper";
 export const HomeScreen = ({ navigation }: any) => {
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
-  
+
   const {
     products,
     categories,
@@ -77,7 +77,7 @@ export const HomeScreen = ({ navigation }: any) => {
   // Locally filter products based on the search query
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
-    return products.filter((p) => 
+    return products.filter((p) =>
       p.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [products, searchQuery]);
@@ -96,7 +96,7 @@ export const HomeScreen = ({ navigation }: any) => {
             resizeMode="contain"
           />
         </TouchableOpacity>
-        
+
         {/* User Greeting */}
         <TouchableOpacity
           style={styles.userPill}
@@ -111,7 +111,7 @@ export const HomeScreen = ({ navigation }: any) => {
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 150 }]} // generous clearance for tab bar
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 5 }]} // Reduced padding to remove dead space while keeping cards visible above tab bar
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#9d174d" />
@@ -121,13 +121,13 @@ export const HomeScreen = ({ navigation }: any) => {
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
-            placeholder="Search ceramics..."
+            placeholder="Search"
             placeholderTextColor="#9ca3af"
             value={searchQuery}
             onChangeText={setSearchQuery}
             returnKeyType="search"
           />
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.searchButton}
             activeOpacity={0.8}
           >
@@ -138,6 +138,7 @@ export const HomeScreen = ({ navigation }: any) => {
         {/* Big Welcome Message */}
         <View style={styles.welcomeBanner}>
           <Text style={styles.welcomeBannerText}>Welcome, browse coolness now!</Text>
+          <Text style={styles.welcomeSubtext}>Discover playful handmade ceramic mugs made to brighten up your sip made by yours truly in SewaMic</Text>
         </View>
 
         {/* C. HERO SECTION */}
@@ -167,6 +168,11 @@ export const HomeScreen = ({ navigation }: any) => {
           </View>
         </View>
 
+        {/* F. PRODUCT SHOWCASE Header moved above Tabs */}
+        <View style={styles.productShowcaseHeader}>
+          <Text style={styles.sectionTitle}>Product Showcase</Text>
+        </View>
+
         {/* E. CATEGORY TAB SWITCHER (Centered and justified) */}
         <View style={styles.tabContainer}>
           {categories.map((cat) => {
@@ -194,11 +200,6 @@ export const HomeScreen = ({ navigation }: any) => {
           })}
         </View>
 
-        {/* F. PRODUCT SHOWCASE */}
-        <View style={styles.productShowcaseHeader}>
-          <Text style={styles.sectionTitle}>Product Showcase</Text>
-        </View>
-
         <View style={styles.productGridContainer}>
           {isLoading && !refreshing ? (
             <View style={styles.loadingContainer}>
@@ -217,27 +218,27 @@ export const HomeScreen = ({ navigation }: any) => {
                     <Image
                       source={getProductImage(item.imageKey)}
                       style={styles.productImage}
-                      resizeMode="cover" 
+                      resizeMode="cover"
                     />
-                    
+
                     {/* Favorite Heart Icon Overlay */}
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={styles.favoriteButton}
                       onPress={() => toggleFavorite(item.id)}
                       activeOpacity={0.7}
                     >
-                      <Ionicons 
-                        name={favorites[item.id] ? "heart" : "heart-outline"} 
-                        size={16} 
-                        color={favorites[item.id] ? "#9d174d" : "#6b7280"} 
+                      <Ionicons
+                        name={favorites[item.id] ? "heart" : "heart-outline"}
+                        size={16}
+                        color={favorites[item.id] ? "#9d174d" : "#6b7280"}
                       />
                     </TouchableOpacity>
                   </View>
-                  
+
                   {/* Content Row: Title and Rating */}
                   <View style={styles.cardContentRow}>
                     <View style={styles.titleWrapper}>
-                       {/* Full text, no truncation */}
+                      {/* Full text, no truncation */}
                       <Text style={styles.productName}>
                         {item.name}
                       </Text>
@@ -247,7 +248,7 @@ export const HomeScreen = ({ navigation }: any) => {
                       <Text style={styles.ratingText}>{item.rating || "0.0"}</Text>
                     </View>
                   </View>
-                  
+
                   {/* Price Row */}
                   <Text style={styles.productPrice}>
                     ₱{Number(item.price).toFixed(2)}
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     backgroundColor: "#ffffff",
   },
-  
+
   // Header
   header: {
     flexDirection: "row",
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
   userPill: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#ffffff", 
+    backgroundColor: "#ffffff",
     paddingVertical: 6,
     paddingLeft: 12,
     paddingRight: 6,
@@ -307,14 +308,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
-    color: "#001b3a", 
+    color: "#001b3a",
     marginRight: 8,
   },
   avatarContainer: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "#9d174d", 
+    backgroundColor: "#9d174d",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -326,13 +327,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 8,
     marginBottom: 16,
-    height: 52, 
-    borderRadius: 26, 
-    backgroundColor: "#f9fafb", 
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "#f9fafb",
+    borderWidth: 1.5,
+    borderColor: "#fb923c",
     paddingLeft: 20,
-    paddingRight: 4, 
+    paddingRight: 4,
   },
   searchInput: {
     flex: 1,
@@ -345,7 +346,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "#fb923c", 
+    backgroundColor: "#fb923c",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -356,10 +357,18 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   welcomeBannerText: {
-    fontSize: 22,
+    fontSize: 36, // Increased to match Log In/Sign Up titles
     fontFamily: "Zalando-SemiBold", // 600 as requested
     letterSpacing: -0.5,
     color: "#fb923c", // Match orange theme
+    marginBottom: 4,
+  },
+  welcomeSubtext: {
+    fontSize: 15,
+    fontFamily: "Zalando-Medium", // 500 weight as product names
+    color: "#6b7280",
+    lineHeight: 20,
+    textAlign: "left",
   },
 
   // Hero Section
@@ -368,7 +377,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 16,
     overflow: "hidden",
-    height: 160, 
+    height: 160,
   },
   heroImage: {
     width: "100%",
@@ -384,7 +393,7 @@ const styles = StyleSheet.create({
   },
   featuredCard: {
     width: "48%", // Use exact percentage instead of flex to fix Android image blowout
-    height: 160, 
+    height: 160,
     backgroundColor: "#f3f4f6",
     borderRadius: 16,
     overflow: "hidden",
@@ -407,15 +416,15 @@ const styles = StyleSheet.create({
     flex: 1, // Flex 1 ensures they divide the space equally
     paddingVertical: 10,
     marginHorizontal: 4,
-    borderRadius: 24, 
+    borderRadius: 24,
     justifyContent: "center",
     alignItems: "center",
   },
   tabButtonActive: {
-    backgroundColor: "#fb923c", 
+    backgroundColor: "#fb923c",
   },
   tabButtonInactive: {
-    backgroundColor: "#ffffff", 
+    backgroundColor: "#ffffff",
     borderWidth: 1,
     borderColor: "#e5e7eb",
   },
@@ -442,9 +451,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
-    color: "#001b3a", 
+    color: "#fb923c", // Updated to brand orange
   },
-  
+
   // 2-Column Grid Layout
   productGridContainer: {
     paddingHorizontal: 16,
@@ -455,14 +464,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   productCard: {
-    width: "48%", 
+    width: "48%",
     marginBottom: 24,
   },
   productImageContainer: {
     width: "100%",
     aspectRatio: 1,
     borderRadius: 16,
-    backgroundColor: "#fcfbf8", 
+    backgroundColor: "#fcfbf8",
     overflow: "hidden",
     marginBottom: 12,
   },
@@ -486,7 +495,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  
+
   cardContentRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -499,11 +508,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   productName: {
-    fontSize: 15, 
+    fontSize: 15,
     fontFamily: "Zalando-Medium", // 500 as requested
-    lineHeight: 18, 
+    lineHeight: 18,
     letterSpacing: -0.2,
-    color: "#1f2937", 
+    color: "#1f2937",
   },
   ratingContainer: {
     flexDirection: "row",
@@ -515,15 +524,15 @@ const styles = StyleSheet.create({
     marginRight: 2,
   },
   ratingText: {
-    fontSize: 14, 
+    fontSize: 14,
     fontFamily: "Zalando-Bold", // 700 for importance
     color: "#6b7280",
   },
   productPrice: {
-    fontSize: 17, 
+    fontSize: 17,
     fontFamily: "Zalando-SemiBold", // 600 as requested
     letterSpacing: -0.5,
-    color: "#1f2937", 
+    color: "#1f2937",
   },
 
   loadingContainer: {
