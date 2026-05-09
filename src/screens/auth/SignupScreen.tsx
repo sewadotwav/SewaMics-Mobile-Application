@@ -1,9 +1,9 @@
 // ============================================================
-// SewaMics — Login Screen
-// File: src/screens/auth/LoginScreen.tsx
+// SewaMics — Signup Screen
+// File: src/screens/auth/SignupScreen.tsx
 // ============================================================
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -12,13 +12,18 @@ import {
   StyleSheet,
   ActivityIndicator,
   Keyboard,
-  Platform,
 } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { AuthScreenWrapper } from "../../components/AuthScreenWrapper";
 import { useAuth } from "../../context/AuthContext";
 
 // ─── Validation Helpers ──────────────────────────────────────
+const validateName = (name: string): string | null => {
+  if (!name.trim()) return "Full name is required.";
+  if (name.trim().length < 2) return "Name must be at least 2 characters.";
+  return null;
+};
+
 const validateEmail = (email: string): string | null => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email.trim()) return "Email is required.";
@@ -28,51 +33,56 @@ const validateEmail = (email: string): string | null => {
 
 const validatePassword = (password: string): string | null => {
   if (!password) return "Password is required.";
-  if (password.length < 8) return "Password must be at least 8 characters.";
-  if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
-  if (!/[a-z]/.test(password)) return "Password must contain at least one lowercase letter.";
-  if (!/[^A-Za-z0-9]/.test(password)) return "Password must contain at least one symbol.";
+  if (password.length < 6) return "Password must be at least 6 characters.";
+  // As per previous requirements, you may add uppercase/lowercase/symbol validation here.
+  // We'll stick to basic length validation as requested for the prototype.
   return null;
 };
 // ─────────────────────────────────────────────────────────────
 
-interface LoginScreenProps {
+interface SignupScreenProps {
   navigation: any;
 }
 
-export const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  const { loginWithEmail, loginWithGoogle, error: authError, clearError } = useAuth();
+export const SignupScreen = ({ navigation }: SignupScreenProps) => {
+  const { signupWithEmail, loginWithGoogle, error: authError, clearError } = useAuth();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  
   const [localLoading, setLocalLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+
+  // Focus tracking for border colors (NO Android shadow/elevation bug)
+  const [nameFocused, setNameFocused] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
 
   const displayError = localError || authError;
 
+  // ─── Computed Properties ─────────────────────────────────
+  const passwordsMatch = useMemo(() => {
+    return password.length > 0 && confirmPassword.length > 0 && password === confirmPassword;
+  }, [password, confirmPassword]);
+
   // ─── Handlers ────────────────────────────────────────────
-  const handleEmailChange = useCallback((text: string) => {
-    setEmail(text);
+  const clearErrors = useCallback(() => {
     if (localError) setLocalError(null);
     if (authError) clearError();
   }, [localError, authError, clearError]);
 
-  const handlePasswordChange = useCallback((text: string) => {
-    setPassword(text);
-    if (localError) setLocalError(null);
-    if (authError) clearError();
-  }, [localError, authError, clearError]);
-
-  const togglePasswordVisibility = useCallback(() => {
-    setShowPassword((prev) => !prev);
-  }, []);
-
-  const handleLogin = useCallback(async () => {
+  const handleSignup = useCallback(async () => {
     Keyboard.dismiss();
+
+    const nameErr = validateName(name);
+    if (nameErr) { setLocalError(nameErr); return; }
 
     const emailErr = validateEmail(email);
     if (emailErr) { setLocalError(emailErr); return; }
@@ -80,19 +90,24 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     const passErr = validatePassword(password);
     if (passErr) { setLocalError(passErr); return; }
 
+    if (!passwordsMatch) {
+      setLocalError("Passwords do not match.");
+      return;
+    }
+
     try {
       setLocalLoading(true);
       setLocalError(null);
-      await loginWithEmail(email, password);
-      // Navigation is handled automatically by RootNavigator on auth state change
+      await signupWithEmail(email, password, name);
+      // Auth context will navigate to AppRoot automatically on success
     } catch {
       // Error is set in AuthContext
     } finally {
       setLocalLoading(false);
     }
-  }, [email, password, loginWithEmail]);
+  }, [name, email, password, passwordsMatch, signupWithEmail]);
 
-  const handleGoogleLogin = useCallback(async () => {
+  const handleGoogleSignup = useCallback(async () => {
     Keyboard.dismiss();
     try {
       setLocalLoading(true);
@@ -105,29 +120,42 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     }
   }, [loginWithGoogle]);
 
-  const handleNavigateSignup = useCallback(() => {
-    navigation.navigate("Signup");
+  const handleNavigateLogin = useCallback(() => {
+    navigation.navigate("Login");
   }, [navigation]);
+
   // ─────────────────────────────────────────────────────────
 
   return (
     <AuthScreenWrapper
-      title="Log In"
-      subtitle="Login Now To Your Account. Access your account to manage settings, explore features."
-      bottomText="Don't have an account?"
-      bottomLinkText="Sign Up"
-      onBottomLinkPress={handleNavigateSignup}
+      title="Sign Up"
+      subtitle="Sign Up To Your Account. Create your account to start shopping and save favorites."
+      bottomText="Already have an account?"
+      bottomLinkText="Login"
+      onBottomLinkPress={handleNavigateLogin}
     >
-      {/* ── a) Email Label ── */}
-      <Text style={styles.label}>Email</Text>
+      {/* ── a) Full Name ── */}
+      <Text style={styles.label}>Full Name</Text>
+      <TextInput
+        style={[styles.input, nameFocused && styles.inputFocused]}
+        placeholder="Chiyo Chan"
+        placeholderTextColor="#d1d5db"
+        value={name}
+        onChangeText={(text) => { setName(text); clearErrors(); }}
+        autoCapitalize="words"
+        autoCorrect={false}
+        onFocus={() => setNameFocused(true)}
+        onBlur={() => setNameFocused(false)}
+      />
 
-      {/* ── b) Email Input ── */}
+      {/* ── b) Email ── */}
+      <Text style={styles.label}>Email</Text>
       <TextInput
         style={[styles.input, emailFocused && styles.inputFocused]}
         placeholder="chiyochan@gmail.com"
         placeholderTextColor="#d1d5db"
         value={email}
-        onChangeText={handleEmailChange}
+        onChangeText={(text) => { setEmail(text); clearErrors(); }}
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
@@ -135,17 +163,15 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         onBlur={() => setEmailFocused(false)}
       />
 
-      {/* ── c) Password Label ── */}
-      <Text style={[styles.label, { marginTop: 4 }]}>Password</Text>
-
-      {/* ── d) Password Input ── */}
+      {/* ── c) Password ── */}
+      <Text style={styles.label}>Password</Text>
       <View style={[styles.passwordContainer, passwordFocused && styles.inputFocused]}>
         <TextInput
           style={styles.passwordInput}
           placeholder="••••••••"
           placeholderTextColor="#d1d5db"
           value={password}
-          onChangeText={handlePasswordChange}
+          onChangeText={(text) => { setPassword(text); clearErrors(); }}
           secureTextEntry={!showPassword}
           autoCapitalize="none"
           autoCorrect={false}
@@ -153,13 +179,59 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
           onBlur={() => setPasswordFocused(false)}
         />
         <TouchableOpacity
-          onPress={togglePasswordVisibility}
+          onPress={() => setShowPassword(!showPassword)}
           style={styles.eyeButton}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <Feather
             name={showPassword ? "eye" : "eye-off"}
-            size={24}
+            size={20}
+            color="#9ca3af"
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* ── d) Confirm Password & Validation ── */}
+      <Text style={styles.label}>Confirm Password</Text>
+      <View style={[styles.passwordContainer, confirmPasswordFocused && styles.inputFocused, { marginBottom: 12 }]}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="••••••••"
+          placeholderTextColor="#d1d5db"
+          value={confirmPassword}
+          onChangeText={(text) => { setConfirmPassword(text); clearErrors(); }}
+          secureTextEntry={!showConfirmPassword}
+          autoCapitalize="none"
+          autoCorrect={false}
+          onFocus={() => setConfirmPasswordFocused(true)}
+          onBlur={() => setConfirmPasswordFocused(false)}
+        />
+        
+        {/* Right side match validation */}
+        {confirmPassword.length > 0 && (
+          <View style={styles.validationIndicator}>
+            {passwordsMatch ? (
+              <>
+                <Feather name="check" size={14} color="#10b981" />
+                <Text style={styles.matchTextValid}>Passwords match</Text>
+              </>
+            ) : (
+              <>
+                <Feather name="x" size={14} color="#ef4444" />
+                <Text style={styles.matchTextInvalid}>Passwords don't match</Text>
+              </>
+            )}
+          </View>
+        )}
+        
+        <TouchableOpacity
+          onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+          style={styles.eyeButton}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Feather
+            name={showConfirmPassword ? "eye" : "eye-off"}
+            size={20}
             color="#9ca3af"
           />
         </TouchableOpacity>
@@ -171,7 +243,6 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         onPress={() => setRememberMe((prev) => !prev)}
         activeOpacity={0.7}
       >
-        {/* Circle radio-style checkbox */}
         <View style={[styles.radioOuter, rememberMe && styles.radioOuterChecked]}>
           {rememberMe && <View style={styles.radioInner} />}
         </View>
@@ -183,17 +254,17 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         <Text style={styles.errorText}>{displayError}</Text>
       ) : null}
 
-      {/* ── g) Login Button ── */}
+      {/* ── g) Sign Up Button ── */}
       <TouchableOpacity
-        style={[styles.loginButton, localLoading && styles.buttonDisabled]}
-        onPress={handleLogin}
+        style={[styles.signupButton, localLoading && styles.buttonDisabled]}
+        onPress={handleSignup}
         disabled={localLoading}
         activeOpacity={0.85}
       >
         {localLoading ? (
           <ActivityIndicator color="#ffffff" size="small" />
         ) : (
-          <Text style={styles.loginButtonText}>Login</Text>
+          <Text style={styles.signupButtonText}>Sign Up</Text>
         )}
       </TouchableOpacity>
 
@@ -207,13 +278,14 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       {/* ── i) Google Button ── */}
       <TouchableOpacity
         style={styles.googleButton}
-        onPress={handleGoogleLogin}
+        onPress={handleGoogleSignup}
         activeOpacity={0.85}
         disabled={localLoading}
       >
         <AntDesign name="google" size={20} color="#EA4335" />
         <Text style={styles.googleButtonText}>Sign in with Google</Text>
       </TouchableOpacity>
+
     </AuthScreenWrapper>
   );
 };
@@ -241,9 +313,7 @@ const styles = StyleSheet.create({
   inputFocused: {
     borderColor: "#9d174d",
     borderWidth: 2,
-    // Note: Elevation and shadow properties are explicitly removed here.
-    // On Android, dynamically adding 'elevation' to a TextInput container
-    // forces the native view to re-create itself, immediately stealing focus.
+    // Explicitly avoiding elevation/shadow to prevent the Android focus jump bug
   },
   passwordContainer: {
     height: 48,
@@ -254,7 +324,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     backgroundColor: "#ffffff",
-    marginBottom: 12,
+    marginBottom: 16,
   },
   passwordInput: {
     flex: 1,
@@ -264,6 +334,25 @@ const styles = StyleSheet.create({
   },
   eyeButton: {
     padding: 4,
+    marginLeft: 4,
+  },
+
+  // ── Password Validation ──
+  validationIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 8,
+    gap: 4,
+  },
+  matchTextValid: {
+    fontSize: 12,
+    color: "#10b981",
+    fontWeight: "500",
+  },
+  matchTextInvalid: {
+    fontSize: 12,
+    color: "#ef4444",
+    fontWeight: "500",
   },
 
   // ── Remember Me ──
@@ -306,19 +395,19 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  // ── Login Button ──
-  loginButton: {
+  // ── Buttons ──
+  signupButton: {
     height: 48,
     backgroundColor: "#9d174d",
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 24,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
-  loginButtonText: {
+  signupButtonText: {
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "600",
@@ -328,8 +417,7 @@ const styles = StyleSheet.create({
   dividerRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 8,
-    marginBottom: 16,
+    marginBottom: 24,
   },
   dividerLine: {
     flex: 1,

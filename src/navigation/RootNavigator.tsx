@@ -17,12 +17,7 @@ import { BottomTabNavigator } from "./BottomTabNavigator";
 
 const Stack = createNativeStackNavigator();
 
-// Placeholder for Signup (will be replaced in next step)
-const SignupScreen = () => (
-  <View style={styles.placeholderContainer}>
-    <Text style={styles.placeholderText}>Signup Screen</Text>
-  </View>
-);
+import { SignupScreen } from "../screens/auth/SignupScreen";
 
 // The authentication flow
 const AuthStack = () => {

@@ -44,7 +44,6 @@ export function useGoogleAuth() {
     selectAccount: true,
   });
 
-  // Listen for the response from the Google OAuth flow
   useEffect(() => {
     async function handleSignInResponse() {
       if (response?.type === "success") {
