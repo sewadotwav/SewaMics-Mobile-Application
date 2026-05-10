@@ -152,6 +152,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
+          { flexGrow: 1 },
           styles.scrollContent,
           cartItems.length > 0 && { paddingBottom: 250 }, // Extra space for sticky footer
         ]}
@@ -348,6 +349,7 @@ const styles = StyleSheet.create({
 
   // Cart Items Container 
   cartContainer: {
+    flex: 1,
     backgroundColor: "#ffffff",
     borderRadius: 28,
     overflow: "hidden",
@@ -357,9 +359,11 @@ const styles = StyleSheet.create({
 
   // Empty state
   emptyState: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 48,
     paddingHorizontal: 32,
+    paddingBottom: 40,
   },
   emptyTitle: {
     fontSize: 18,

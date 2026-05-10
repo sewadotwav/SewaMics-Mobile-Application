@@ -42,7 +42,8 @@ export const WishlistScreen = ({ navigation }: WishlistScreenProps) => {
         </View>
       ) : wishlistItems.length === 0 ? (
         // ── Empty State ──────────────────────────────────────────
-        <ScrollView contentContainerStyle={styles.emptyContainer}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+          <View style={styles.emptyContainer}>
           <View style={styles.emptyIconWrapper}>
             <Feather name="heart" size={40} color="#9d174d" />
           </View>
@@ -58,6 +59,7 @@ export const WishlistScreen = ({ navigation }: WishlistScreenProps) => {
             <Feather name="shopping-bag" size={18} color="#ffffff" style={{ marginRight: 8 }} />
             <Text style={styles.browseButtonText}>Browse Products</Text>
           </TouchableOpacity>
+          </View>
         </ScrollView>
       ) : (
         // ── Product Grid ─────────────────────────────────────────
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
   headerRight: { width: 40 },
 
   // Empty State
-  emptyContainer: { alignItems: "center", paddingTop: 80, paddingHorizontal: 32, paddingBottom: 100 },
+  emptyContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 32, paddingBottom: 40 },
   emptyIconWrapper: {
     width: 100, height: 100, borderRadius: 50,
     backgroundColor: "#f9fafb",

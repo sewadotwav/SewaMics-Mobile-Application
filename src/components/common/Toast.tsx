@@ -42,7 +42,7 @@ export const Toast = ({ visible, message, onHide, duration = 2000 }: ToastProps)
   return (
     <Animated.View style={[styles.container, { opacity }]}>
       <View style={styles.content}>
-        <Feather name="check-circle" size={18} color="#ffffff" style={{ marginRight: 8 }} />
+        <Feather name="check-circle" size={18} color="#9d174d" style={{ marginRight: 8 }} />
         <Text style={styles.message}>{message}</Text>
       </View>
     </Animated.View>
@@ -61,19 +61,19 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(157, 23, 77, 0.95)", // Purple
+    backgroundColor: "rgba(243, 244, 246, 0.95)", // Light gray opaque
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 30,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 8,
   },
   message: {
     fontSize: 14,
     fontFamily: "Zalando-SemiBold",
-    color: "#ffffff",
+    color: "#9d174d", // Purple
   },
 });
