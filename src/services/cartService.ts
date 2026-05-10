@@ -29,7 +29,7 @@ import {
   CartItem,
   ProductDocument,
 } from "../config/firestoreSchema";
-import { getProductById } from "./productService";
+import { getProductById, Product } from "./productService";
 
 // ─────────────────────────────────────────────
 // HELPERS
@@ -103,7 +103,8 @@ export async function getCart(userId: string): Promise<CartDocument | null> {
 export async function addToCart(
   userId: string,
   productId: string,
-  qty: number
+  qty: number,
+  selectedSize?: string
 ): Promise<void> {
   try {
     // ── Validate inputs ────────────────────────────────────
@@ -115,7 +116,7 @@ export async function addToCart(
     }
 
     // ── Fetch live product data ────────────────────────────
-    const product: ProductDocument | null = await getProductById(productId);
+    const product: Product | null = await getProductById(productId);
     if (!product) {
       throw new Error(
         `[cartService] Cannot add to cart — product ${productId} not found.`
@@ -135,12 +136,13 @@ export async function addToCart(
       : [];
 
     // ── Add or increment ───────────────────────────────────
+    // Check for same product AND same size
     const existingIndex = items.findIndex(
-      (item) => item.productId === productId
+      (item) => item.productId === productId && item.selectedSize === selectedSize
     );
 
     if (existingIndex >= 0) {
-      // Product already in cart — increment quantity
+      // Product + Size already in cart — increment quantity
       const updated = { ...items[existingIndex] };
       updated.quantity += qty;
       updated.subtotal = parseFloat(
@@ -154,7 +156,8 @@ export async function addToCart(
         name: product.name,
         price: product.price,
         quantity: qty,
-        image: product.images[0] ?? "",
+        image: product.imageKey ?? "",
+        selectedSize,
         subtotal: parseFloat((product.price * qty).toFixed(2)),
         addedAt: Timestamp.now(),
       };

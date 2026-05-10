@@ -71,6 +71,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string; // Firebase Storage URL
+  selectedSize?: string;
   subtotal: number;
   addedAt: Timestamp;
 }

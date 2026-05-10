@@ -91,8 +91,8 @@ export const ProductDetailScreen = () => {
     }
     setCartLoading(true);
     try {
-      await addToCart(user.uid, product.id, quantity);
-      Alert.alert("Added to Cart", `${product.name} has been added to your cart!`);
+      await addToCart(user.uid, product.id, quantity, selectedSize);
+      Alert.alert("Added to Cart", `${product.name} (${selectedSize}) has been added to your cart!`);
     } catch (err) {
       Alert.alert("Error", getErrorMessage(err));
     } finally {

@@ -6,14 +6,17 @@
 // main application tabs, including custom badges.
 // ============================================================
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
+import { getCart } from "../services/cartService";
 
 import { HomeScreen } from "../screens/home/HomeScreen";
 import { CatalogScreen } from "../screens/catalog/CatalogScreen";
+import { CartScreen } from "../screens/cart/CartScreen";
 import { ProfileScreen } from "../screens/profile/ProfileScreen";
 import { EditProfileScreen } from "../screens/profile/EditProfileScreen";
 import { WishlistScreen } from "../screens/profile/WishlistScreen";
@@ -29,8 +32,7 @@ const PlaceholderScreen = ({ name }: { name: string }) => (
   </View>
 );
 
-// const SearchScreen = () => <PlaceholderScreen name="Search" />;
-const CartScreen = () => <PlaceholderScreen name="Cart" />;
+// const CartScreen = () => <PlaceholderScreen name="Cart" />;
 const OrdersScreen = () => <PlaceholderScreen name="Orders" />;
 
 // ----------------------------------------------------------------
@@ -67,7 +69,7 @@ const CatalogStack = () => (
 
 const CartStack = () => (
   <Stack.Navigator screenOptions={defaultHeaderOptions}>
-    <Stack.Screen name="CartMain" component={CartScreen} options={{ headerTitle: "Your Cart" }} />
+    <Stack.Screen name="CartMain" component={CartScreen} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 
@@ -93,14 +95,28 @@ const ProfileStack = () => (
 // ----------------------------------------------------------------
 const Tab = createBottomTabNavigator();
 
-// Temporary mock data for cart count
-const CART_ITEM_COUNT = 2;
-
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// ... skipping to the component ...
 export const BottomTabNavigator = () => {
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
+  const [cartCount, setCartCount] = useState(0);
+
+  // Fetch live cart count on mount and periodically
+  useEffect(() => {
+    if (!user?.uid) return;
+    let isMounted = true;
+    const fetchCount = async () => {
+      try {
+        const cart = await getCart(user.uid);
+        if (isMounted) setCartCount(cart?.itemCount ?? 0);
+      } catch {}
+    };
+    fetchCount();
+    // Poll every 3 seconds so badge stays fresh after add-to-cart
+    const interval = setInterval(fetchCount, 3000);
+    return () => { isMounted = false; clearInterval(interval); };
+  }, [user?.uid]);
   
   return (
     <Tab.Navigator
@@ -135,10 +151,9 @@ export const BottomTabNavigator = () => {
           return (
             <View>
               <Feather name={iconName} size={24} color={color} />
-              {/* Custom exact badge implementation for Cart */}
-              {route.name === "CartTab" && CART_ITEM_COUNT > 0 && (
+              {route.name === "CartTab" && cartCount > 0 && (
                 <View style={styles.badgeContainer}>
-                  <Text style={styles.badgeText}>{CART_ITEM_COUNT}</Text>
+                  <Text style={styles.badgeText}>{cartCount}</Text>
                 </View>
               )}
             </View>
