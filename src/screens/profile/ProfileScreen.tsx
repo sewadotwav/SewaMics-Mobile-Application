@@ -24,7 +24,7 @@ import { useAuth } from "../../context/AuthContext";
 import { getUserProfile, updateUserProfile } from "../../services/userService";
 import { getErrorMessage } from "../../utils/errorHandler";
 import { LoadingScreen } from "../../components/common/LoadingScreen";
-import { logout } from "../../services/authService";
+import { useNotification } from "../../context/NotificationContext";
 import { CTAButton } from "../../components/common/CTAButton";
 import { UserDocument } from "../../config/firestoreSchema";
 
@@ -34,6 +34,7 @@ interface ProfileScreenProps {
 
 export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const { user, logout } = useAuth();
+  const { showAlert } = useNotification();
 
   const [profile, setProfile] = useState<UserDocument | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -113,22 +114,21 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   }, [user]);
 
   // ── Logout Handler ────────────────────────────────────────────
-  const handleLogout = useCallback(async () => {
-    Alert.alert("Log Out", "Are you sure you want to log out?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Log Out",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await logout();
-          } catch (err: any) {
-            Alert.alert("Error", getErrorMessage(err));
-          }
-        },
+  const handleLogout = useCallback(() => {
+    showAlert({
+      title: "Log Out",
+      message: "Are you sure you wanna log out? We will miss you :((",
+      confirmText: "Yes",
+      cancelText: "No",
+      onConfirm: async () => {
+        try {
+          await logout();
+        } catch (err: any) {
+          Alert.alert("Error", getErrorMessage(err));
+        }
       },
-    ]);
-  }, [logout]);
+    });
+  }, [logout, showAlert]);
 
   if (profileLoading) {
     return <LoadingScreen message="Loading profile..." />;

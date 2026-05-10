@@ -14,6 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { getUserProfile, updateUserProfile } from "../../services/userService";
 import { getErrorMessage } from "../../utils/errorHandler";
+import { useNotification } from "../../context/NotificationContext";
 import { LoadingScreen } from "../../components/common/LoadingScreen";
 import { CTAButton } from "../../components/common/CTAButton";
 
@@ -23,6 +24,7 @@ interface EditProfileScreenProps {
 
 export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
   const { user } = useAuth();
+  const { showToast, showAlert } = useNotification();
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -60,11 +62,16 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
         phone: phone.trim(),
         addresses: address.trim() ? [{ street: address.trim(), city: "", state: "", zip: "", country: "" }] : [],
       } as any);
-      Alert.alert("Saved!", "Your profile has been updated.", [
-        { text: "OK", onPress: () => navigation.goBack() },
-      ]);
+      
+      showToast("Profile updated successfully!");
+      navigation.goBack();
     } catch (err: any) {
-      Alert.alert("Error", getErrorMessage(err));
+      showAlert({
+        title: "Error",
+        message: getErrorMessage(err),
+        confirmText: "OK",
+        onConfirm: () => {},
+      });
     } finally {
       setSaving(false);
     }

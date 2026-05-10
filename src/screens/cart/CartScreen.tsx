@@ -27,6 +27,7 @@ import { getProductImage } from "../../utils/imageMapper";
 import { getErrorMessage } from "../../utils/errorHandler";
 import { CTAButton } from "../../components/common/CTAButton";
 import { LoadingScreen } from "../../components/common/LoadingScreen";
+import { useNotification } from "../../context/NotificationContext";
 import { CartItem } from "../../config/firestoreSchema";
 
 const DELIVERY_FEE = 50;
@@ -37,6 +38,7 @@ interface CartScreenProps {
 
 export const CartScreen = ({ navigation }: CartScreenProps) => {
   const { user } = useAuth();
+  const { showAlert, showToast } = useNotification();
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,30 +73,27 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
 
   // ── Handlers ──────────────────────────────────────────────────
   const handleRemove = async (productId: string) => {
-    Alert.alert(
-      "Remove Item",
-      "Are you sure you want to remove this item from your cart?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: async () => {
-            setActionLoading(productId);
-            try {
-              await removeFromCart(user!.uid, productId);
-              setCartItems((prev) =>
-                prev.filter((item) => item.productId !== productId)
-              );
-            } catch (err) {
-              Alert.alert("Error", getErrorMessage(err));
-            } finally {
-              setActionLoading(null);
-            }
-          },
-        },
-      ]
-    );
+    showAlert({
+      title: "Remove Item",
+      message: "Are you sure you want to remove this item from your cart?",
+      confirmText: "Remove",
+      cancelText: "Cancel",
+      isDestructive: true,
+      onConfirm: async () => {
+        setActionLoading(productId);
+        try {
+          await removeFromCart(user!.uid, productId);
+          setCartItems((prev) =>
+            prev.filter((item) => item.productId !== productId)
+          );
+          showToast("Item removed from cart");
+        } catch (err) {
+          Alert.alert("Error", getErrorMessage(err));
+        } finally {
+          setActionLoading(null);
+        }
+      },
+    });
   };
 
   const handleUpdateQty = async (productId: string, newQty: number) => {

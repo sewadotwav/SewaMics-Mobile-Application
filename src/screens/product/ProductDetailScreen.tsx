@@ -25,6 +25,7 @@ import { getProductImage } from "../../utils/imageMapper";
 import { getErrorMessage } from "../../utils/errorHandler";
 import { CTAButton } from "../../components/common/CTAButton";
 import { LoadingScreen } from "../../components/common/LoadingScreen";
+import { useNotification } from "../../context/NotificationContext";
 
 const DEFAULT_SIZES = ["Small", "Medium", "Large"];
 
@@ -33,6 +34,7 @@ export const ProductDetailScreen = () => {
   const navigation = useNavigation<any>();
   const { user } = useAuth();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { showToast } = useNotification();
 
   const { productId } = route.params;
 
@@ -92,7 +94,7 @@ export const ProductDetailScreen = () => {
     setCartLoading(true);
     try {
       await addToCart(user.uid, product.id, quantity, selectedSize);
-      Alert.alert("Added to Cart", `${product.name} (${selectedSize}) has been added to your cart!`);
+      showToast(`${product.name} (${selectedSize}) added to cart!`);
     } catch (err) {
       Alert.alert("Error", getErrorMessage(err));
     } finally {
