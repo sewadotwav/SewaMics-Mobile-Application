@@ -9,7 +9,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginScreen } from "../screens/auth/LoginScreen";
-import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { LoadingScreen } from "../components/common/LoadingScreen";
 import { useAuth } from "../context/AuthContext";
 
 import { BottomTabNavigator } from "./BottomTabNavigator";
@@ -38,13 +39,7 @@ export const RootNavigator = () => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    // Show a full-screen loading spinner with text while Firebase initializes
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9d174d" />
-        <Text style={styles.loadingText}>Loading app...</Text>
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   return (

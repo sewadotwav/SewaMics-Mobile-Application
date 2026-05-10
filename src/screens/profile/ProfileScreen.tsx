@@ -23,6 +23,9 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../context/AuthContext";
 import { getUserProfile, updateUserProfile } from "../../services/userService";
 import { getErrorMessage } from "../../utils/errorHandler";
+import { LoadingScreen } from "../../components/common/LoadingScreen";
+import { logout } from "../../services/authService";
+import { CTAButton } from "../../components/common/CTAButton";
 import { UserDocument } from "../../config/firestoreSchema";
 
 interface ProfileScreenProps {
@@ -128,11 +131,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   }, [logout]);
 
   if (profileLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9d174d" />
-      </View>
-    );
+    return <LoadingScreen message="Loading profile..." />;
   }
 
   const displayName = profile?.name || user?.displayName || "User";
@@ -205,10 +204,12 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.8}>
-          <Feather name="log-out" size={20} color="#ffffff" style={{ marginRight: 8 }} />
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
+        <CTAButton
+          title="Logout"
+          icon="log-out"
+          onPress={handleLogout}
+          style={{ marginTop: 16 }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -321,11 +322,4 @@ const styles = StyleSheet.create({
   rowIcon: { marginRight: 12 },
   rowLabel: { fontSize: 14, fontFamily: "Zalando-Regular", color: "#1f2937" },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },
-
-  logoutButton: {
-    flexDirection: "row", alignItems: "center", justifyContent: "center",
-    marginTop: 16, height: 48, borderRadius: 20,
-    backgroundColor: "#9d174d",
-  },
-  logoutText: { fontSize: 16, fontFamily: "Zalando-SemiBold", color: "#ffffff" },
 });

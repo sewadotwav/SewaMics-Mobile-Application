@@ -14,6 +14,8 @@ import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { getUserProfile, updateUserProfile } from "../../services/userService";
 import { getErrorMessage } from "../../utils/errorHandler";
+import { LoadingScreen } from "../../components/common/LoadingScreen";
+import { CTAButton } from "../../components/common/CTAButton";
 
 interface EditProfileScreenProps {
   navigation: any;
@@ -69,11 +71,7 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
   };
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9d174d" />
-      </View>
-    );
+    return <LoadingScreen message="Fetching profile details..." />;
   }
 
   return (
@@ -157,26 +155,21 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
           </View>
 
           {/* Save */}
-          <TouchableOpacity
-            style={styles.saveButton}
+          <CTAButton
+            title="Save Changes"
+            icon="check"
             onPress={handleSave}
-            activeOpacity={0.85}
-            disabled={saving}
-          >
-            {saving ? (
-              <ActivityIndicator size="small" color="#ffffff" />
-            ) : (
-              <>
-                <Feather name="check" size={18} color="#ffffff" style={{ marginRight: 8 }} />
-                <Text style={styles.saveButtonText}>Save Changes</Text>
-              </>
-            )}
-          </TouchableOpacity>
+            loading={saving}
+            style={{ marginTop: 24 }}
+          />
 
           {/* Cancel */}
-          <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()} activeOpacity={0.8}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
+          <CTAButton
+            title="Cancel"
+            variant="secondary"
+            onPress={() => navigation.goBack()}
+            style={{ marginTop: 12 }}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -205,16 +198,4 @@ const styles = StyleSheet.create({
   fieldContent: { flex: 1 },
   fieldLabel: { fontSize: 12, fontFamily: "Zalando-Light", color: "#6b7280", marginBottom: 2 },
   fieldInput: { fontSize: 14, fontFamily: "Zalando-Regular", color: "#1f2937", padding: 0 },
-
-  saveButton: {
-    flexDirection: "row", alignItems: "center", justifyContent: "center",
-    height: 48, borderRadius: 20, marginTop: 24, backgroundColor: "#9d174d",
-  },
-  saveButtonText: { color: "#ffffff", fontSize: 16, fontFamily: "Zalando-SemiBold" },
-
-  cancelButton: {
-    height: 48, borderRadius: 20, borderWidth: 1.5, borderColor: "#e5e7eb",
-    alignItems: "center", justifyContent: "center", marginTop: 12,
-  },
-  cancelButtonText: { fontSize: 16, fontFamily: "Zalando-Regular", color: "#6b7280" },
 });

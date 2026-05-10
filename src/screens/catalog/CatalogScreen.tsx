@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { ProductCard } from "../../components/common/ProductCard";
+import { LoadingScreen } from "../../components/common/LoadingScreen";
 import { CategoryTabs } from "../../components/common/CategoryTabs";
 import { SearchBar } from "../../components/common/SearchBar";
 import { useProducts } from "../../hooks/useProducts";
@@ -151,9 +152,7 @@ export const CatalogScreen = ({ navigation }: any) => {
 
         {/* PRODUCT GRID OR EMPTY STATE */}
         {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#9d174d" />
-          </View>
+          <LoadingScreen />
         ) : filteredAndSortedProducts.length === 0 ? (
           <View style={styles.emptyState}>
             <Feather name="search" size={48} color="#9ca3af" />

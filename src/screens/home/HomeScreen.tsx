@@ -23,6 +23,7 @@ import { getUserProfile } from "../../services/userService";
 import { useProducts } from "../../hooks/useProducts";
 import { getProductImage } from "../../utils/imageMapper";
 import { useWishlist } from "../../context/WishlistContext";
+import { LoadingScreen } from "../../components/common/LoadingScreen";
 import { SearchBar } from "../../components/common/SearchBar";
 import { CategoryTabs } from "../../components/common/CategoryTabs";
 import { ProductCard } from "../../components/common/ProductCard";
@@ -170,9 +171,7 @@ export const HomeScreen = ({ navigation }: any) => {
 
         <View style={styles.productGridContainer}>
           {isLoading && !refreshing ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#9d174d" />
-            </View>
+            <LoadingScreen />
           ) : filteredProducts.length > 0 ? (
             <View style={styles.productGrid}>
               {filteredProducts.map((item) => (
