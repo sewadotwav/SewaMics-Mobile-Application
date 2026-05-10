@@ -9,6 +9,8 @@
 
 # Dependencies
 node_modules/
+sewamics-admin/node_modules/
+sewamics-admin/.env
 
 # Expo
 .expo/
