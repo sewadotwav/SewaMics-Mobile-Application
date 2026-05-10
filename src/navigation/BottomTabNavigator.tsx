@@ -13,6 +13,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 
 import { HomeScreen } from "../screens/home/HomeScreen";
+import { CatalogScreen } from "../screens/catalog/CatalogScreen";
 import { ProfileScreen } from "../screens/profile/ProfileScreen";
 import { EditProfileScreen } from "../screens/profile/EditProfileScreen";
 import { WishlistScreen } from "../screens/profile/WishlistScreen";
@@ -27,7 +28,7 @@ const PlaceholderScreen = ({ name }: { name: string }) => (
   </View>
 );
 
-const SearchScreen = () => <PlaceholderScreen name="Search" />;
+// const SearchScreen = () => <PlaceholderScreen name="Search" />;
 const CartScreen = () => <PlaceholderScreen name="Cart" />;
 const OrdersScreen = () => <PlaceholderScreen name="Orders" />;
 
@@ -55,9 +56,9 @@ const HomeStack = () => (
   </Stack.Navigator>
 );
 
-const SearchStack = () => (
+const CatalogStack = () => (
   <Stack.Navigator screenOptions={defaultHeaderOptions}>
-    <Stack.Screen name="SearchMain" component={SearchScreen} options={{ headerTitle: "Search" }} />
+    <Stack.Screen name="CatalogMain" component={CatalogScreen} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 
@@ -122,7 +123,7 @@ export const BottomTabNavigator = () => {
           let iconName: React.ComponentProps<typeof Feather>["name"] = "home";
 
           if (route.name === "HomeTab") iconName = "home";
-          else if (route.name === "SearchTab") iconName = "search";
+          else if (route.name === "CatalogTab") iconName = "grid";
           else if (route.name === "CartTab") iconName = "shopping-cart";
           else if (route.name === "OrdersTab") iconName = "package";
           else if (route.name === "ProfileTab") iconName = "user";
@@ -142,7 +143,7 @@ export const BottomTabNavigator = () => {
       })}
     >
       <Tab.Screen name="HomeTab" component={HomeStack} options={{ tabBarLabel: "Home" }} />
-      <Tab.Screen name="SearchTab" component={SearchStack} options={{ tabBarLabel: "Search" }} />
+      <Tab.Screen name="CatalogTab" component={CatalogStack} options={{ tabBarLabel: "Catalog" }} />
       <Tab.Screen name="CartTab" component={CartStack} options={{ tabBarLabel: "Cart" }} />
       <Tab.Screen name="OrdersTab" component={OrdersStack} options={{ tabBarLabel: "Orders" }} />
       <Tab.Screen name="ProfileTab" component={ProfileStack} options={{ tabBarLabel: "Profile" }} />

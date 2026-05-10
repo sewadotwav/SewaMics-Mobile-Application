@@ -4,7 +4,9 @@ import { Product, getProducts, getCategories } from "../services/productService"
 export const useProducts = (initialCategory?: string) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || "Fruits");
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    initialCategory !== undefined ? initialCategory : "Fruits"
+  );
   
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +20,7 @@ export const useProducts = (initialCategory?: string) => {
         const fetchedCategories = await getCategories();
         if (isMounted) {
           setCategories(fetchedCategories);
-          if (!initialCategory && fetchedCategories.length > 0) {
+          if (initialCategory === undefined && fetchedCategories.length > 0) {
             setSelectedCategory(fetchedCategories[0]);
           }
         }
@@ -37,7 +39,7 @@ export const useProducts = (initialCategory?: string) => {
       setIsLoading(true);
       setError(null);
       // Limit to 100 as per requirements to show all products
-      const fetchedProducts = await getProducts(selectedCategory, 100);
+      const fetchedProducts = await getProducts(selectedCategory || undefined, 100);
       setProducts(fetchedProducts);
     } catch (err: any) {
       setError(err.message || "Failed to fetch products");
@@ -50,10 +52,10 @@ export const useProducts = (initialCategory?: string) => {
     let isMounted = true;
     
     const loadData = async () => {
-      if (selectedCategory) {
+      if (selectedCategory !== undefined) {
         try {
           setIsLoading(true);
-          const data = await getProducts(selectedCategory, 100);
+          const data = await getProducts(selectedCategory || undefined, 100);
           if (isMounted) {
             setProducts(data);
           }

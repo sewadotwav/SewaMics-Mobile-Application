@@ -20,7 +20,7 @@ export type AuthStackParamList = {
 // ── 2. Bottom Tab Stack ───────────────────────────────────────
 export type BottomTabParamList = {
   Home: undefined;
-  Search: undefined;
+  Catalog: undefined;
   Cart: undefined;
   Orders: undefined;
   Profile: undefined;
