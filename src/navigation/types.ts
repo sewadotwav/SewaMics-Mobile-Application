@@ -17,34 +17,50 @@ export type AuthStackParamList = {
   Signup: undefined;
 };
 
-// ── 2. Bottom Tab Stack ───────────────────────────────────────
-export type BottomTabParamList = {
+// ── 2. Home Stack ─────────────────────────────────────────────
+export type HomeStackParamList = {
   Home: undefined;
-  Catalog: undefined;
-  Cart: undefined;
-  Orders: undefined;
-  Profile: undefined;
-};
-
-// ── 3. App Stack (Authenticated) ──────────────────────────────
-export type AppStackParamList = {
-  BottomTabs: NavigatorScreenParams<BottomTabParamList>;
   ProductDetail: { productId: string };
 };
 
-// ── 4. Root Stack (Top-level) ─────────────────────────────────
+// ── 3. Catalog Stack ──────────────────────────────────────────
+export type CatalogStackParamList = {
+  Catalog: undefined;
+  ProductDetail: { productId: string };
+};
+
+// ── 4. Bottom Tab Stack ───────────────────────────────────────
+export type BottomTabParamList = {
+  HomeTab: NavigatorScreenParams<HomeStackParamList>;
+  CatalogTab: NavigatorScreenParams<CatalogStackParamList>;
+  CartTab: undefined;
+  OrdersTab: undefined;
+  ProfileTab: undefined;
+};
+
+// ── 5. App Stack (Authenticated) ──────────────────────────────
+export type AppStackParamList = {
+  BottomTabs: NavigatorScreenParams<BottomTabParamList>;
+  ProductDetail: { productId: string };
+  Profile: undefined; // For direct profile navigation if needed
+  EditProfile: undefined;
+};
+
+// ── 6. Root Stack (Top-level) ─────────────────────────────────
 export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList>;
   App: NavigatorScreenParams<AppStackParamList>;
 };
 
 // ── Navigation Hook Types ─────────────────────────────────────
-// Use these with useNavigation() in your components
 export type RootNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export type AuthNavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 export type AppNavigationProp = NativeStackNavigationProp<AppStackParamList>;
 export type TabNavigationProp = BottomTabNavigationProp<BottomTabParamList>;
+export type HomeNavigationProp = NativeStackNavigationProp<HomeStackParamList>;
+export type CatalogNavigationProp = NativeStackNavigationProp<CatalogStackParamList>;
 
 // ── Route Prop Types ──────────────────────────────────────────
-// Use these with useRoute() in your components
 export type ProductDetailRouteProp = RouteProp<AppStackParamList, "ProductDetail">;
+export type HomeProductDetailRouteProp = RouteProp<HomeStackParamList, "ProductDetail">;
+export type CatalogProductDetailRouteProp = RouteProp<CatalogStackParamList, "ProductDetail">;

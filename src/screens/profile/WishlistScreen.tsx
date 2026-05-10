@@ -70,7 +70,7 @@ export const WishlistScreen = ({ navigation }: WishlistScreenProps) => {
               <TouchableOpacity
                 key={item.id}
                 style={styles.productCard}
-                onPress={() => navigation.navigate("HomeTab", { screen: "HomeMain", params: { productId: item.id } })}
+                onPress={() => navigation.navigate("ProductDetail", { productId: item.id })}
                 activeOpacity={0.9}
               >
                 <View style={styles.productImageContainer}>

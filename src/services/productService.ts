@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, orderBy, limit, DocumentData } from "firebase/firestore";
+import { collection, getDocs, query, where, limit, doc, getDoc, DocumentData } from "firebase/firestore";
 import { db } from "../config/firebaseConfig";
 
 export interface Product {
@@ -13,8 +13,44 @@ export interface Product {
   productID: string;
   rating: number;
   reviews: number;
+  reviewCount?: number;
   stock: number;
+  features?: string[];
+  sizes?: string[];
 }
+
+export const getProductById = async (productId: string): Promise<Product | null> => {
+  try {
+    const docRef = doc(db, "products", productId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) return null;
+
+    const rawData = docSnap.data() as DocumentData;
+    const priceValue = rawData.price ?? rawData.Price ?? rawData["price "] ?? 0;
+
+    return {
+      id: docSnap.id,
+      category: rawData.category || "Uncategorized",
+      currency: rawData.currency || "₱",
+      description: rawData.description || "",
+      imageKey: rawData.imageKey || "",
+      isActive: rawData.isActive !== false,
+      name: rawData.name || "Unknown Product",
+      price: Number(priceValue),
+      productID: rawData.productID || docSnap.id,
+      rating: rawData.rating || 0,
+      reviews: rawData.reviews || 0,
+      reviewCount: rawData.reviewCount ?? rawData.reviews ?? 0,
+      stock: rawData.stock || 0,
+      features: rawData.features || [],
+      sizes: rawData.sizes || ["Small", "Medium", "Large"],
+    };
+  } catch (error) {
+    console.error("Error fetching product by ID:", error);
+    throw error;
+  }
+};
 
 export const getProducts = async (categoryFilter?: string, maxLimit: number = 20): Promise<Product[]> => {
   try {

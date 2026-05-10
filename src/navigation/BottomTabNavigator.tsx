@@ -18,6 +18,7 @@ import { ProfileScreen } from "../screens/profile/ProfileScreen";
 import { EditProfileScreen } from "../screens/profile/EditProfileScreen";
 import { WishlistScreen } from "../screens/profile/WishlistScreen";
 import { HelpSupportScreen } from "../screens/profile/HelpSupportScreen";
+import { ProductDetailScreen } from "../screens/product/ProductDetailScreen";
 
 // ----------------------------------------------------------------
 // TEMPORARY PLACEHOLDER SCREENS
@@ -53,12 +54,14 @@ const defaultHeaderOptions = {
 const HomeStack = () => (
   <Stack.Navigator screenOptions={{ ...defaultHeaderOptions, headerShown: false }}>
     <Stack.Screen name="HomeMain" component={HomeScreen} />
+    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
   </Stack.Navigator>
 );
 
 const CatalogStack = () => (
   <Stack.Navigator screenOptions={defaultHeaderOptions}>
     <Stack.Screen name="CatalogMain" component={CatalogScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 
@@ -81,6 +84,7 @@ const ProfileStack = () => (
     <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     <Stack.Screen name="Wishlist" component={WishlistScreen} />
     <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
+    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
   </Stack.Navigator>
 );
 
