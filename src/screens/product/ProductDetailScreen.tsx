@@ -19,13 +19,14 @@ import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { useWishlist } from "../../context/WishlistContext";
-import { getProductById, Product } from "../../services/productService";
+import { getProductById, getProducts, Product } from "../../services/productService";
 import { addToCart } from "../../services/cartService";
 import { getProductImage } from "../../utils/imageMapper";
 import { getErrorMessage } from "../../utils/errorHandler";
 import { CTAButton } from "../../components/common/CTAButton";
 import { LoadingScreen } from "../../components/common/LoadingScreen";
 import { useNotification } from "../../context/NotificationContext";
+import { ProductDocument } from "../../config/firestoreSchema";
 
 const DEFAULT_SIZES = ["Small", "Medium", "Large"];
 
@@ -45,6 +46,7 @@ export const ProductDetailScreen = () => {
   const [quantity, setQuantity] = useState(1);
   const [cartLoading, setCartLoading] = useState(false);
   const [isSpecsExpanded, setIsSpecsExpanded] = useState(false);
+  const [otherProducts, setOtherProducts] = useState<Product[]>([]);
 
   const SPEC_LABELS: Record<string, string> = {
     brand: "Brand",
@@ -79,7 +81,22 @@ export const ProductDetailScreen = () => {
       }
     };
 
+    const fetchOtherProducts = async () => {
+      try {
+        const products = await getProducts();
+        // Filter out current product
+        const filtered = products.filter(p => p.id !== productId);
+        // Randomize the list (Fisher-Yates shuffle style)
+        const randomized = filtered.sort(() => Math.random() - 0.5);
+        // Take only 6
+        setOtherProducts(randomized.slice(0, 6));
+      } catch (err) {
+        console.error("Error fetching other products:", err);
+      }
+    };
+
     fetchProduct();
+    fetchOtherProducts();
   }, [productId]);
 
   // ── Handlers ──────────────────────────────────────────────────
@@ -342,6 +359,56 @@ export const ProductDetailScreen = () => {
           </View>
         )}
 
+        {/* ── BROWSE MORE ITEMS (horizontal scroll) ── */}
+        {otherProducts.length > 0 && (
+          <View style={styles.moreItemsSection}>
+            <TouchableOpacity 
+              style={styles.moreItemsHeader}
+              onPress={() => navigation.navigate("CatalogTab")}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.moreItemsTitle}>Browse more items</Text>
+              <Feather name="chevron-right" size={18} color="#9d174d" />
+            </TouchableOpacity>
+
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.horizontalScroll}
+            >
+              {otherProducts.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.smallCard}
+                  onPress={() => navigation.push("ProductDetail", { productId: item.id })}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.smallCardImageContainer}>
+                    <Image 
+                      source={getProductImage(item.imageKey)} 
+                      style={styles.smallCardImage} 
+                      resizeMode="cover"
+                    />
+                    <TouchableOpacity
+                      style={styles.smallCardWishlist}
+                      onPress={() => toggleWishlist(item as any)}
+                    >
+                      <Ionicons 
+                        name={isInWishlist(item.id) ? "heart" : "heart-outline"} 
+                        size={14} 
+                        color={isInWishlist(item.id) ? "#9d174d" : "#6b7280"} 
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.smallCardInfo}>
+                    <Text numberOfLines={1} style={styles.smallCardName}>{item.name}</Text>
+                    <Text style={styles.smallCardPrice}>₱{item.price.toLocaleString()}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
       </ScrollView>
 
       {/* ── STICKY BOTTOM ACTION BAR ── */}
@@ -643,6 +710,71 @@ const styles = StyleSheet.create({
     fontFamily: "Zalando-SemiBold",
     color: "#9d174d",
     marginRight: 4,
+  },
+
+  // Browse More Items
+  moreItemsSection: {
+    paddingTop: 8,
+    paddingBottom: 40,
+    backgroundColor: "#ffffff",
+  },
+  moreItemsHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  moreItemsTitle: {
+    fontSize: 15,
+    fontFamily: "Zalando-Bold",
+    color: "#9d174d",
+  },
+  horizontalScroll: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  smallCard: {
+    width: 110, // Shows approx 3.25 cards
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#f3f4f6",
+  },
+  smallCardImageContainer: {
+    width: "100%",
+    height: 110,
+    backgroundColor: "#f9fafb",
+  },
+  smallCardImage: {
+    width: "100%",
+    height: "100%",
+  },
+  smallCardWishlist: {
+    position: "absolute",
+    top: 6,
+    right: 6,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  smallCardInfo: {
+    padding: 8,
+  },
+  smallCardName: {
+    fontSize: 11,
+    fontFamily: "Zalando-Medium",
+    color: "#1f2937",
+    marginBottom: 2,
+  },
+  smallCardPrice: {
+    fontSize: 12,
+    fontFamily: "Zalando-Bold",
+    color: "#ea580c",
   },
 
   // Sticky Bottom Action Bar
