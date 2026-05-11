@@ -1,18 +1,51 @@
 @import "tailwindcss";
 
+/* ── Zalando Sans Font Family ────────────────────────────────── */
+@font-face {
+  font-family: 'Zalando Sans';
+  src: url('./assets/fonts/ZalandoSansSemiExpanded-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Zalando Sans';
+  src: url('./assets/fonts/ZalandoSansSemiExpanded-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Zalando Sans';
+  src: url('./assets/fonts/ZalandoSansSemiExpanded-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Zalando Sans';
+  src: url('./assets/fonts/ZalandoSansSemiExpanded-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
 @theme {
-  --color-brand-orange: #ff914d;
-  --color-brand-purple: #990066;
+  /* Exactly matching SewaMics Brand Palette */
+  --color-brand-purple: #9d174d;
+  --color-brand-orange: #ea580c;
+  
+  /* Primary Font */
+  --font-zalando: 'Zalando Sans', sans-serif;
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-zalando);
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #1f2937;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -22,15 +55,18 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #f9fafb; /* Lightest gray for premium dashboard look */
 }
 
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+}
+
+/* Base Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-zalando);
+  font-weight: 700;
+  color: var(--color-brand-purple);
 }
