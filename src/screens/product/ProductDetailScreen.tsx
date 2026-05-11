@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
   specValue: {
     fontSize: 14,
     fontFamily: "Zalando-Regular",
-    color: "#000000",
+    color: "#4b5563",
   },
   seeMoreButton: {
     flexDirection: "row",
