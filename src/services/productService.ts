@@ -17,6 +17,7 @@ export interface Product {
   stock: number;
   features?: string[];
   sizes?: string[];
+  specifications?: Record<string, string>;
 }
 
 export const getProductById = async (productId: string): Promise<Product | null> => {
@@ -45,6 +46,7 @@ export const getProductById = async (productId: string): Promise<Product | null>
       stock: rawData.stock || 0,
       features: rawData.features || [],
       sizes: rawData.sizes || ["Small", "Medium", "Large"],
+      specifications: rawData.specifications || {},
     };
   } catch (error) {
     console.error("Error fetching product by ID:", error);

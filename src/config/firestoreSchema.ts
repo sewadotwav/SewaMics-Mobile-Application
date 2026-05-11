@@ -128,6 +128,7 @@ export interface ProductDocument {
   isActive: boolean; // soft-delete / visibility toggle
   rating: number; // 0–5
   reviews: number; // total review count
+  specifications?: Record<string, string>; // e.g. { brand: "SewaMics", material: "Ceramic" }
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

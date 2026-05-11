@@ -44,6 +44,16 @@ export const ProductDetailScreen = () => {
   const [selectedSize, setSelectedSize] = useState<string>("Medium");
   const [quantity, setQuantity] = useState(1);
   const [cartLoading, setCartLoading] = useState(false);
+  const [isSpecsExpanded, setIsSpecsExpanded] = useState(false);
+
+  const SPEC_LABELS: Record<string, string> = {
+    brand: "Brand",
+    capacity: "Capacity",
+    finishType: "Finish Type",
+    material: "Material",
+    size: "Size",
+    weight: "Weight",
+  };
 
   // ── Fetch product ─────────────────────────────────────────────
   useEffect(() => {
@@ -292,10 +302,45 @@ export const ProductDetailScreen = () => {
         {/* ── PRODUCT DESCRIPTION (plain, no card) ── */}
         {product.description ? (
           <View style={styles.descriptionSection}>
-            <Text style={styles.descriptionTitle}>Product Description</Text>
+            <Text style={styles.descriptionTitle}>Description</Text>
             <Text style={styles.descriptionText}>{product.description}</Text>
           </View>
         ) : null}
+
+        {/* ── PRODUCT SPECIFICATIONS (collapsible) ── */}
+        {product.specifications && Object.keys(product.specifications).length > 0 && (
+          <View style={styles.specSection}>
+            <Text style={styles.specTitle}>Specification</Text>
+            
+            <View style={styles.specList}>
+              {Object.entries(product.specifications as Record<string, string>)
+                .slice(0, isSpecsExpanded ? undefined : 3)
+                .map(([key, value], index) => (
+                  <View key={key} style={[styles.specRow, index === 0 && { borderTopWidth: 0 }]}>
+                    <Text style={styles.specLabel}>{SPEC_LABELS[key] || key}</Text>
+                    <Text style={styles.specValue}>{String(value)}</Text>
+                  </View>
+                ))}
+            </View>
+
+            {Object.keys(product.specifications).length > 3 && (
+              <TouchableOpacity 
+                onPress={() => setIsSpecsExpanded(!isSpecsExpanded)}
+                style={styles.seeMoreButton}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.seeMoreText}>
+                  {isSpecsExpanded ? "See Less" : "See More"}
+                </Text>
+                <Feather 
+                  name={isSpecsExpanded ? "chevron-up" : "chevron-down"} 
+                  size={16} 
+                  color="#9d174d" 
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
 
       </ScrollView>
 
@@ -352,7 +397,7 @@ const styles = StyleSheet.create({
   headerRight: { width: 40 },
 
   // Scroll
-  scrollContent: { paddingBottom: 10 },
+  scrollContent: { paddingBottom: 75 }, // Extra padding to accommodate floating buttons
 
   // Product Image
   imageContainer: {
@@ -548,35 +593,84 @@ const styles = StyleSheet.create({
   descriptionText: {
     fontSize: 14,
     fontFamily: "Zalando-Regular",
-    color: "#6b7280",
+    color: "#4b5563",
     lineHeight: 22,
+  },
+
+  // Specifications
+  specSection: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 24,
+    backgroundColor: "#ffffff",
+  },
+  specTitle: {
+    fontSize: 15,
+    fontFamily: "Zalando-Bold",
+    color: "#9d174d",
+    marginBottom: 16,
+  },
+  specList: {
+    backgroundColor: "#ffffff",
+  },
+  specRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#f3f4f6",
+  },
+  specLabel: {
+    fontSize: 14,
+    fontFamily: "Zalando-Medium",
+    color: "#9d174d",
+  },
+  specValue: {
+    fontSize: 14,
+    fontFamily: "Zalando-Regular",
+    color: "#000000",
+  },
+  seeMoreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 16,
+    paddingVertical: 8,
+  },
+  seeMoreText: {
+    fontSize: 14,
+    fontFamily: "Zalando-SemiBold",
+    color: "#9d174d",
+    marginRight: 4,
   },
 
   // Sticky Bottom Action Bar
   stickyBar: {
+    position: "absolute",
+    bottom: 20, // Float slightly above the very bottom
+    left: 0,
+    right: 0,
     flexDirection: "row",
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
-    backgroundColor: "#ffffff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 8,
+    gap: 12,
   },
   cartButton: {
     flex: 1,
-    height: 48,
-    borderRadius: 20,
+    height: 54, // Slightly taller for better touch target when floating
+    borderRadius: 27,
     borderWidth: 2,
     borderColor: "#9d174d",
     backgroundColor: "#ffffff",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    // Floating shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
   },
   cartButtonText: {
     fontSize: 15,
@@ -585,11 +679,17 @@ const styles = StyleSheet.create({
   },
   buyButton: {
     flex: 1,
-    height: 48,
-    borderRadius: 20,
+    height: 54,
+    borderRadius: 27,
     backgroundColor: "#9d174d",
     justifyContent: "center",
     alignItems: "center",
+    // Floating shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
   },
   buyButtonText: {
     fontSize: 15,
