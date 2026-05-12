@@ -89,7 +89,7 @@ export const HomeScreen = ({ navigation }: any) => {
           activeOpacity={0.7}
         >
           <Image
-            source={require("../../../assets/Brand/SewaLogo.png")}
+            source={require("../../../assets/Brand/newSewaMicsLogo.png")}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     fontSize: 36, // Increased to match Log In/Sign Up titles
     fontFamily: "Zalando-SemiBold", // 600 as requested
     letterSpacing: -0.5,
-    color: "#fb923c", // Match orange theme
+    color: "#ff914d", // Match orange theme
     marginBottom: 4,
   },
   welcomeSubtext: {
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
-    color: "#fb923c", // Updated to brand orange
+    color: "#ff914d", // Updated to brand orange
   },
 
   // 2-Column Grid Layout

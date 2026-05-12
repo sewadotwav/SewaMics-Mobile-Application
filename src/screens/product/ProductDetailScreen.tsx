@@ -145,7 +145,7 @@ export const ProductDetailScreen = () => {
         <Feather name="arrow-left" size={22} color="#9d174d" />
       </TouchableOpacity>
       <Image
-        source={require("../../../assets/Brand/SewaLogo.png")}
+        source={require("../../../assets/Brand/newSewaMicsLogo.png")}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 24,
     fontFamily: "Zalando-Bold",
-    color: "#ea580c",
+    color: "#ff914d",
   },
   stockText: {
     fontSize: 12,
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3f4f6",
   },
   qtyPlus: {
-    backgroundColor: "#ea580c",
+    backgroundColor: "#ff914d",
   },
   qtyButtonDisabled: {
     opacity: 0.4,
@@ -774,7 +774,7 @@ const styles = StyleSheet.create({
   smallCardPrice: {
     fontSize: 12,
     fontFamily: "Zalando-Bold",
-    color: "#ea580c",
+    color: "#ff914d",
   },
 
   // Sticky Bottom Action Bar

@@ -104,7 +104,7 @@ export const CatalogScreen = ({ navigation }: any) => {
           activeOpacity={0.7}
         >
           <Image
-            source={require("../../../assets/Brand/SewaLogo.png")}
+            source={require("../../../assets/Brand/newSewaMicsLogo.png")}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -217,7 +217,7 @@ export const CatalogScreen = ({ navigation }: any) => {
                 <Feather name={option.icon as any} size={16} color="#9ca3af" style={styles.sortOptionIcon} />
                 <Text style={styles.sortOptionText}>{option.label}</Text>
                 {selectedSort === option.id && (
-                  <Feather name="check" size={16} color="#ea580c" />
+                  <Feather name="check" size={16} color="#ff914d" />
                 )}
               </TouchableOpacity>
             ))}
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
-    color: "#fb923c", 
+    color: "#ff914d", 
     paddingHorizontal: 16,
     paddingTop: 16,
   },

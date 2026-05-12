@@ -25,7 +25,7 @@ export const LIGHT_COLORS = {
   icon: "#9ca3af",
   card: "#ffffff",
   accent: "#9d174d",
-  orange: "#ea580c",
+  orange: "#ff914d",
 } as const;
 
 export const DARK_COLORS = {
@@ -37,7 +37,7 @@ export const DARK_COLORS = {
   icon: "#888888",
   card: "#1a1a1a",
   accent: "#9d174d",
-  orange: "#ea580c",
+  orange: "#ff914d",
 } as const;
 
 export type ThemeColors = {

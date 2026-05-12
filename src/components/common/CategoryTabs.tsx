@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabButtonActive: {
-    backgroundColor: "#fb923c",
+    backgroundColor: "#ff914d",
   },
   tabButtonInactive: {
     backgroundColor: "#ffffff",

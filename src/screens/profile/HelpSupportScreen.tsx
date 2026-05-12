@@ -84,8 +84,8 @@ export const HelpSupportScreen = ({ navigation }: HelpSupportScreenProps) => {
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.contactRow, styles.rowBorder]} onPress={() => Linking.openURL("tel:+63281234567")} activeOpacity={0.7}>
-            <View style={[styles.contactIconWrapper, { backgroundColor: "#ea580c18" }]}>
-              <Feather name="phone" size={18} color="#ea580c" />
+            <View style={[styles.contactIconWrapper, { backgroundColor: "#ff914d18" }]}>
+              <Feather name="phone" size={18} color="#ff914d" />
             </View>
             <View style={styles.contactContent}>
               <Text style={styles.contactLabel}>Phone Support</Text>

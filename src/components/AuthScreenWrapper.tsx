@@ -70,7 +70,7 @@ export const AuthScreenWrapper = ({
           {/* ── b) Logo Area ── */}
           <View style={[styles.logoContainer, !onBackPress && styles.logoTopMarginNoBack]}>
             <Image
-              source={require("../../assets/Brand/SewaLogo.png")}
+              source={require("../../assets/Brand/newSewaMicsLogo.png")}
               style={styles.logo}
               resizeMode="contain"
             />

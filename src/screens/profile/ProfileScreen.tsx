@@ -145,7 +145,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       {/* Header */}
       <View style={styles.header}>
         <Image
-          source={require("../../../assets/Brand/SewaLogo.png")}
+          source={require("../../../assets/Brand/newSewaMicsLogo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -289,11 +289,11 @@ const styles = StyleSheet.create({
   avatarEditBadge: {
     position: "absolute", bottom: 0, right: 0,
     width: 24, height: 24, borderRadius: 12,
-    backgroundColor: "#ea580c",
+    backgroundColor: "#ff914d",
     justifyContent: "center", alignItems: "center",
     borderWidth: 2, borderColor: "#ffffff",
   },
-  userName: { fontSize: 26, fontFamily: "Zalando-Bold", color: "#ea580c", marginTop: 16, letterSpacing: -0.5 },
+  userName: { fontSize: 26, fontFamily: "Zalando-Bold", color: "#ff914d", marginTop: 16, letterSpacing: -0.5 },
   userEmail: { fontSize: 14, fontFamily: "Zalando-Regular", color: "#6b7280", marginTop: 4 },
 
   card: {
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, borderBottomColor: "#e5e7eb",
   },
   cardTitle: { fontSize: 16, fontFamily: "Zalando-Bold", color: "#1f2937" },
-  editLink: { fontSize: 13, fontFamily: "Zalando-SemiBold", color: "#ea580c" },
+  editLink: { fontSize: 13, fontFamily: "Zalando-SemiBold", color: "#ff914d" },
 
   infoRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 12, minHeight: 44 },
   infoRowContent: { flex: 1 },
