@@ -70,18 +70,20 @@ export interface CartItem {
   name: string;
   price: number;
   quantity: number;
-  image: string; // Firebase Storage URL
+  image: string;        // imageKey used for local asset resolution
+  imageKey?: string;    // explicit imageKey alias (same value as image)
   selectedSize?: string;
   subtotal: number;
   addedAt: Timestamp;
 }
 
 export interface OrderItem {
-  productId: string;
+  productID: string;
   name: string;
   price: number;
   quantity: number;
   subtotal: number;
+  imageKey: string;     // stored so OrdersScreen can resolve product images
 }
 
 export interface ShippingAddress {

@@ -14,6 +14,7 @@ import { LoadingScreen } from "../components/common/LoadingScreen";
 import { useAuth } from "../context/AuthContext";
 
 import { BottomTabNavigator } from "./BottomTabNavigator";
+import { CheckoutStackNavigator } from "./CheckoutStackNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,22 @@ const AuthStack = () => {
   );
 };
 
+// The main authenticated app flow
+const AppStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        animation: "fade",
+        contentStyle: { backgroundColor: "#ffffff" },
+      }}
+    >
+      <Stack.Screen name="BottomTabs" component={BottomTabNavigator} />
+      <Stack.Screen name="CheckoutStack" component={CheckoutStackNavigator} />
+    </Stack.Navigator>
+  );
+};
+
 export const RootNavigator = () => {
   const { isAuthenticated, loading } = useAuth();
 
@@ -53,7 +70,7 @@ export const RootNavigator = () => {
       }}
     >
       {isAuthenticated ? (
-        <Stack.Screen name="AppRoot" component={BottomTabNavigator} />
+        <Stack.Screen name="AppRoot" component={AppStack} />
       ) : (
         <Stack.Screen name="AuthRoot" component={AuthStack} />
       )}

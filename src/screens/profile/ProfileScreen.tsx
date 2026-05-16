@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   card: {
     marginTop: 24, borderRadius: 20,
     borderWidth: 1, borderColor: "#e5e7eb",
-    backgroundColor: "#f9fafb", overflow: "hidden",
+    backgroundColor: "#ffffff", overflow: "hidden",
   },
   cardHeader: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",

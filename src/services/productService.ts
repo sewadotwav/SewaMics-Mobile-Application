@@ -37,7 +37,7 @@ export const getProductById = async (productId: string): Promise<Product | null>
       description: rawData.description || "",
       imageKey: rawData.imageKey || "",
       isActive: rawData.isActive !== false,
-      name: rawData.name || "Unknown Product",
+      name: rawData.name ?? rawData.Name ?? rawData["name "] ?? "Unknown Product",
       price: Number(priceValue),
       productID: rawData.productID || docSnap.id,
       rating: rawData.rating || 0,
@@ -58,24 +58,24 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
   try {
     const productsRef = collection(db, "products");
     let q = query(productsRef, where("isActive", "==", true));
-    
+
     if (categoryFilter) {
       q = query(q, where("category", "==", categoryFilter));
     }
-    
+
     // To avoid requiring a composite index in Firestore for every category,
     // we remove orderBy from the query and sort client-side instead.
     if (maxLimit > 0) {
       q = query(q, limit(maxLimit * 3)); // fetch a bit more to sort properly
     }
-    
+
     const snapshot = await getDocs(q);
-    
+
     const products: Product[] = [];
     snapshot.forEach((doc) => {
       if (!doc.exists()) return;
       const rawData = doc.data() as DocumentData;
-      
+
       // Support common field name variants including a trailing space found in logs
       const priceValue = rawData.price ?? rawData.Price ?? rawData["price "] ?? 0;
       const finalPrice = Number(priceValue);
@@ -87,7 +87,7 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
         description: rawData.description || "",
         imageKey: rawData.imageKey || "",
         isActive: rawData.isActive !== false,
-        name: rawData.name || "Unknown Product",
+        name: rawData.name ?? rawData.Name ?? rawData["name "] ?? "Unknown Product",
         price: finalPrice,
         productID: rawData.productID || doc.id,
         rating: rawData.rating || 0,
@@ -95,10 +95,10 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
         stock: rawData.stock || 0,
       });
     });
-    
+
     // Sort by rating descending client-side to avoid Firebase Index errors
     products.sort((a, b) => b.rating - a.rating);
-    
+
     // Return only the requested limit
     return products.slice(0, maxLimit);
   } catch (error) {
@@ -115,7 +115,7 @@ export const getCategories = async (): Promise<string[]> => {
     const productsRef = collection(db, "products");
     const q = query(productsRef, where("isActive", "==", true));
     const snapshot = await getDocs(q);
-    
+
     const categoriesSet = new Set<string>();
     snapshot.forEach((doc) => {
       const categoryRaw = doc.data().category;
@@ -125,7 +125,7 @@ export const getCategories = async (): Promise<string[]> => {
         categoriesSet.add(normalized);
       }
     });
-    
+
     // Sort categories, maybe ensure "Fruits" is first as per requirements
     const categories = Array.from(categoriesSet);
     categories.sort((a, b) => {
@@ -133,12 +133,12 @@ export const getCategories = async (): Promise<string[]> => {
       if (b === "Fruits") return 1;
       return a.localeCompare(b);
     });
-    
+
     // Fallback if empty
     if (categories.length === 0) {
       return ["Fruits", "Vegetables", "Animals"];
     }
-    
+
     return categories;
   } catch (error) {
     console.error("Error fetching categories:", error);

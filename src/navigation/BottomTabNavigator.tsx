@@ -22,6 +22,8 @@ import { EditProfileScreen } from "../screens/profile/EditProfileScreen";
 import { WishlistScreen } from "../screens/profile/WishlistScreen";
 import { HelpSupportScreen } from "../screens/profile/HelpSupportScreen";
 import { ProductDetailScreen } from "../screens/product/ProductDetailScreen";
+import { OrdersScreen } from "../screens/orders/OrdersScreen";
+import { OrderDetailScreen } from "../screens/orders/OrderDetailScreen";
 
 // ----------------------------------------------------------------
 // TEMPORARY PLACEHOLDER SCREENS
@@ -33,7 +35,7 @@ const PlaceholderScreen = ({ name }: { name: string }) => (
 );
 
 // const CartScreen = () => <PlaceholderScreen name="Cart" />;
-const OrdersScreen = () => <PlaceholderScreen name="Orders" />;
+// const CartScreen = () => <PlaceholderScreen name="Cart" />;
 
 // ----------------------------------------------------------------
 // STACK NAVIGATORS FOR EACH TAB
@@ -74,8 +76,9 @@ const CartStack = () => (
 );
 
 const OrdersStack = () => (
-  <Stack.Navigator screenOptions={defaultHeaderOptions}>
-    <Stack.Screen name="OrdersMain" component={OrdersScreen} options={{ headerTitle: "Your Orders" }} />
+  <Stack.Navigator screenOptions={{ ...defaultHeaderOptions, headerShown: false }}>
+    <Stack.Screen name="OrdersMain" component={OrdersScreen} />
+    <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
   </Stack.Navigator>
 );
 

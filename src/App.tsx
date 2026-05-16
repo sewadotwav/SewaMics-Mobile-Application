@@ -16,6 +16,7 @@ import { WishlistProvider } from "./context/WishlistContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import { RootNavigator } from "./navigation/RootNavigator";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -42,18 +43,20 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <SafeAreaProvider>
-        <AuthProvider>
-          <WishlistProvider>
-            <NotificationProvider>
-              <NavigationContainer>
-                <RootNavigator />
-              </NavigationContainer>
-              <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-            </NotificationProvider>
-          </WishlistProvider>
-        </AuthProvider>
-      </SafeAreaProvider>
+      <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}>
+        <SafeAreaProvider>
+          <AuthProvider>
+            <WishlistProvider>
+              <NotificationProvider>
+                <NavigationContainer>
+                  <RootNavigator />
+                </NavigationContainer>
+                <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+              </NotificationProvider>
+            </WishlistProvider>
+          </AuthProvider>
+        </SafeAreaProvider>
+      </StripeProvider>
     </ErrorBoundary>
   );
 }

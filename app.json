@@ -16,7 +16,14 @@
       "package": "com.sewamics.app"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.sewamics.app",
+          "urlScheme": "sewamics"
+        }
+      ]
     ]
   }
 }

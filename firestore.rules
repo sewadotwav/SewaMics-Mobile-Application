@@ -94,10 +94,17 @@ service cloud.firestore {
         && isPositiveNumber(request.resource.data.stock)
         && request.resource.data.isActive is bool;
 
-      // Admins only: update an existing product
+      // Admins only: update an existing product (full edit)
       allow update: if isAdmin()
         // Prevent productId from being changed after creation
         && request.resource.data.productId == resource.data.productId;
+
+      // Authenticated users can decrement stock after a successful purchase.
+      // Only the 'stock' field may change; it may only decrease (never increase).
+      allow update: if isAuthenticated()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock'])
+        && request.resource.data.stock < resource.data.stock
+        && request.resource.data.stock >= 0;
 
       // Admins only: soft-delete by setting isActive: false (preferred)
       // Hard delete is also permitted for admins
@@ -156,9 +163,12 @@ service cloud.firestore {
         && isNonEmptyString(request.resource.data.status)
         && isNonEmptyString(request.resource.data.paymentMethod)
         && isNonEmptyString(request.resource.data.paymentStatus)
-        // Initial status must always be 'pending'
+        // Initial order status must be 'pending'
         && request.resource.data.status == 'pending'
-        && request.resource.data.paymentStatus == 'pending';
+        // paymentStatus is 'paid' when Stripe confirms before write,
+        // or 'pending' if using a deferred capture flow
+        && (request.resource.data.paymentStatus == 'paid' ||
+            request.resource.data.paymentStatus == 'pending');
 
       // Only admins can update order status and payment status
       allow update: if isAdmin()

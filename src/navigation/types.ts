@@ -34,7 +34,7 @@ export type BottomTabParamList = {
   HomeTab: NavigatorScreenParams<HomeStackParamList>;
   CatalogTab: NavigatorScreenParams<CatalogStackParamList>;
   CartTab: undefined;
-  OrdersTab: undefined;
+  OrdersStack: NavigatorScreenParams<OrdersStackParamList>;
   ProfileTab: undefined;
 };
 
@@ -42,8 +42,9 @@ export type BottomTabParamList = {
 export type AppStackParamList = {
   BottomTabs: NavigatorScreenParams<BottomTabParamList>;
   ProductDetail: { productId: string };
-  Profile: undefined; // For direct profile navigation if needed
+  Profile: undefined;
   EditProfile: undefined;
+  CheckoutStack: NavigatorScreenParams<CheckoutStackParamList>;
 };
 
 // ── 6. Root Stack (Top-level) ─────────────────────────────────
@@ -64,3 +65,18 @@ export type CatalogNavigationProp = NativeStackNavigationProp<CatalogStackParamL
 export type ProductDetailRouteProp = RouteProp<AppStackParamList, "ProductDetail">;
 export type HomeProductDetailRouteProp = RouteProp<HomeStackParamList, "ProductDetail">;
 export type CatalogProductDetailRouteProp = RouteProp<CatalogStackParamList, "ProductDetail">;
+
+// ── 7. Checkout Stack ─────────────────────────────────────────
+export type CheckoutStackParamList = {
+  Checkout: { step: 'shipping' | 'payment' | 'review' };
+  OrderConfirmation: { orderId: string };
+};
+
+// ── 8. Orders Stack ───────────────────────────────────────────
+export type OrdersStackParamList = {
+  Orders: undefined;
+  OrderDetail: { orderId: string };
+};
+
+export type CheckoutNavigationProp = NativeStackNavigationProp<CheckoutStackParamList>;
+export type OrdersNavigationProp = NativeStackNavigationProp<OrdersStackParamList>;

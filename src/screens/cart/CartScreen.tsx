@@ -123,11 +123,10 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
   };
 
   const handleMakePayment = () => {
-    // Milestone 3 checkout — placeholder
-    Alert.alert(
-      "Proceeding to Checkout",
-      "Checkout flow will be implemented in the next update!"
-    );
+    navigation.navigate("CheckoutStack", {
+      screen: "Checkout",
+      params: { step: "shipping" },
+    });
   };
 
   // ── Derived values ────────────────────────────────────────────

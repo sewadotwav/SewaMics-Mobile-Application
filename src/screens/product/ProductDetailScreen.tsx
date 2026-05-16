@@ -130,8 +130,26 @@ export const ProductDetailScreen = () => {
   };
 
   const handleBuyNow = () => {
-    // Milestone 3 — Checkout
-    Alert.alert("Coming Soon", "Checkout will be available in the next update!");
+    if (!user || !product) return;
+    if (!selectedSize) {
+      Alert.alert("Select a size", "Please choose a size before buying.");
+      return;
+    }
+
+    setCartLoading(true);
+    addToCart(user.uid, product.id, quantity, selectedSize)
+      .then(() => {
+        navigation.navigate("CheckoutStack", {
+          screen: "Checkout",
+          params: { step: "shipping" },
+        });
+      })
+      .catch((err) => {
+        Alert.alert("Error", getErrorMessage(err));
+      })
+      .finally(() => {
+        setCartLoading(false);
+      });
   };
 
   // ── Shared Header ─────────────────────────────────────────────
