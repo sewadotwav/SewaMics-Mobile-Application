@@ -97,19 +97,13 @@ export const CatalogScreen = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("HomeTab")}
-          activeOpacity={0.7}
-        >
-          <Image
-            source={require("../../../assets/Brand/newSewaMicsLogo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-        <View style={styles.headerRight} />
+      {/* SEARCH BAR replacing Header */}
+      <View style={styles.topSearchSection}>
+        <SearchBar
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+          placeholder="Search ceramics..."
+        />
       </View>
 
       <ScrollView
@@ -118,14 +112,7 @@ export const CatalogScreen = ({ navigation }: any) => {
       >
         <Text style={styles.pageTitle}>Product Catalog</Text>
 
-        {/* SEARCH */}
-        <View style={styles.searchSection}>
-          <SearchBar
-            value={searchTerm}
-            onChangeText={setSearchTerm}
-            placeholder="Search ceramics..."
-          />
-        </View>
+
 
         {/* CATEGORIES */}
         <CategoryTabs
@@ -230,31 +217,21 @@ export const CatalogScreen = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#ffffff" },
-  header: {
-    height: 56,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
-    backgroundColor: "#ffffff",
-  },
-  logo: { width: 64, height: 48 },
-  headerRight: { width: 40 },
   scrollContent: { paddingBottom: 10 },
   pageTitle: {
-    fontSize: 20,
+    fontSize: 28,
     fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
     color: "#ff914d", 
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 8,
   },
-  searchSection: {
+  topSearchSection: {
     paddingHorizontal: 16,
-    marginTop: 12,
+    paddingVertical: 12,
+    backgroundColor: "#ffffff",
   },
+
   categoryTabs: {
     marginTop: 16,
     marginBottom: 0,

@@ -143,14 +143,14 @@ export const HomeScreen = ({ navigation }: any) => {
         <View style={styles.featuredContainer}>
           <View style={styles.featuredCard}>
             <Image
-              source={require("../../../assets/Featured Products/showcase1.jpg")}
+              source={require("../../../assets/Featured Products/showcase1.png")}
               style={styles.featuredImage}
               resizeMode="cover"
             />
           </View>
           <View style={styles.featuredCard}>
             <Image
-              source={require("../../../assets/Featured Products/showcase2.jpg")}
+              source={require("../../../assets/Featured Products/showcase2.png")}
               style={styles.featuredImage}
               resizeMode="cover"
             />
@@ -261,16 +261,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   welcomeBannerText: {
-    fontSize: 36, // Increased to match Log In/Sign Up titles
-    fontFamily: "Zalando-SemiBold", // 600 as requested
+    fontSize: 38, 
+    fontFamily: "Zalando-Bold", 
     letterSpacing: -0.5,
-    color: "#ff914d", // Match orange theme
+    color: "#ff914d", 
     marginBottom: 4,
   },
   welcomeSubtext: {
     fontSize: 15,
-    fontFamily: "Zalando-Medium", // 500 weight as product names
-    color: "#1f2937", // Updated from gray to black
+    fontFamily: "Zalando-Medium", 
+    color: "#1f2937", 
     lineHeight: 20,
     textAlign: "left",
   },

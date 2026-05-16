@@ -12,12 +12,12 @@ export const ProductImages: Record<string, any> = {
   "tomato": require("../../assets/Products/tomato.jpg"),
   
   // Featured / Fallbacks
-  "bananafeatured": require("../../assets/Featured Products/bananafeatured.jpg"),
-  "grapefeatured": require("../../assets/Featured Products/grapefeatured.jpg"),
-  "pumpkinfeatured": require("../../assets/Featured Products/pumpkinfeatured.jpg"),
-  "showcase1": require("../../assets/Featured Products/showcase1.jpg"),
-  "showcase2": require("../../assets/Featured Products/showcase2.jpg"),
-  "strawberryfeatured": require("../../assets/Featured Products/strawberryfeatured.jpg"),
+  "bananafeatured": require("../../assets/Featured Products/featuredBanana.png"),
+  "grapefeatured": require("../../assets/Featured Products/featuredGrapes.png"),
+  "pumpkinfeatured": require("../../assets/Featured Products/featuredPumpkin.png"),
+  "showcase1": require("../../assets/Featured Products/showcase1.png"),
+  "showcase2": require("../../assets/Featured Products/showcase2.png"),
+  "strawberryfeatured": require("../../assets/Featured Products/featuredStrawberry.png"),
 };
 
 export const getProductImage = (imageKey: string | undefined) => {

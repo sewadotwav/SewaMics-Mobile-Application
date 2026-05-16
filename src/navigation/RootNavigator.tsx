@@ -18,6 +18,7 @@ import { BottomTabNavigator } from "./BottomTabNavigator";
 const Stack = createNativeStackNavigator();
 
 import { SignupScreen } from "../screens/auth/SignupScreen";
+import { SplashScreen } from "../screens/auth/SplashScreen";
 
 // The authentication flow
 const AuthStack = () => {
@@ -29,6 +30,7 @@ const AuthStack = () => {
         contentStyle: { backgroundColor: "#ffffff" },
       }}
     >
+      <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
     </Stack.Navigator>

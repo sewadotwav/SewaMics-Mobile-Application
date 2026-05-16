@@ -113,7 +113,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   return (
     <AuthScreenWrapper
       title="Log In"
-      subtitle="Login Now To Your Account. Access your account to manage settings, explore features."
+      subtitle="Login now to your existing account. Access your account to manage settings, explore features."
       bottomText="Don't have an account?"
       bottomLinkText="Sign Up"
       onBottomLinkPress={handleNavigateSignup}
