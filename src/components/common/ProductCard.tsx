@@ -50,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <Text style={styles.productName}>{product.name}</Text>
         </View>
         <View style={styles.ratingContainer}>
-          <Text style={styles.ratingStar}>⭐</Text>
+          <Ionicons name="star" size={13} color="#ff914d" style={{ marginRight: 4, marginTop: -1 }} />
           <Text style={styles.ratingText}>{product.rating || "0.0"}</Text>
         </View>
       </View>
@@ -117,10 +117,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 0,
   },
-  ratingStar: {
-    fontSize: 14,
-    marginRight: 2,
-  },
   ratingText: {
     fontSize: 14,
     fontFamily: "Zalando-Bold",
@@ -130,6 +126,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: "Zalando-SemiBold",
     letterSpacing: -0.5,
-    color: "#1f2937",
+    color: "#ff914d",
   },
 });

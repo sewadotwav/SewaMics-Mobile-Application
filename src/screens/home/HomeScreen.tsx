@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     fontSize: 38, 
     fontFamily: "Zalando-Bold", 
     letterSpacing: -0.5,
-    color: "#ff914d", 
+    color: "#9d174d", 
     marginBottom: 4,
   },
   welcomeSubtext: {
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
-    color: "#ff914d", // Updated to brand orange
+    color: "#9d174d", // Updated to deep pink
   },
 
   // 2-Column Grid Layout

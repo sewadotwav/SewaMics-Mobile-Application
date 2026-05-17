@@ -96,7 +96,7 @@ export const WishlistScreen = ({ navigation }: WishlistScreenProps) => {
                     <Text style={styles.productName}>{item.name}</Text>
                   </View>
                   <View style={styles.ratingContainer}>
-                    <Text style={styles.ratingStar}>⭐</Text>
+                    <Ionicons name="star" size={13} color="#ff914d" style={{ marginRight: 4, marginTop: -1 }} />
                     <Text style={styles.ratingText}>{item.rating || "0.0"}</Text>
                   </View>
                 </View>
@@ -167,7 +167,6 @@ const styles = StyleSheet.create({
   titleWrapper: { flex: 1, minHeight: 44, marginRight: 8 },
   productName: { fontSize: 15, fontFamily: "Zalando-Medium", lineHeight: 18, letterSpacing: -0.2, color: "#1f2937" },
   ratingContainer: { flexDirection: "row", alignItems: "center" },
-  ratingStar: { fontSize: 14, marginRight: 2 },
   ratingText: { fontSize: 14, fontFamily: "Zalando-Bold", color: "#6b7280" },
-  productPrice: { fontSize: 17, fontFamily: "Zalando-SemiBold", letterSpacing: -0.5, color: "#1f2937" },
+  productPrice: { fontSize: 17, fontFamily: "Zalando-SemiBold", letterSpacing: -0.5, color: "#ff914d" },
 });

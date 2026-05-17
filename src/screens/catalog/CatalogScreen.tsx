@@ -204,7 +204,7 @@ export const CatalogScreen = ({ navigation }: any) => {
                 <Feather name={option.icon as any} size={16} color="#9ca3af" style={styles.sortOptionIcon} />
                 <Text style={styles.sortOptionText}>{option.label}</Text>
                 {selectedSort === option.id && (
-                  <Feather name="check" size={16} color="#ff914d" />
+                  <Feather name="check" size={16} color="#9d174d" />
                 )}
               </TouchableOpacity>
             ))}
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontFamily: "Zalando-Bold", // 700
     letterSpacing: -0.5,
-    color: "#ff914d", 
+    color: "#9d174d", 
     paddingHorizontal: 16,
     paddingTop: 8,
   },

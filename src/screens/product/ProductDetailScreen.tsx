@@ -230,7 +230,7 @@ export const ProductDetailScreen = () => {
               <Text style={styles.categoryText}>{product.category}</Text>
             </View>
             <View style={styles.ratingRow}>
-              <Feather name="star" size={14} color="#fbbf24" />
+              <Feather name="star" size={14} color="#ff914d" />
               <Text style={styles.ratingValue}>
                 {product.rating > 0 ? product.rating.toFixed(1) : "4.7"}
               </Text>

@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     justifyContent: "center", alignItems: "center",
     borderWidth: 2, borderColor: "#ffffff",
   },
-  userName: { fontSize: 26, fontFamily: "Zalando-Bold", color: "#ff914d", marginTop: 16, letterSpacing: -0.5 },
+  userName: { fontSize: 26, fontFamily: "Zalando-Bold", color: "#9d174d", marginTop: 16, letterSpacing: -0.5 },
   userEmail: { fontSize: 14, fontFamily: "Zalando-Regular", color: "#6b7280", marginTop: 4 },
 
   card: {
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 14,
     borderBottomWidth: 1, borderBottomColor: "#e5e7eb",
   },
-  cardTitle: { fontSize: 16, fontFamily: "Zalando-Bold", color: "#1f2937" },
+  cardTitle: { fontSize: 16, fontFamily: "Zalando-Bold", color: "#9d174d" },
   editLink: { fontSize: 13, fontFamily: "Zalando-SemiBold", color: "#ff914d" },
 
   infoRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 12, minHeight: 44 },

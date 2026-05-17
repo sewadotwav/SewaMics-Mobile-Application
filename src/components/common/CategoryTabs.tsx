@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabButtonActive: {
-    backgroundColor: "#ff914d",
+    backgroundColor: "#9d174d",
   },
   tabButtonInactive: {
     backgroundColor: "#ffffff",
@@ -84,6 +84,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   tabTextInactive: {
-    color: "#1f2937",
+    color: "#6b7280",
   },
 });
