@@ -26,7 +26,7 @@ const STATUS_TABS = [
 ];
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; icon: string }> = {
-  pending:   { bg: "#fef3c7", text: "#92400e", icon: "clock" },
+  pending:   { bg: "#ff914d", text: "#ffffff", icon: "clock" },
   shipped:   { bg: "#dbeafe", text: "#1e40af", icon: "truck" },
   delivered: { bg: "#dcfce7", text: "#166534", icon: "check-circle" },
   cancelled: { bg: "#fee2e2", text: "#991b1b", icon: "x-circle" },
@@ -112,9 +112,6 @@ export const OrdersScreen = () => {
         onPress={() => navigation.navigate("OrderDetail", { orderId: item.orderID || item.id })}
         activeOpacity={0.85}
       >
-        {/* Status stripe on left edge */}
-        <View style={[styles.statusStripe, { backgroundColor: cfg.text }]} />
-
         <View style={styles.cardBody}>
           {/* Top row: image + details */}
           <View style={styles.cardTop}>
@@ -258,16 +255,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 8,
     paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
   },
-  headerTitle: { fontSize: 22, fontFamily: "Zalando-Bold", color: "#9d174d" },
-  headerSubtitle: { fontSize: 12, fontFamily: "Zalando-Medium", color: "#9ca3af", marginTop: 2 },
+  headerTitle: { fontSize: 28, fontFamily: "Zalando-Bold", color: "#9d174d" },
+  headerSubtitle: { fontSize: 13, fontFamily: "Zalando-Medium", color: "#9ca3af", marginTop: 2 },
 
   centerContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
 
   // ── Tabs ──────────────────────────────────────────────────
-  tabBarWrapper: { borderBottomWidth: 1, borderBottomColor: "#f3f4f6" },
+  tabBarWrapper: { borderBottomWidth: 0 },
   tabBar: { paddingHorizontal: 16, paddingVertical: 10, gap: 8 },
   tab: {
     flexDirection: "row", alignItems: "center",
@@ -286,7 +281,7 @@ const styles = StyleSheet.create({
   tabBadgeActive: { backgroundColor: "rgba(255,255,255,0.3)" },
   tabBadgeText: { fontSize: 10, fontFamily: "Zalando-Bold", color: "#6b7280" },
   tabBadgeTextActive: { color: "#ffffff" },
-
+ 
   // ── Order card ────────────────────────────────────────────
   listContent: { padding: 16, gap: 12 },
   orderCard: {
@@ -294,7 +289,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "#9d174d",
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -302,7 +297,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
   },
-  statusStripe: { width: 4 },
   cardBody: { flex: 1, padding: 14 },
   cardTop: { flexDirection: "row", marginBottom: 12 },
   productImage: {
@@ -342,7 +336,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9fafb", justifyContent: "center", alignItems: "center", marginBottom: 20,
   },
   emptyTitle: {
-    fontSize: 18, fontFamily: "Zalando-Bold", color: "#1f2937", marginBottom: 8, marginTop: 12,
+    fontSize: 18, fontFamily: "Zalando-Bold", color: "#9d174d", marginBottom: 8, marginTop: 12,
   },
   emptySubtitle: {
     fontSize: 14, fontFamily: "Zalando-Medium", color: "#9ca3af",

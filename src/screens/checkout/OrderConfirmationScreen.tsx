@@ -113,17 +113,18 @@ export const OrderConfirmationScreen = () => {
           </View>
         </View>
 
-      </View>
+        {/* Buttons located inside the main container directly below the card */}
+        <View style={styles.buttonWrapper}>
+          <CTAButton
+            title="Track Order"
+            onPress={handleTrackOrder}
+            style={styles.trackBtn}
+          />
+          <TouchableOpacity style={styles.shopBtn} onPress={handleContinueShopping} activeOpacity={0.7}>
+            <Text style={styles.shopBtnText}>Continue Shopping</Text>
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.footer}>
-        <CTAButton
-          title="Track Order"
-          onPress={handleTrackOrder}
-          style={styles.trackBtn}
-        />
-        <TouchableOpacity style={styles.shopBtn} onPress={handleContinueShopping} activeOpacity={0.7}>
-          <Text style={styles.shopBtnText}>Continue Shopping</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -134,7 +135,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 60,
+    justifyContent: "center",
+    paddingHorizontal: 20,
   },
   successIconContainer: {
     width: 80,
@@ -162,8 +164,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   detailsContainer: {
-    backgroundColor: "#f9fafb",
-    width: "85%",
+    backgroundColor: "#ffffff",
+    width: "100%",
     borderRadius: 16,
     padding: 20,
     marginTop: 40,
@@ -198,10 +200,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#e5e7eb",
     marginVertical: 16,
   },
-  footer: {
-    padding: 20,
-    paddingBottom: 40,
-    backgroundColor: "#ffffff",
+  buttonWrapper: {
+    width: "100%",
+    marginTop: 32,
     gap: 12,
   },
   trackBtn: {

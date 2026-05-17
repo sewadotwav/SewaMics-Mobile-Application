@@ -168,10 +168,12 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
                 <View key={`${item.productId}-${idx}`} style={styles.itemRow}>
                   <Image source={getProductImage(item.productId.split("-")[0])} style={styles.itemImage} />
                   <View style={styles.itemDetails}>
-                    <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+                    <View style={styles.itemNameRow}>
+                      <Text style={styles.itemName} numberOfLines={3}>{item.name}</Text>
+                      <Text style={styles.itemPrice}>₱{item.price.toFixed(2)}</Text>
+                    </View>
                     <Text style={styles.itemQty}>Qty: {item.quantity}</Text>
                   </View>
-                  <Text style={styles.itemPrice}>₱{item.price.toFixed(2)}</Text>
                 </View>
               ))}
             </View>
@@ -197,13 +199,16 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
         {/* Shipping Address */}
         <View style={styles.cardLight}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Shipping address</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Feather name="map-pin" size={16} color="#ffffff" style={{ marginRight: 6 }} />
+              <Text style={styles.cardTitleLight}>Shipping address</Text>
+            </View>
             <TouchableOpacity onPress={() => updateCurrentStep("shipping")}>
-              <Text style={styles.editText}>Edit</Text>
+              <Text style={styles.editTextLight}>Edit</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.addressName}>{selectedAddress?.label || "Home"}</Text>
-          <Text style={styles.addressFull}>
+          <Text style={styles.addressNameLight}>{selectedAddress?.label || "Home"}</Text>
+          <Text style={styles.addressFullLight}>
             {selectedAddress?.street}, {selectedAddress?.city}, {selectedAddress?.province} {selectedAddress?.postalCode}
           </Text>
         </View>
@@ -211,9 +216,12 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
         {/* Payment Method */}
         <View style={styles.cardLight}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Payment</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Feather name="credit-card" size={16} color="#ffffff" style={{ marginRight: 6 }} />
+              <Text style={styles.cardTitleLight}>Payment</Text>
+            </View>
             <TouchableOpacity onPress={() => updateCurrentStep("payment")}>
-              <Text style={styles.editText}>Edit</Text>
+              <Text style={styles.editTextLight}>Edit</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.paymentInfoRow}>
@@ -222,8 +230,8 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
               <View style={[styles.circle, { backgroundColor: "#fbbf24", marginLeft: -8 }]} />
             </View>
             <View>
-              <Text style={styles.paymentCardText}>•••• •••• •••• {last4}</Text>
-              <Text style={styles.paymentExpiryText}>{cardDetails?.expiryDate}</Text>
+              <Text style={styles.paymentCardTextLight}>•••• •••• •••• {last4}</Text>
+              <Text style={styles.paymentExpiryTextLight}>{cardDetails?.expiryDate}</Text>
             </View>
           </View>
         </View>
@@ -263,7 +271,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.closeButton} onPress={() => setTermsModalVisible(false)}>
-              <Feather name="x" size={24} color="#9d174d" />
+              <Feather name="x" size={24} color="#ffffff" />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Terms of Use</Text>
             <ScrollView style={styles.modalScroll}>
@@ -280,7 +288,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.closeButton} onPress={() => setPrivacyModalVisible(false)}>
-              <Feather name="x" size={24} color="#9d174d" />
+              <Feather name="x" size={24} color="#ffffff" />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Privacy Policy</Text>
             <ScrollView style={styles.modalScroll}>
@@ -318,7 +326,7 @@ const styles = StyleSheet.create({
   },
   itemRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: 12,
   },
   itemImage: {
@@ -330,10 +338,17 @@ const styles = StyleSheet.create({
   itemDetails: {
     flex: 1,
   },
+  itemNameRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
   itemName: {
+    flex: 1,
     fontSize: 13,
     fontFamily: "Zalando-Bold",
     color: "#1f2937",
+    marginRight: 8,
   },
   itemQty: {
     fontSize: 12,
@@ -382,13 +397,16 @@ const styles = StyleSheet.create({
     color: "#9d174d",
   },
   cardLight: {
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#f3f4f6",
+    backgroundColor: "#9d174d",
     borderRadius: 12,
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 12,
+    shadowColor: "#9d174d",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   cardHeader: {
     flexDirection: "row",
@@ -396,21 +414,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8,
   },
-  editText: {
+  cardTitleLight: {
+    fontSize: 14,
+    fontFamily: "Zalando-Bold",
+    color: "#ffffff",
+  },
+  editTextLight: {
     fontSize: 12,
     fontFamily: "Zalando-Bold",
-    color: "#9d174d",
+    color: "#ffffff",
+    textDecorationLine: "underline",
   },
-  addressName: {
+  addressNameLight: {
     fontSize: 13,
     fontFamily: "Zalando-Bold",
-    color: "#1f2937",
+    color: "#ffffff",
     marginBottom: 4,
   },
-  addressFull: {
+  addressFullLight: {
     fontSize: 13,
     fontFamily: "Zalando-Medium",
-    color: "#6b7280",
+    color: "rgba(255,255,255,0.9)",
   },
   paymentInfoRow: {
     flexDirection: "row",
@@ -425,16 +449,16 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
   },
-  paymentCardText: {
+  paymentCardTextLight: {
     fontSize: 13,
     fontFamily: "Zalando-Bold",
-    color: "#1f2937",
+    color: "#ffffff",
     letterSpacing: 1,
   },
-  paymentExpiryText: {
+  paymentExpiryTextLight: {
     fontSize: 12,
     fontFamily: "Zalando-Medium",
-    color: "#6b7280",
+    color: "rgba(255,255,255,0.9)",
   },
   termsContainer: {
     flexDirection: "row",
@@ -478,10 +502,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   footer: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 50,
     backgroundColor: "#ffffff",
-    borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
   },
   modalOverlay: {
     flex: 1,
@@ -490,11 +514,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#9d174d",
     borderRadius: 16,
     padding: 24,
     width: "85%",
     maxHeight: "70%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   },
   closeButton: {
     position: "absolute",
@@ -505,7 +534,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontFamily: "Zalando-Bold",
-    color: "#1f2937",
+    color: "#ffffff",
     textAlign: "center",
     marginBottom: 16,
   },
@@ -515,7 +544,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 14,
     fontFamily: "Zalando-Regular",
-    color: "#4b5563",
+    color: "#ffffff",
     lineHeight: 22,
     marginBottom: 12,
     textAlign: "center",

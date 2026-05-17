@@ -59,3 +59,33 @@ export const createPaymentIntent = async (
 
   return data.client_secret as string;
 };
+
+/**
+ * Refunds a Stripe PaymentIntent.
+ *
+ * @param paymentIntentId - The ID of the PaymentIntent to refund (e.g., pi_3L...).
+ */
+export const refundPaymentIntent = async (paymentIntentId: string): Promise<any> => {
+  const response = await fetch(`${STRIPE_API_URL}/refunds`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: encode({
+      payment_intent: paymentIntentId,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    if (data?.error?.code !== "charge_already_refunded") {
+      console.error("[Stripe] refundPaymentIntent error:", data?.error);
+    }
+    throw new Error(data?.error?.message || "Failed to refund payment");
+  }
+
+  return data;
+};
+

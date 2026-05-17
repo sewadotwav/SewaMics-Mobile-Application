@@ -201,7 +201,7 @@ export const CatalogScreen = ({ navigation }: any) => {
                   setSortMenuVisible(false);
                 }}
               >
-                <Feather name={option.icon as any} size={16} color="#9ca3af" style={styles.sortOptionIcon} />
+                <Feather name={option.icon as any} size={16} color="#9d174d" style={styles.sortOptionIcon} />
                 <Text style={styles.sortOptionText}>{option.label}</Text>
                 {selectedSort === option.id && (
                   <Feather name="check" size={16} color="#9d174d" />
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 16,
     fontFamily: "Zalando-SemiBold",
-    color: "#1f2937",
+    color: "#9d174d",
   },
   sortOption: {
     flexDirection: "row",

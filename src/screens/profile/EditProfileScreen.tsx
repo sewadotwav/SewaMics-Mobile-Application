@@ -217,7 +217,7 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
                         <Feather name="edit-2" size={16} color="#9d174d" />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => handleDeleteAddress(addr.id)} style={{ marginLeft: 16 }}>
-                        <Feather name="trash-2" size={16} color="#ef4444" />
+                        <Feather name="trash-2" size={16} color="#ff914d" />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -298,8 +298,8 @@ const styles = StyleSheet.create({
   addressHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 },
   addressLabelRow: { flexDirection: "row", alignItems: "center" },
   addressLabelName: { fontSize: 14, fontFamily: "Zalando-Bold", color: "#1f2937", marginRight: 8 },
-  defaultBadge: { backgroundColor: "#f3f4f6", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
-  defaultBadgeText: { fontSize: 9, fontFamily: "Zalando-Bold", color: "#6b7280" },
+  defaultBadge: { backgroundColor: "#9d174d", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
+  defaultBadgeText: { fontSize: 9, fontFamily: "Zalando-Bold", color: "#ffffff" },
   addressActions: { flexDirection: "row", alignItems: "center" },
   addressStreet: { fontSize: 13, fontFamily: "Zalando-Medium", color: "#1f2937", marginBottom: 2 },
   addressCity: { fontSize: 12, fontFamily: "Zalando-Regular", color: "#6b7280" },

@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   defaultBadge: {
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "#9d174d",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   defaultBadgeText: {
     fontSize: 9,
     fontFamily: "Zalando-Bold",
-    color: "#6b7280",
+    color: "#ffffff",
   },
   addressDetails: {
     paddingLeft: 30, // Align with text next to radio
@@ -301,10 +301,10 @@ const styles = StyleSheet.create({
     color: "#ff914d",
   },
   footer: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 50,
     backgroundColor: "#ffffff",
-    borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
   },
   continueBtn: {
     width: "100%",

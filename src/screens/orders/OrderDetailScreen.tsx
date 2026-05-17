@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from "react-native";
+import * as Clipboard from "expo-clipboard";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { getProductImage } from "../../utils/imageMapper";
+import { useNotification } from "../../context/NotificationContext";
+import { refundPaymentIntent } from "../../services/stripeService";
+import { CTAButton } from "../../components/common/CTAButton";
+
+// Helper functions for safe Firestore timestamp conversion
+const getSafeDate = (ts: any): Date => {
+  if (!ts) return new Date();
+  if (typeof ts.toDate === "function") return ts.toDate();
+  if (ts.seconds) return new Date(ts.seconds * 1000);
+  return new Date(ts);
+};
+
+const getSafeMillis = (ts: any): number => {
+  if (!ts) return 0;
+  if (typeof ts.toMillis === "function") return ts.toMillis();
+  if (ts.seconds) return ts.seconds * 1000;
+  return new Date(ts).getTime();
+};
 
 export const OrderDetailScreen = () => {
   const navigation = useNavigation<any>();
@@ -13,6 +33,15 @@ export const OrderDetailScreen = () => {
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
+  const { showToast, showAlert } = useNotification();
+
+  const handleCopyOrderNumber = async () => {
+    if (!order) return;
+    const textToCopy = order.orderID || order.id;
+    await Clipboard.setStringAsync(textToCopy);
+    showToast("Copied to clipboard!");
+  };
 
   useEffect(() => {
     fetchOrderDetail();
@@ -31,6 +60,96 @@ export const OrderDetailScreen = () => {
       console.error("Error fetching order detail", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const confirmCancelOrder = () => {
+    if (!order) return;
+
+    // Check 3 days constraint dynamically
+    const orderTime = getSafeMillis(order.createdAt);
+    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+    const isPastThreeDays = (Date.now() - orderTime) > threeDaysInMs;
+
+    if (isPastThreeDays) {
+      showAlert({
+        title: "Cannot Cancel Order",
+        message: "Orders can only be cancelled within 3 days of purchase. Please contact our support team for assistance.",
+        confirmText: "OK",
+        onConfirm: () => {},
+      });
+      return;
+    }
+
+    showAlert({
+      title: "Cancel Order",
+      message: "Are you sure you want to cancel this order? This action will refund your payment.",
+      confirmText: "Yes, Cancel",
+      cancelText: "No, Keep Order",
+      isDestructive: true,
+      onConfirm: handleCancelOrder,
+    });
+  };
+
+  const handleCancelOrder = async () => {
+    if (!order) return;
+    setCancelling(true);
+    try {
+      // 1. Refund Stripe Payment
+      if (order.stripePaymentIntentId) {
+        try {
+          await refundPaymentIntent(order.stripePaymentIntentId);
+        } catch (stripeError: any) {
+          // If the charge was already refunded in Stripe, proceed gracefully to fix database sync issues
+          if (stripeError.message && stripeError.message.includes("already been refunded")) {
+            console.log("Stripe payment was already refunded. Continuing database sync.");
+          } else {
+            throw stripeError;
+          }
+        }
+      }
+
+      // 2. Update Firestore Order Status
+      const docRef = doc(db, "orders", order.id);
+      await updateDoc(docRef, {
+        status: "cancelled",
+        paymentStatus: "refunded",
+        cancelledAt: new Date(),
+      });
+
+      // 3. Restore Stock for each item
+      if (order.items && Array.isArray(order.items)) {
+        await Promise.all(
+          order.items.map((item: any) => {
+            const pId = item.productID || item.productId;
+            if (!pId) return Promise.resolve();
+            return updateDoc(doc(db, "products", pId), {
+              stock: increment(item.quantity || 1),
+            }).catch(e => console.warn(`Stock update failed for ${pId}:`, e));
+          })
+        );
+      }
+
+      // Refresh order details to show Cancelled badge
+      await fetchOrderDetail();
+      
+      // Notify successful cancellation with a premium dialog
+      showAlert({
+        title: "Order Cancelled Successfully",
+        message: "Your order has been successfully cancelled and a full refund has been initiated to your payment card.",
+        confirmText: "OK",
+        onConfirm: () => {},
+      });
+    } catch (error: any) {
+      console.error("Cancellation error:", error);
+      showAlert({
+        title: "Cancellation Failed",
+        message: error.message || "Could not cancel the order. Please try again or contact support.",
+        confirmText: "OK",
+        onConfirm: () => {},
+      });
+    } finally {
+      setCancelling(false);
     }
   };
 
@@ -58,26 +177,30 @@ export const OrderDetailScreen = () => {
 
   if (loading || !order) {
     return (
-      <View style={styles.centerContainer}>
+      <SafeAreaView style={styles.centerContainer} edges={["top"]}>
         <ActivityIndicator size="large" color="#9d174d" />
-      </View>
+      </SafeAreaView>
     );
   }
 
-  const orderDate = order.createdAt ? order.createdAt.toDate().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Unknown date";
+  const orderDate = order.createdAt ? getSafeDate(order.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Unknown date";
   const last4 = "6522"; // Mock from prototype or fetch if saved
 
+  // Can cancel if order is in a cancellable status (not shipped or delivered)
+  const isCancellable = order &&
+    order.status !== "cancelled" &&
+    order.status !== "shipped" &&
+    order.status !== "delivered";
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.7}>
           <Feather name="chevron-left" size={28} color="#9d174d" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Order Details</Text>
-        <View style={styles.headerRight}>
-          {renderStatusBadge(order.status || "pending")}
-        </View>
+        <View style={styles.headerRight} />
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -89,8 +212,8 @@ export const OrderDetailScreen = () => {
               <Text style={styles.label}>Order Number</Text>
               <Text style={styles.valueHighlight}>{order.orderID || order.id}</Text>
             </View>
-            <TouchableOpacity>
-              <Feather name="copy" size={18} color="#9ca3af" />
+            <TouchableOpacity onPress={handleCopyOrderNumber} activeOpacity={0.7}>
+              <Feather name="copy" size={18} color="#9d174d" />
             </TouchableOpacity>
           </View>
           <View style={styles.divider} />
@@ -128,7 +251,7 @@ export const OrderDetailScreen = () => {
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Delivery fee</Text>
-              <Text style={styles.summaryValueGreen}>₱{order.shippingFee?.toFixed(2)}</Text>
+              <Text style={styles.summaryValue}>₱{order.shippingFee?.toFixed(2)}</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.summaryRow}>
@@ -141,30 +264,51 @@ export const OrderDetailScreen = () => {
         {/* Shipping Address */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Shipping Address</Text>
-          <View style={styles.infoCard}>
-            <Text style={styles.addressText}>
-              {order.shippingAddress?.Street}{"\n"}
-              {order.shippingAddress?.City}, {order.shippingAddress?.Province} {order.shippingAddress?.PostalCode}
-            </Text>
+          <View style={styles.infoCardSolid}>
+            <Feather name="map-pin" size={20} color="#ffffff" style={styles.infoIcon} />
+            <View style={styles.infoContent}>
+              <Text style={styles.addressTextSolid}>
+                {order.shippingAddress?.Street}{"\n"}
+                {order.shippingAddress?.City}, {order.shippingAddress?.Province} {order.shippingAddress?.PostalCode}
+              </Text>
+            </View>
           </View>
         </View>
 
         {/* Payment Method */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Payment Method</Text>
-          <View style={styles.infoCard}>
-            <View style={styles.paymentRow}>
-              <View>
-                <Text style={styles.paymentMethod}>Credit Card</Text>
-                <Text style={styles.paymentDetails}>•••• •••• •••• {last4}</Text>
+          <View style={styles.infoCardSolid}>
+            <Feather name="credit-card" size={20} color="#ffffff" style={styles.infoIcon} />
+            <View style={styles.infoContent}>
+              <View style={styles.paymentRow}>
+                <View>
+                  <Text style={styles.paymentMethodSolid}>Credit Card</Text>
+                  <Text style={styles.paymentDetailsSolid}>•••• •••• •••• {last4}</Text>
+                </View>
+                <Text style={styles.paymentStatusSolid}>
+                  {order.paymentStatus === "refunded" ? "Refunded" : "Completed"}
+                </Text>
               </View>
-              <Text style={styles.paymentStatus}>Completed</Text>
             </View>
           </View>
         </View>
 
+        {isCancellable && (
+          <View style={{ marginHorizontal: 16, marginBottom: 40 }}>
+            <CTAButton
+              title="Cancel Order"
+              onPress={confirmCancelOrder}
+              disabled={cancelling}
+              loading={cancelling}
+              style={{ backgroundColor: "#ffffff", borderWidth: 2, borderColor: "#9d174d" }}
+              textStyle={{ color: "#9d174d" }}
+            />
+          </View>
+        )}
+
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -181,13 +325,13 @@ const styles = StyleSheet.create({
     borderBottomColor: "#f3f4f6",
   },
   backBtn: { width: 40 },
-  headerTitle: { fontSize: 18, fontFamily: "Zalando-Bold", color: "#1f2937" },
-  headerRight: { width: 80, alignItems: "flex-end" },
+  headerTitle: { fontSize: 18, fontFamily: "Zalando-Bold", color: "#9d174d", flex: 1, textAlign: "center" },
+  headerRight: { width: 40 },
   statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4 },
   statusText: { fontSize: 10, fontFamily: "Zalando-Bold", letterSpacing: 0.5 },
   scrollContainer: { flex: 1 },
   card: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#ffffff",
     margin: 16,
     borderRadius: 12,
     padding: 16,
@@ -200,7 +344,7 @@ const styles = StyleSheet.create({
   valueHighlight: { fontSize: 14, fontFamily: "Zalando-Bold", color: "#9d174d" },
   divider: { height: 1, backgroundColor: "#e5e7eb", marginVertical: 12 },
   sectionContainer: { marginBottom: 24 },
-  sectionTitle: { fontSize: 14, fontFamily: "Zalando-Bold", color: "#1f2937", paddingHorizontal: 16, marginBottom: 12 },
+  sectionTitle: { fontSize: 14, fontFamily: "Zalando-Bold", color: "#9d174d", paddingHorizontal: 16, marginBottom: 12 },
   itemRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, marginBottom: 16 },
   itemImage: { width: 64, height: 64, borderRadius: 12, marginRight: 12, backgroundColor: "#f3f4f6" },
   itemDetails: { flex: 1 },
@@ -210,14 +354,22 @@ const styles = StyleSheet.create({
   summaryCard: { marginHorizontal: 16 },
   summaryRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },
   summaryLabel: { fontSize: 13, fontFamily: "Zalando-Medium", color: "#6b7280" },
-  summaryValue: { fontSize: 13, fontFamily: "Zalando-SemiBold", color: "#6b7280" },
-  summaryValueGreen: { fontSize: 13, fontFamily: "Zalando-SemiBold", color: "#10b981" },
-  summaryTotalLabel: { fontSize: 14, fontFamily: "Zalando-Bold", color: "#1f2937" },
+  summaryValue: { fontSize: 13, fontFamily: "Zalando-SemiBold", color: "#1f2937" },
+  summaryTotalLabel: { fontSize: 14, fontFamily: "Zalando-Bold", color: "#9d174d" },
   summaryTotalValue: { fontSize: 18, fontFamily: "Zalando-Bold", color: "#9d174d" },
-  infoCard: { backgroundColor: "#f9fafb", marginHorizontal: 16, borderRadius: 12, padding: 16 },
-  addressText: { fontSize: 13, fontFamily: "Zalando-Medium", color: "#1f2937", lineHeight: 20 },
+  infoCardSolid: { 
+    backgroundColor: "#9d174d", 
+    marginHorizontal: 16, 
+    borderRadius: 12, 
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  infoIcon: { marginRight: 12 },
+  infoContent: { flex: 1 },
+  addressTextSolid: { fontSize: 13, fontFamily: "Zalando-Medium", color: "#ffffff", lineHeight: 20 },
   paymentRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  paymentMethod: { fontSize: 13, fontFamily: "Zalando-Bold", color: "#1f2937", marginBottom: 2 },
-  paymentDetails: { fontSize: 12, fontFamily: "Zalando-Medium", color: "#6b7280" },
-  paymentStatus: { fontSize: 12, fontFamily: "Zalando-Bold", color: "#10b981" },
+  paymentMethodSolid: { fontSize: 13, fontFamily: "Zalando-Bold", color: "#ffffff", marginBottom: 2 },
+  paymentDetailsSolid: { fontSize: 12, fontFamily: "Zalando-Medium", color: "rgba(255, 255, 255, 0.8)" },
+  paymentStatusSolid: { fontSize: 12, fontFamily: "Zalando-Bold", color: "rgba(255, 255, 255, 0.9)" },
 });

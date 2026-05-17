@@ -99,11 +99,10 @@ service cloud.firestore {
         // Prevent productId from being changed after creation
         && request.resource.data.productId == resource.data.productId;
 
-      // Authenticated users can decrement stock after a successful purchase.
-      // Only the 'stock' field may change; it may only decrease (never increase).
+      // Authenticated users can update stock after a successful purchase or cancellation.
+      // Only the 'stock' field may change.
       allow update: if isAuthenticated()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock'])
-        && request.resource.data.stock < resource.data.stock
         && request.resource.data.stock >= 0;
 
       // Admins only: soft-delete by setting isActive: false (preferred)
@@ -170,12 +169,19 @@ service cloud.firestore {
         && (request.resource.data.paymentStatus == 'paid' ||
             request.resource.data.paymentStatus == 'pending');
 
-      // Only admins can update order status and payment status
+      // Only admins can update order status and payment status freely
       allow update: if isAdmin()
         // Prevent tampering with core order fields after creation
         && request.resource.data.userId == resource.data.userId
         && request.resource.data.totalAmount == resource.data.totalAmount
         && request.resource.data.items == resource.data.items;
+
+      // Users can cancel their own orders (status to 'cancelled', paymentStatus to 'refunded')
+      allow update: if isAuthenticated()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'paymentStatus', 'cancelledAt'])
+        && request.resource.data.status == 'cancelled'
+        && request.resource.data.paymentStatus == 'refunded';
 
       // No one can delete an order (preserve audit trail)
       allow delete: if false;
