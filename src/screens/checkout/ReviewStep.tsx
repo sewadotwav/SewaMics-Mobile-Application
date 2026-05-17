@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { CheckoutData } from "./CheckoutScreen";
 import { CTAButton } from "../../components/common/CTAButton";
 import { createPaymentIntent } from "../../services/stripeService";
-import { getCart, clearCart } from "../../services/cartService";
+import { getCart, removeFromCart } from "../../services/cartService";
 import { CartItem } from "../../config/firestoreSchema";
 import { getProductImage } from "../../utils/imageMapper";
 import { doc, setDoc, updateDoc, Timestamp, increment } from "firebase/firestore";
@@ -38,7 +38,13 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
       if (!user) return;
       try {
         const cart = await getCart(user.uid);
-        if (cart) setCartItems(cart.items);
+        if (cart) {
+          if (checkoutData.selectedItems && checkoutData.selectedItems.length > 0) {
+            setCartItems(cart.items.filter(item => checkoutData.selectedItems!.includes(item.productId)));
+          } else {
+            setCartItems(cart.items);
+          }
+        }
       } catch (err) {
         console.error("Failed to fetch cart", err);
       } finally {
@@ -137,8 +143,12 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
         )
       );
 
-      // 4. Clear Cart
-      await clearCart(user.uid);
+      // 4. Remove checked out items from Cart
+      await Promise.all(
+        cartItems.map(item => 
+          removeFromCart(user.uid, item.productId).catch(e => console.warn(`Cart remove failed for ${item.productId}:`, e))
+        )
+      );
 
       // 4. Navigate
       navigation.navigate("OrderConfirmation", { orderId });
@@ -308,10 +318,12 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContainer: { flex: 1 },
   card: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#ffffff",
     borderRadius: 12,
     marginHorizontal: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
   },
   cardTitle: {
     fontSize: 14,

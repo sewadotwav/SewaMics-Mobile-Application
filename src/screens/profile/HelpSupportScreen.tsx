@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   faqQuestion: { fontSize: 14, fontFamily: "Zalando-Medium", color: "#ffffff", flex: 1, marginRight: 12, lineHeight: 20 },
   faqAnswer: { fontSize: 13, fontFamily: "Zalando-Regular", color: "rgba(255,255,255,0.85)", marginTop: 12, lineHeight: 20 },
 
-  contactCard: { borderRadius: 20, borderWidth: 1, borderColor: "#e5e7eb", backgroundColor: "#f9fafb", overflow: "hidden" },
+  contactCard: { borderRadius: 20, borderWidth: 1, borderColor: "#e5e7eb", backgroundColor: "#ffffff", overflow: "hidden" },
   contactRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 14, minHeight: 60 },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },
   contactIconWrapper: { width: 40, height: 40, borderRadius: 20, justifyContent: "center", alignItems: "center", marginRight: 12 },

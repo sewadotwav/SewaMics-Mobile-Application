@@ -13,6 +13,7 @@ export interface CheckoutData {
   cardDetails: any;          // { cardholderName, last4 } — no raw numbers stored
   paymentMethodId: string | null; // Stripe PaymentMethod ID created in PaymentStep
   clientSecret: string | null;    // Stripe PaymentIntent client_secret created in ReviewStep
+  selectedItems?: string[];       // Array of selected product IDs
 }
 
 export const CheckoutScreen = () => {
@@ -26,6 +27,7 @@ export const CheckoutScreen = () => {
     cardDetails: null,
     paymentMethodId: null,
     clientSecret: null,
+    selectedItems: route.params?.selectedItems || [],
   });
 
   const steps = [

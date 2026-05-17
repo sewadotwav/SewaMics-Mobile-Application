@@ -228,17 +228,28 @@ export const OrderDetailScreen = () => {
         {/* Items List */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Items</Text>
-          {order.items?.map((item: any, idx: number) => (
-            <View key={idx} style={styles.itemRow}>
-              <Image source={getProductImage(item.productID)} style={styles.itemImage} />
-              <View style={styles.itemDetails}>
-                <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
-                <Text style={styles.itemSubText}>Qty: {item.quantity}</Text>
-                {item.size && <Text style={styles.itemSubText}>Size: {item.size}</Text>}
+          {order.items?.map((item: any, idx: number) => {
+            let resolvedImageKey = item.imageKey || item.productID || item.productId;
+            if (!resolvedImageKey || resolvedImageKey.startsWith("product-")) {
+              const lowerName = (item.name || "").toLowerCase();
+              if (lowerName.includes("pumpkin")) resolvedImageKey = "pumpkin";
+              else if (lowerName.includes("parrot")) resolvedImageKey = "parrot";
+              else if (lowerName.includes("strawberry")) resolvedImageKey = "strawberry";
+              else if (lowerName.includes("fish")) resolvedImageKey = "fish";
+            }
+            
+            return (
+              <View key={idx} style={styles.itemRow}>
+                <Image source={getProductImage(resolvedImageKey)} style={styles.itemImage} />
+                <View style={styles.itemDetails}>
+                  <Text style={styles.itemName} numberOfLines={1}>{item.name || "Unknown Product"}</Text>
+                  <Text style={styles.itemSubText}>Qty: {item.quantity}</Text>
+                  {item.size && <Text style={styles.itemSubText}>Size: {item.size}</Text>}
+                </View>
+                <Text style={styles.itemPrice}>₱{item.price?.toFixed(2)}</Text>
               </View>
-              <Text style={styles.itemPrice}>₱{item.price?.toFixed(2)}</Text>
-            </View>
-          ))}
+            );
+          })}
         </View>
 
         {/* Order Summary */}

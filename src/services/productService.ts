@@ -35,11 +35,11 @@ export const getProductById = async (productId: string): Promise<Product | null>
       category: rawData.category || "Uncategorized",
       currency: rawData.currency || "₱",
       description: rawData.description || "",
-      imageKey: rawData.imageKey || "",
+      imageKey: rawData.imageKey || rawData.image || rawData.imageUrl || rawData.imageUri || "",
       isActive: rawData.isActive !== false,
-      name: rawData.name ?? rawData.Name ?? rawData["name "] ?? "Unknown Product",
+      name: String(rawData.name || rawData.Name || rawData["name "] || rawData.title || rawData.Title || "Unknown Product").trim(),
       price: Number(priceValue),
-      productID: rawData.productID || docSnap.id,
+      productID: rawData.productID || rawData.productId || docSnap.id,
       rating: rawData.rating || 0,
       reviews: rawData.reviews || 0,
       reviewCount: rawData.reviewCount ?? rawData.reviews ?? 0,
@@ -75,6 +75,7 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
     snapshot.forEach((doc) => {
       if (!doc.exists()) return;
       const rawData = doc.data() as DocumentData;
+      console.log(`Raw Product Data for ${doc.id}:`, JSON.stringify(rawData));
 
       // Support common field name variants including a trailing space found in logs
       const priceValue = rawData.price ?? rawData.Price ?? rawData["price "] ?? 0;
@@ -85,11 +86,11 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
         category: rawData.category || "Uncategorized",
         currency: rawData.currency || "₱",
         description: rawData.description || "",
-        imageKey: rawData.imageKey || "",
+        imageKey: rawData.imageKey || rawData.image || rawData.imageUrl || rawData.imageUri || "",
         isActive: rawData.isActive !== false,
-        name: rawData.name ?? rawData.Name ?? rawData["name "] ?? "Unknown Product",
+        name: String(rawData.name || rawData.Name || rawData["name "] || rawData.title || rawData.Title || "Unknown Product").trim(),
         price: finalPrice,
-        productID: rawData.productID || doc.id,
+        productID: rawData.productID || rawData.productId || doc.id,
         rating: rawData.rating || 0,
         reviews: rawData.reviews || 0,
         stock: rawData.stock || 0,

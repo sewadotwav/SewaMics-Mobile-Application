@@ -237,7 +237,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
                 countryCode: "PH"
               }}
               cardStyle={{
-                backgroundColor: "#f9fafb",
+                backgroundColor: "#ffffff",
                 textColor: "#1f2937",
                 placeholderColor: "#9ca3af",
                 borderColor: "#e5e7eb",
@@ -260,7 +260,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
 
           {/* Security notice */}
           <View style={styles.secureNotice}>
-            <FontAwesome name="lock" size={12} color="#6b7280" style={{ marginRight: 6 }} />
+            <FontAwesome name="lock" size={12} color="#9d174d" style={{ marginRight: 6 }} />
             <Text style={styles.secureText}>
               Payments are processed securely by Stripe. We never store your card number.
             </Text>
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e5e7eb",
     borderRadius: 8,
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#ffffff",
     paddingHorizontal: 12,
   },
   inputContainerError: {
@@ -366,12 +366,11 @@ const styles = StyleSheet.create({
   secureNotice: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 4,
-    padding: 10,
-    backgroundColor: "#f9fafb",
-    borderRadius: 8,
+    marginTop: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 4,
   },
-  secureText: { fontSize: 11, fontFamily: "Zalando-Regular", color: "#6b7280", flex: 1 },
+  secureText: { fontSize: 11, fontFamily: "Zalando-Regular", color: "#9d174d", flex: 1 },
   // High-Fidelity Virtual Credit Card Mockup Styles
   vCardWrapper: {
     marginHorizontal: 16,

@@ -44,6 +44,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null); // productId being acted on
+  const [uncheckedItemIds, setUncheckedItemIds] = useState<Set<string>>(new Set());
 
   // ── Fetch cart ────────────────────────────────────────────────
   const fetchCart = useCallback(async () => {
@@ -108,10 +109,10 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
         prev.map((item) =>
           item.productId === productId
             ? {
-                ...item,
-                quantity: newQty,
-                subtotal: parseFloat((item.price * newQty).toFixed(2)),
-              }
+              ...item,
+              quantity: newQty,
+              subtotal: parseFloat((item.price * newQty).toFixed(2)),
+            }
             : item
         )
       );
@@ -123,15 +124,30 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
   };
 
   const handleMakePayment = () => {
+    const selectedItems = cartItems.filter(item => !uncheckedItemIds.has(item.productId)).map(i => i.productId);
+    if (selectedItems.length === 0) {
+      Alert.alert("No items selected", "Please select at least one item to checkout.");
+      return;
+    }
     navigation.navigate("CheckoutStack", {
       screen: "Checkout",
-      params: { step: "shipping" },
+      params: { step: "shipping", selectedItems },
+    });
+  };
+
+  const toggleCheck = (productId: string) => {
+    setUncheckedItemIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(productId)) next.delete(productId);
+      else next.add(productId);
+      return next;
     });
   };
 
   // ── Derived values ────────────────────────────────────────────
-  const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-  const totalAmount = subtotal + (cartItems.length > 0 ? DELIVERY_FEE : 0);
+  const checkedCartItems = cartItems.filter(item => !uncheckedItemIds.has(item.productId));
+  const subtotal = checkedCartItems.reduce((sum, item) => sum + item.subtotal, 0);
+  const totalAmount = subtotal + (checkedCartItems.length > 0 ? DELIVERY_FEE : 0);
 
   // ── Render ────────────────────────────────────────────────────
   if (loading) return <LoadingScreen message="Loading your cart..." />;
@@ -171,7 +187,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
               <Feather name="shopping-cart" size={52} color="#e5e7eb" />
               <Text style={styles.emptyTitle}>Your cart is empty</Text>
               <Text style={styles.emptySubtext}>
-               Browse our products now to get started with the coolness!
+                Browse our products now to get started with the coolness!
               </Text>
               <TouchableOpacity
                 style={styles.browseButton}
@@ -198,6 +214,17 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
                   key={item.productId}
                   style={[styles.cartItem, !isLast && styles.cartItemBorder]}
                 >
+                  {/* Checkbox */}
+                  <TouchableOpacity 
+                    style={styles.checkboxContainer} 
+                    onPress={() => toggleCheck(item.productId)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={[styles.checkbox, !uncheckedItemIds.has(item.productId) && styles.checkboxActive]}>
+                      {!uncheckedItemIds.has(item.productId) && <Feather name="check" size={10} color="#ffffff" />}
+                    </View>
+                  </TouchableOpacity>
+
                   {/* Circular thumbnail */}
                   <View style={styles.thumbnailWrapper}>
                     <Image
@@ -296,7 +323,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
           {/* ── MAKE PAYMENT BUTTON ── */}
           <View style={styles.stickyBar}>
             <CTAButton
-              title="Make Payment"
+              title="Check Out"
               onPress={handleMakePayment}
               style={styles.paymentButton}
             />
@@ -396,11 +423,33 @@ const styles = StyleSheet.create({
 
   // Cart Item Row
   cartItem: {
+    position: "relative",
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingLeft: 42,
+    paddingRight: 16,
     paddingVertical: 18,
     gap: 16,
+  },
+  checkboxContainer: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    zIndex: 10,
+  },
+  checkbox: {
+    width: 16,
+    height: 16,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: "#e5e7eb",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+  },
+  checkboxActive: {
+    backgroundColor: "#9d174d",
+    borderColor: "#9d174d",
   },
   cartItemBorder: {
     borderBottomWidth: 1,

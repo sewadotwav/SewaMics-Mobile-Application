@@ -18,16 +18,16 @@ import { getProductImage } from "../../utils/imageMapper";
 
 // ── Status tab config ─────────────────────────────────────────
 const STATUS_TABS = [
-  { key: "all",       label: "All" },
-  { key: "pending",   label: "Pending" },
-  { key: "shipped",   label: "Shipped" },
+  { key: "all", label: "All" },
+  { key: "pending", label: "Pending" },
+  { key: "shipped", label: "Shipped" },
   { key: "delivered", label: "Delivered" },
   { key: "cancelled", label: "Cancelled" },
 ];
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; icon: string }> = {
-  pending:   { bg: "#ff914d", text: "#ffffff", icon: "clock" },
-  shipped:   { bg: "#dbeafe", text: "#1e40af", icon: "truck" },
+  pending: { bg: "#ff914d", text: "#ffffff", icon: "clock" },
+  shipped: { bg: "#dbeafe", text: "#1e40af", icon: "truck" },
   delivered: { bg: "#dcfce7", text: "#166534", icon: "check-circle" },
   cancelled: { bg: "#fee2e2", text: "#991b1b", icon: "x-circle" },
 };
@@ -92,15 +92,22 @@ export const OrdersScreen = () => {
     const firstItem = items[0] ?? null;
     const extraCount = items.length - 1;
 
-    // Use the stored imageKey on each item for correct image resolution
-    const imageSource = firstItem?.imageKey
-      ? getProductImage(firstItem.imageKey)
-      : getProductImage(firstItem?.productID); // fallback
+    // Smart fallback for old broken test orders that were saved before the schema fix
+    let resolvedImageKey = firstItem?.imageKey || firstItem?.productID || firstItem?.productId;
+    if (!resolvedImageKey || resolvedImageKey.startsWith("product-")) {
+      const lowerName = (firstItem?.name || "").toLowerCase();
+      if (lowerName.includes("pumpkin")) resolvedImageKey = "pumpkin";
+      else if (lowerName.includes("parrot")) resolvedImageKey = "parrot";
+      else if (lowerName.includes("strawberry")) resolvedImageKey = "strawberry";
+      else if (lowerName.includes("fish")) resolvedImageKey = "fish";
+    }
+
+    const imageSource = getProductImage(resolvedImageKey);
 
     const dateStr = item.createdAt
       ? item.createdAt.toDate().toLocaleDateString("en-PH", {
-          month: "short", day: "numeric", year: "numeric",
-        })
+        month: "short", day: "numeric", year: "numeric",
+      })
       : "—";
 
     const status = item.status ?? "pending";
@@ -123,7 +130,7 @@ export const OrdersScreen = () => {
             <View style={styles.cardInfo}>
               {/* Product name(s) */}
               <Text style={styles.productName} numberOfLines={1}>
-                {firstItem?.name ?? "Unknown Product"}
+                {firstItem?.name || "Unknown Product"}
               </Text>
               {extraCount > 0 && (
                 <Text style={styles.extraItems}>+{extraCount} more item{extraCount > 1 ? "s" : ""}</Text>
@@ -268,7 +275,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center",
     paddingHorizontal: 14, paddingVertical: 6,
     borderRadius: 20, borderWidth: 1, borderColor: "#e5e7eb",
-    backgroundColor: "#f9fafb", gap: 6,
+    backgroundColor: "#ffffff", gap: 6,
   },
   tabActive: { backgroundColor: "#9d174d", borderColor: "#9d174d" },
   tabLabel: { fontSize: 13, fontFamily: "Zalando-SemiBold", color: "#6b7280" },
@@ -281,7 +288,7 @@ const styles = StyleSheet.create({
   tabBadgeActive: { backgroundColor: "rgba(255,255,255,0.3)" },
   tabBadgeText: { fontSize: 10, fontFamily: "Zalando-Bold", color: "#6b7280" },
   tabBadgeTextActive: { color: "#ffffff" },
- 
+
   // ── Order card ────────────────────────────────────────────
   listContent: { padding: 16, gap: 12 },
   orderCard: {
