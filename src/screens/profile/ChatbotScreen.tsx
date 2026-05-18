@@ -92,13 +92,11 @@ export const ChatbotScreen = ({ navigation }: any) => {
       // Check RPM (Limit: 5/minute)
       const recentMinutes = activeTimestamps.filter(t => t > oneMinuteAgo);
       if (recentMinutes.length >= 5) {
-        Alert.alert("Clay is catching his breath!", "Please wait a minute before sending another question to prevent spam.");
         return false;
       }
 
       // Check RPD (Limit: 30/day)
       if (activeTimestamps.length >= 30) {
-        Alert.alert("Daily limit reached!", "You've reached your chat limit for today. Come back tomorrow!");
         return false;
       }
 
@@ -115,17 +113,35 @@ export const ChatbotScreen = ({ navigation }: any) => {
   const handleSendMessage = async () => {
     if (!inputText.trim() || isLoading || setupError) return;
 
-    const allowed = await checkRateLimits();
-    if (!allowed) return;
-
     const userMessage: Message = {
       id: Date.now().toString(),
       text: inputText.trim(),
       sender: "user",
     };
 
+    // 1. Instantly append the user's message and clear input
     setMessages(prev => [...prev, userMessage]);
     setInputText("");
+
+    // 2. Perform the rate limit check
+    const allowed = await checkRateLimits();
+    if (!allowed) {
+      // Premium delayed response to simulate natural Mascot sleeping
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        setMessages(prev => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            text: "Ooops, sorry! just msg me for another time. It's time for me to sleep :c",
+            sender: "bot",
+          }
+        ]);
+      }, 700);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
