@@ -120,11 +120,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       {/* Header */}
       <View style={styles.header}>
-        <Image
-          source={require("../../../assets/Brand/newSewaMicsLogo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../../../assets/Brand/newSewaMicsLogo.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
         <Text style={styles.headerTitle}>Profile</Text>
         <View style={styles.headerRight} />
       </View>
@@ -251,9 +253,10 @@ const styles = StyleSheet.create({
     borderBottomColor: "#e5e7eb",
     backgroundColor: "#ffffff",
   },
+  logoContainer: { width: 64, alignItems: "flex-start", justifyContent: "center" },
   logo: { width: 64, height: 48 },
-  headerTitle: { fontSize: 18, fontFamily: "Zalando-SemiBold", color: "#1f2937", letterSpacing: -0.3 },
-  headerRight: { width: 40 },
+  headerTitle: { fontSize: 18, fontFamily: "Zalando-SemiBold", color: "#9d174d", letterSpacing: -0.3, textAlign: "center", flex: 1 },
+  headerRight: { width: 64 },
 
   avatarSection: { alignItems: "center", paddingTop: 24, paddingBottom: 8 },
   avatarContainer: {
