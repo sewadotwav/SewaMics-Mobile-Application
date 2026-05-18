@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: "#e5e7eb", backgroundColor: "#ffffff",
   },
   backButton: { width: 40, alignItems: "flex-start" },
-  headerTitle: { fontSize: 18, fontFamily: "Zalando-SemiBold", color: "#1f2937", letterSpacing: -0.3 },
+  headerTitle: { fontSize: 18, fontFamily: "Zalando-SemiBold", color: "#9d174d", letterSpacing: -0.3 },
   headerRight: { width: 40 },
 
   heroHeading: {

@@ -19,7 +19,7 @@ import { useProducts } from "../../hooks/useProducts";
 import { useAuth } from "../../context/AuthContext";
 import { Product } from "../../services/productService";
 import { FloatingMascotBubble } from "../../components/common/FloatingMascotBubble";
-export const CatalogScreen = ({ navigation }: any) => {
+export const CatalogScreen = ({ navigation, route }: any) => {
   const { user } = useAuth();
   
   const {
@@ -34,6 +34,15 @@ export const CatalogScreen = ({ navigation }: any) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState<string>("default");
+
+  // Listen to navigation route parameters for queries sent from HomeScreen
+  useEffect(() => {
+    if (route?.params?.search !== undefined) {
+      setSearchTerm(route.params.search);
+      // Clear parameters to prevent re-applying old queries on subsequent switches
+      navigation.setParams({ search: undefined });
+    }
+  }, [route?.params?.search, navigation]);
 
   // Since useProducts sets a default category, if we want an "All" view, we need to handle it.
   // For now, let's inject "All" into the category list client-side if it's not there.
@@ -143,16 +152,18 @@ export const CatalogScreen = ({ navigation }: any) => {
           <LoadingScreen />
         ) : filteredAndSortedProducts.length === 0 ? (
           <View style={styles.emptyState}>
-            <Feather name="search" size={48} color="#9ca3af" />
-            <Text style={styles.emptyTitle}>No products found</Text>
+            <Feather name="search" size={48} color="#9d174d" />
+            <Text style={styles.emptyTitle}>Whoops, no ceramics found!</Text>
             <Text style={styles.emptySubtext}>
-              Try adjusting your filters or search term
+              {searchTerm.trim()
+                ? `We couldn't find anything matching "${searchTerm}". Try checking your spelling or search for another fruit!`
+                : "No products match your selected category or filters."}
             </Text>
             <TouchableOpacity
               style={styles.clearFiltersButton}
               onPress={handleClearFilters}
             >
-              <Text style={styles.clearFiltersText}>Clear All Filters</Text>
+              <Text style={styles.clearFiltersText}>Reset Search & Filters</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -293,6 +304,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Zalando-Regular",
     color: "#6b7280",
+    textAlign: "center",
     marginTop: 8,
     marginBottom: 24,
   },

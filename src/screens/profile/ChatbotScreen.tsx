@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getSystemInstructions, generateGeminiResponse } from "../../services/geminiService";
+import { useAuth } from "../../context/AuthContext";
 
 interface Message {
   id: string;
@@ -24,6 +25,10 @@ interface Message {
 }
 
 export const ChatbotScreen = ({ navigation }: any) => {
+  const { user } = useAuth();
+  const historyKey = user?.uid ? `chatbot_history_${user.uid}` : "chatbot_history_guest";
+  const rateLimitKey = user?.uid ? `chat_request_timestamps_${user.uid}` : "chat_request_timestamps_guest";
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +45,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
         const instructions = await getSystemInstructions();
         if (isMounted) setSystemInstructionCache(instructions);
 
-        const history = await AsyncStorage.getItem("chatbot_history");
+        const history = await AsyncStorage.getItem(historyKey);
         if (isMounted) {
           if (history) {
             setMessages(JSON.parse(history));
@@ -63,14 +68,14 @@ export const ChatbotScreen = ({ navigation }: any) => {
     };
     initializeChat();
     return () => { isMounted = false; };
-  }, []);
+  }, [historyKey]);
 
   // Save chat history to local storage whenever it updates
   useEffect(() => {
     if (!isSettingUp && messages.length > 0) {
-      AsyncStorage.setItem("chatbot_history", JSON.stringify(messages));
+      AsyncStorage.setItem(historyKey, JSON.stringify(messages));
     }
-  }, [messages, isSettingUp]);
+  }, [messages, isSettingUp, historyKey]);
 
   // ── RATE LIMIT CHECKS (Local safeguard) ──────────────────────────
   const checkRateLimits = async (): Promise<boolean> => {
@@ -79,7 +84,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
       const oneMinuteAgo = now - 60000;
       const oneDayAgo = now - 86400000;
 
-      const storedTimestamps = await AsyncStorage.getItem("chat_request_timestamps");
+      const storedTimestamps = await AsyncStorage.getItem(rateLimitKey);
       const timestamps: number[] = storedTimestamps ? JSON.parse(storedTimestamps) : [];
 
       const activeTimestamps = timestamps.filter(t => t > oneDayAgo);
@@ -98,7 +103,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
       }
 
       activeTimestamps.push(now);
-      await AsyncStorage.setItem("chat_request_timestamps", JSON.stringify(activeTimestamps));
+      await AsyncStorage.setItem(rateLimitKey, JSON.stringify(activeTimestamps));
       return true;
     } catch (e) {
       console.error("Rate limit error", e);
@@ -188,7 +193,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
   };
 
   const innerContent = (
-    <>
+    <View style={styles.innerContainer}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -265,20 +270,18 @@ export const ChatbotScreen = ({ navigation }: any) => {
           </View>
         </>
       )}
-    </>
+    </View>
   );
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      {Platform.OS === "ios" ? (
-        <KeyboardAvoidingView style={styles.keyboardAvoid} behavior="padding" keyboardVerticalOffset={10}>
-          {innerContent}
-        </KeyboardAvoidingView>
-      ) : (
-        <View style={styles.keyboardAvoid}>
-          {innerContent}
-        </View>
-      )}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+      >
+        {innerContent}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -286,6 +289,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ffffff" },
   keyboardAvoid: { flex: 1 },
+  innerContainer: { flex: 1 },
   header: {
     paddingHorizontal: 12,
     paddingVertical: 12,
@@ -298,23 +302,23 @@ const styles = StyleSheet.create({
   },
   backBtn: { padding: 4, marginRight: 8 },
   mascotTitleContainer: { flexDirection: "row", alignItems: "center" },
-  mascotHeaderImg: { width: 36, height: 36, borderRadius: 18, marginRight: 8, backgroundColor: "#fa955d20" },
+  mascotHeaderImg: { width: 44, height: 44, borderRadius: 22, marginRight: 8, backgroundColor: "#fa955d20" },
   mascotName: { fontSize: 16, fontFamily: "Zalando-Bold", color: "#1f2937" },
   mascotStatus: { fontSize: 11, fontFamily: "Zalando-Medium", color: "#9d174d" },
   listContent: { padding: 16, paddingBottom: 24 },
   messageRow: { flexDirection: "row", marginVertical: 8, maxWidth: "80%" },
   userRow: { alignSelf: "flex-end", flexDirection: "row-reverse" },
   botRow: { alignSelf: "flex-start" },
-  mascotIcon: { width: 28, height: 28, borderRadius: 14, marginRight: 8, alignSelf: "flex-end", backgroundColor: "#fa955d20" },
+  mascotIcon: { width: 34, height: 34, borderRadius: 17, marginRight: 8, alignSelf: "flex-end", backgroundColor: "#fa955d20" },
   bubble: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 18 },
   userBubble: { backgroundColor: "#9d174d", borderBottomRightRadius: 2 },
-  botBubble: { backgroundColor: "#f3f4f6", borderBottomLeftRadius: 2, borderWidth: 1, borderColor: "#e5e7eb" },
+  botBubble: { backgroundColor: "#f9fafb", borderBottomLeftRadius: 2, borderWidth: 1, borderColor: "#f3f4f6" },
   systemBubble: { backgroundColor: "#fee2e2", alignSelf: "center", borderBottomLeftRadius: 18 },
   messageText: { fontSize: 14, fontFamily: "Zalando-Medium", lineHeight: 20 },
   userText: { color: "#ffffff" },
   botText: { color: "#000000" }, // Black text for high readability
   loadingRow: { flexDirection: "row", marginVertical: 8, alignSelf: "flex-start" },
-  loadingBubble: { backgroundColor: "#f3f4f6", borderWidth: 1, borderColor: "#e5e7eb", paddingHorizontal: 20, paddingVertical: 12, borderRadius: 18, borderBottomLeftRadius: 2 },
+  loadingBubble: { backgroundColor: "#f9fafb", borderWidth: 1, borderColor: "#f3f4f6", paddingHorizontal: 20, paddingVertical: 12, borderRadius: 18, borderBottomLeftRadius: 2 },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",

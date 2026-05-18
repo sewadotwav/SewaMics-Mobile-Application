@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: "Zalando-ExtraLight",
+    fontFamily: "Zalando-Medium",
     color: "#1f2937",
     padding: 0,
   },

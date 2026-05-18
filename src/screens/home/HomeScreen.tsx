@@ -165,7 +165,7 @@ export const HomeScreen = ({ navigation }: any) => {
           <SearchBar
             value={searchQuery}
             onChangeText={setSearchQuery}
-            onSubmitEditing={() => navigation.navigate("CatalogTab")}
+            onSubmitEditing={() => navigation.navigate("CatalogTab", { screen: "CatalogMain", params: { search: searchQuery } })}
           />
         </View>
 
