@@ -18,6 +18,7 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 import { useWishlist } from "../../context/WishlistContext";
 import { getProductImage } from "../../utils/imageMapper";
 import { LoadingScreen } from "../../components/common/LoadingScreen";
+import { FloatingMascotBubble } from "../../components/common/FloatingMascotBubble";
 
 interface WishlistScreenProps {
   navigation: any;
@@ -105,6 +106,7 @@ export const WishlistScreen = ({ navigation }: WishlistScreenProps) => {
           </View>
         </ScrollView>
       )}
+      <FloatingMascotBubble />
     </SafeAreaView>
   );
 };

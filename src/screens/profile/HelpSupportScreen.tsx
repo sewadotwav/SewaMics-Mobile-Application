@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import { FloatingMascotBubble } from "../../components/common/FloatingMascotBubble";
 
 interface HelpSupportScreenProps {
   navigation: any;
@@ -105,6 +106,7 @@ export const HelpSupportScreen = ({ navigation }: HelpSupportScreenProps) => {
           </View>
         </View>
       </ScrollView>
+      <FloatingMascotBubble />
     </SafeAreaView>
   );
 };

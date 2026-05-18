@@ -15,6 +15,7 @@ import { useAuth } from "../context/AuthContext";
 
 import { BottomTabNavigator } from "./BottomTabNavigator";
 import { CheckoutStackNavigator } from "./CheckoutStackNavigator";
+import { ChatbotScreen } from "../screens/profile/ChatbotScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +51,7 @@ const AppStack = () => {
     >
       <Stack.Screen name="BottomTabs" component={BottomTabNavigator} />
       <Stack.Screen name="CheckoutStack" component={CheckoutStackNavigator} />
+      <Stack.Screen name="Chatbot" component={ChatbotScreen} />
     </Stack.Navigator>
   );
 };

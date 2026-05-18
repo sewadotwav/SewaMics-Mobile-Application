@@ -18,6 +18,7 @@ import { SearchBar } from "../../components/common/SearchBar";
 import { useProducts } from "../../hooks/useProducts";
 import { useAuth } from "../../context/AuthContext";
 import { Product } from "../../services/productService";
+import { FloatingMascotBubble } from "../../components/common/FloatingMascotBubble";
 export const CatalogScreen = ({ navigation }: any) => {
   const { user } = useAuth();
   
@@ -211,6 +212,7 @@ export const CatalogScreen = ({ navigation }: any) => {
           </View>
         </TouchableOpacity>
       </Modal>
+      <FloatingMascotBubble />
     </SafeAreaView>
   );
 };

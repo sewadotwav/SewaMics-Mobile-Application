@@ -29,6 +29,7 @@ import { LoadingScreen } from "../../components/common/LoadingScreen";
 import { SearchBar } from "../../components/common/SearchBar";
 import { CategoryTabs } from "../../components/common/CategoryTabs";
 import { ProductCard } from "../../components/common/ProductCard";
+import { FloatingMascotBubble } from "../../components/common/FloatingMascotBubble";
 
 const { width: windowWidth } = Dimensions.get("window");
 const cardWidth = (windowWidth - 32) * 0.48;
@@ -306,6 +307,7 @@ export const HomeScreen = ({ navigation }: any) => {
           )}
         </View>
       </ScrollView>
+      <FloatingMascotBubble />
     </SafeAreaView>
   );
 };
