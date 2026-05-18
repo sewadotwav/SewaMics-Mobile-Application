@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useWishlist } from "../../context/WishlistContext";
 import { getProductImage } from "../../utils/imageMapper";
+import { LoadingScreen } from "../../components/common/LoadingScreen";
 
 interface WishlistScreenProps {
   navigation: any;
@@ -37,9 +38,7 @@ export const WishlistScreen = ({ navigation }: WishlistScreenProps) => {
       </View>
 
       {isLoading ? (
-        <View style={styles.centeredContainer}>
-          <ActivityIndicator size="large" color="#9d174d" />
-        </View>
+        <LoadingScreen message="Loading your wishlist..." />
       ) : wishlistItems.length === 0 ? (
         // ── Empty State ──────────────────────────────────────────
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>

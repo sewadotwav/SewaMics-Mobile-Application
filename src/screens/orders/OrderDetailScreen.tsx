@@ -10,6 +10,7 @@ import { getProductImage } from "../../utils/imageMapper";
 import { useNotification } from "../../context/NotificationContext";
 import { refundPaymentIntent } from "../../services/stripeService";
 import { CTAButton } from "../../components/common/CTAButton";
+import { LoadingScreen } from "../../components/common/LoadingScreen";
 
 // Helper functions for safe Firestore timestamp conversion
 const getSafeDate = (ts: any): Date => {
@@ -176,11 +177,7 @@ export const OrderDetailScreen = () => {
   };
 
   if (loading || !order) {
-    return (
-      <SafeAreaView style={styles.centerContainer} edges={["top"]}>
-        <ActivityIndicator size="large" color="#9d174d" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen message="Loading order details..." />;
   }
 
   const orderDate = order.createdAt ? getSafeDate(order.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Unknown date";

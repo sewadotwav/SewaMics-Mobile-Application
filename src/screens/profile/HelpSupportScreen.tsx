@@ -70,7 +70,7 @@ export const HelpSupportScreen = ({ navigation }: HelpSupportScreenProps) => {
         ))}
 
         {/* Contact */}
-        <Text style={styles.sectionLabel}>Contact Us</Text>
+        <Text style={[styles.sectionLabel, { color: "#9d174d" }]}>Contact Us</Text>
         <View style={styles.contactCard}>
           <TouchableOpacity style={[styles.contactRow, styles.rowBorder]} onPress={() => Linking.openURL("mailto:support@sewamics.com")} activeOpacity={0.7}>
             <View style={[styles.contactIconWrapper, { backgroundColor: "#9d174d18" }]}>
@@ -84,8 +84,8 @@ export const HelpSupportScreen = ({ navigation }: HelpSupportScreenProps) => {
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.contactRow, styles.rowBorder]} onPress={() => Linking.openURL("tel:+63281234567")} activeOpacity={0.7}>
-            <View style={[styles.contactIconWrapper, { backgroundColor: "#ff914d18" }]}>
-              <Feather name="phone" size={18} color="#ff914d" />
+            <View style={[styles.contactIconWrapper, { backgroundColor: "#9d174d18" }]}>
+              <Feather name="phone" size={18} color="#9d174d" />
             </View>
             <View style={styles.contactContent}>
               <Text style={styles.contactLabel}>Phone Support</Text>
@@ -95,8 +95,8 @@ export const HelpSupportScreen = ({ navigation }: HelpSupportScreenProps) => {
           </TouchableOpacity>
 
           <View style={styles.contactRow}>
-            <View style={[styles.contactIconWrapper, { backgroundColor: "#10b98118" }]}>
-              <Feather name="clock" size={18} color="#10b981" />
+            <View style={[styles.contactIconWrapper, { backgroundColor: "#9d174d18" }]}>
+              <Feather name="clock" size={18} color="#9d174d" />
             </View>
             <View style={styles.contactContent}>
               <Text style={styles.contactLabel}>Business Hours</Text>

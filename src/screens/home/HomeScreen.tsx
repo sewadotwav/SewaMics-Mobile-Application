@@ -15,6 +15,8 @@ import {
   RefreshControl,
   ActivityIndicator,
   Platform,
+  Animated,
+  Dimensions,
 } from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -27,6 +29,9 @@ import { LoadingScreen } from "../../components/common/LoadingScreen";
 import { SearchBar } from "../../components/common/SearchBar";
 import { CategoryTabs } from "../../components/common/CategoryTabs";
 import { ProductCard } from "../../components/common/ProductCard";
+
+const { width: windowWidth } = Dimensions.get("window");
+const cardWidth = (windowWidth - 32) * 0.48;
 
 export const HomeScreen = ({ navigation }: any) => {
   const { user } = useAuth();
@@ -45,6 +50,36 @@ export const HomeScreen = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = useState(false);
   const [userName, setUserName] = useState("Guest");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const FEATURED_IMAGES = useMemo(() => [
+    require("../../../assets/Featured Products/featuredBanana.png"),
+    require("../../../assets/Featured Products/featuredGrapes.png"),
+    require("../../../assets/Featured Products/featuredPumpkin.png"),
+    require("../../../assets/Featured Products/featuredStrawberry.png"),
+    require("../../../assets/Featured Products/showcase1.png"),
+    require("../../../assets/Featured Products/showcase2.png"),
+  ], []);
+
+  const [imgIdx, setImgIdx] = useState({ prev: 0, curr: 0 });
+  const slideAnim = useMemo(() => new Animated.Value(0), []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setImgIdx(prev => ({ prev: prev.curr, curr: (prev.curr + 2) % FEATURED_IMAGES.length }));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [FEATURED_IMAGES.length]);
+
+  useEffect(() => {
+    if (imgIdx.curr !== imgIdx.prev) {
+      slideAnim.setValue(0);
+      Animated.timing(slideAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [imgIdx, slideAnim]);
 
   // Fetch current user's profile
   useEffect(() => {
@@ -140,20 +175,102 @@ export const HomeScreen = ({ navigation }: any) => {
         </View>
 
         {/* D. FEATURED SHOWCASE */}
+        <View style={styles.featuredHeaderRow}>
+          <Text style={styles.sectionTitle}>Featured</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("CatalogTab")} activeOpacity={0.7}>
+            <Text style={styles.seeMoreText}>See more...</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.featuredContainer}>
           <View style={styles.featuredCard}>
-            <Image
-              source={require("../../../assets/Featured Products/showcase1.png")}
-              style={styles.featuredImage}
-              resizeMode="cover"
-            />
+            <Animated.View
+              style={[
+                {
+                  width: cardWidth * 2,
+                  height: "100%",
+                  flexDirection: "row",
+                },
+                {
+                  transform: [
+                    {
+                      translateX: slideAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [-cardWidth, 0],
+                      }),
+                    },
+                    {
+                      scaleX: slideAnim.interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [1, 1.08, 1], // Simulates horizontal motion blur
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
+              {/* Left Side: Incoming Image */}
+              <View style={{ width: cardWidth, height: "100%" }}>
+                <Image
+                  source={FEATURED_IMAGES[imgIdx.curr]}
+                  style={styles.featuredImage}
+                  resizeMode="cover"
+                />
+              </View>
+              {/* Right Side: Outgoing Image */}
+              <View style={{ width: cardWidth, height: "100%" }}>
+                <Image
+                  source={FEATURED_IMAGES[imgIdx.prev]}
+                  style={styles.featuredImage}
+                  resizeMode="cover"
+                />
+              </View>
+            </Animated.View>
           </View>
+          
           <View style={styles.featuredCard}>
-            <Image
-              source={require("../../../assets/Featured Products/showcase2.png")}
-              style={styles.featuredImage}
-              resizeMode="cover"
-            />
+            <Animated.View
+              style={[
+                {
+                  width: cardWidth * 2,
+                  height: "100%",
+                  flexDirection: "row",
+                },
+                {
+                  transform: [
+                    {
+                      translateX: slideAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [-cardWidth, 0],
+                      }),
+                    },
+                    {
+                      scaleX: slideAnim.interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [1, 1.08, 1], // Simulates horizontal motion blur
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
+              {/* Left Side: Incoming Image */}
+              <View style={{ width: cardWidth, height: "100%" }}>
+                <Image
+                  source={FEATURED_IMAGES[(imgIdx.curr + 1) % FEATURED_IMAGES.length]}
+                  style={styles.featuredImage}
+                  resizeMode="cover"
+                />
+              </View>
+              {/* Right Side: Outgoing Image */}
+              <View style={{ width: cardWidth, height: "100%" }}>
+                <Image
+                  source={FEATURED_IMAGES[(imgIdx.prev + 1) % FEATURED_IMAGES.length]}
+                  style={styles.featuredImage}
+                  resizeMode="cover"
+                />
+              </View>
+            </Animated.View>
           </View>
         </View>
 
@@ -261,16 +378,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   welcomeBannerText: {
-    fontSize: 38, 
-    fontFamily: "Zalando-Bold", 
+    fontSize: 38,
+    fontFamily: "Zalando-Bold",
     letterSpacing: -0.5,
-    color: "#9d174d", 
+    color: "#9d174d",
     marginBottom: 4,
   },
   welcomeSubtext: {
     fontSize: 15,
-    fontFamily: "Zalando-Medium", 
-    color: "#1f2937", 
+    fontFamily: "Zalando-Medium",
+    color: "#1f2937",
     lineHeight: 20,
     textAlign: "left",
   },
@@ -278,7 +395,7 @@ const styles = StyleSheet.create({
   // Hero Section
   heroContainer: {
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 24,
     borderRadius: 16,
     overflow: "hidden",
     height: 160,
@@ -289,6 +406,18 @@ const styles = StyleSheet.create({
   },
 
   // Featured Showcase
+  featuredHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    marginHorizontal: 16,
+    marginBottom: 12,
+  },
+  seeMoreText: {
+    fontSize: 12,
+    fontFamily: "Zalando-Medium",
+    color: "#9d174d",
+  },
   featuredContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -298,7 +427,9 @@ const styles = StyleSheet.create({
   featuredCard: {
     width: "48%", // Use exact percentage instead of flex to fix Android image blowout
     height: 160,
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
     borderRadius: 16,
     overflow: "hidden",
   },

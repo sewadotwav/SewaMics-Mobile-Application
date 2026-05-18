@@ -6,6 +6,7 @@ import { getUserAddresses, addAddress, updateAddress, deleteAddress, Address } f
 import { CheckoutData } from "./CheckoutScreen";
 import { CTAButton } from "../../components/common/CTAButton";
 import { AddressForm } from "../../components/common/AddressForm";
+import { LoadingScreen } from "../../components/common/LoadingScreen";
 
 interface ShippingStepProps {
   checkoutData: CheckoutData;
@@ -82,11 +83,7 @@ export const ShippingStep: React.FC<ShippingStepProps> = ({ checkoutData, update
   };
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9d174d" />
-      </View>
-    );
+    return <LoadingScreen message="Loading shipping addresses..." />;
   }
 
   return (

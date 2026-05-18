@@ -15,6 +15,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { useAuth } from "../../context/AuthContext";
 import { getProductImage } from "../../utils/imageMapper";
+import { LoadingScreen } from "../../components/common/LoadingScreen";
 
 // ── Status tab config ─────────────────────────────────────────
 const STATUS_TABS = [
@@ -152,16 +153,7 @@ export const OrdersScreen = () => {
 
   // ── Loading state ─────────────────────────────────────────
   if (loading && orders.length === 0) {
-    return (
-      <SafeAreaView style={styles.safeArea} edges={["top"]}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>My Orders</Text>
-        </View>
-        <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color="#9d174d" />
-        </View>
-      </SafeAreaView>
-    );
+    return <LoadingScreen message="Loading your orders..." />;
   }
 
   // ── Empty state ───────────────────────────────────────────
