@@ -18,8 +18,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { storage } from "../../config/firebaseConfig";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../context/AuthContext";
 import { getUserProfile, updateUserProfile } from "../../services/userService";
 import { getErrorMessage } from "../../utils/errorHandler";
@@ -34,7 +32,7 @@ interface ProfileScreenProps {
 
 export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const { user, logout } = useAuth();
-  const { showAlert } = useNotification();
+  const { showAlert, showToast } = useNotification();
 
   const [profile, setProfile] = useState<UserDocument | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -70,44 +68,22 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       mediaTypes: "images" as any,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.7,
+      quality: 0.3,
+      base64: true,
     });
 
-    if (result.canceled || !result.assets?.[0]?.uri) return;
+    if (result.canceled || !result.assets?.[0]?.base64) return;
 
     try {
       setImageUploading(true);
-      console.log("[Profile] Starting upload to bucket:", storage.app.options.storageBucket);
-      
-      // Robust Blob conversion for React Native
-      const uri = result.assets[0].uri;
-      const blob: any = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-          resolve(xhr.response);
-        };
-        xhr.onerror = function (e) {
-          console.error("XHR failed", e);
-          reject(new TypeError("Network request failed"));
-        };
-        xhr.responseType = "blob";
-        xhr.open("GET", uri, true);
-        xhr.send(null);
-      });
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
 
-      const storageRef = ref(storage, `users/${user!.uid}/profilePicture.jpg`);
-      await uploadBytes(storageRef, blob, { contentType: "image/jpeg" });
-      
-      // Important: Close the blob to free up memory
-      if (blob.close) blob.close();
-
-      const downloadURL = await getDownloadURL(storageRef);
-      await updateUserProfile(user!.uid, { profilePicture: downloadURL });
-      setProfile((prev) => prev ? { ...prev, profilePicture: downloadURL } : prev);
-      Alert.alert("Success", "Profile picture updated!");
+      await updateUserProfile(user!.uid, { profilePicture: base64Image });
+      setProfile((prev) => prev ? { ...prev, profilePicture: base64Image } : prev);
+      showToast("Profile picture updated!");
     } catch (err: any) {
-      console.error("Upload error details:", JSON.stringify(err, null, 2));
-      Alert.alert("Upload Failed", "Please ensure your Firebase Storage is set up and your .env variables are correct.");
+      console.error("Save error:", err);
+      Alert.alert("Update Failed", "An error occurred while saving your profile picture.");
     } finally {
       setImageUploading(false);
     }
