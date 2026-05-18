@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import { updateProfile } from "firebase/auth";
 import { useAuth } from "../../context/AuthContext";
 import { getUserProfile, updateUserProfile } from "../../services/userService";
 import { getErrorMessage } from "../../utils/errorHandler";
@@ -25,7 +26,7 @@ interface EditProfileScreenProps {
 }
 
 export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
-  const { user } = useAuth();
+  const { user, updateAuthProfile } = useAuth();
   const { showToast, showAlert } = useNotification();
 
   const [name, setName] = useState("");
@@ -66,6 +67,12 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
         name: name.trim(),
         phone: phone.trim(),
       });
+      // Synchronize changes to Firebase Auth and trigger instant global state updates
+      if (updateAuthProfile) {
+        await updateAuthProfile(name.trim());
+      } else {
+        await updateProfile(user, { displayName: name.trim() });
+      }
       showToast("Profile updated successfully!");
       navigation.goBack();
     } catch (err: any) {
@@ -179,7 +186,7 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
                   style={styles.fieldInput}
                   value={phone}
                   onChangeText={setPhone}
-                  placeholder="+1 555 000 0000"
+                  placeholder="+63 900 000 0000"
                   placeholderTextColor="#9ca3af"
                   keyboardType="phone-pad"
                 />
@@ -279,7 +286,7 @@ const styles = StyleSheet.create({
 
   card: { marginTop: 24, borderRadius: 20, borderWidth: 1, borderColor: "#e5e7eb", backgroundColor: "#ffffff", overflow: "hidden" },
   cardHeader: { paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },
-  cardTitle: { fontSize: 16, fontFamily: "Zalando-Bold", color: "#1f2937" },
+  cardTitle: { fontSize: 16, fontFamily: "Zalando-Bold", color: "#9d174d" },
 
   fieldRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 12, minHeight: 60 },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },

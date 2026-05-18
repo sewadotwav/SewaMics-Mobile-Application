@@ -15,7 +15,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 
-import { db } from "../config/firebaseConfig";
+import { db, auth } from "../config/firebaseConfig";
 import { COLLECTIONS, UserDocument } from "../config/firestoreSchema";
 
 // ─────────────────────────────────────────────
@@ -138,9 +138,23 @@ export async function updateUserProfile(
     // Confirm user exists before attempting update
     const snap = await getDoc(userRef);
     if (!snap.exists()) {
-      throw new Error(
-        `[userService] Cannot update — no profile found for UID: ${uid}`
-      );
+      // If the profile document doesn't exist (orphaned from previous signup phases), create it now!
+      const now = Timestamp.now();
+      const newUser: UserDocument = {
+        uid,
+        email: auth.currentUser?.email || updates.email || "",
+        name: updates.name || auth.currentUser?.displayName || "",
+        phone: updates.phone || "",
+        addresses: [],
+        preferences: {
+          notifications: true,
+          theme: "light",
+        },
+        createdAt: now,
+        updatedAt: now,
+      };
+      await setDoc(userRef, newUser);
+      return;
     }
 
     // Strip immutable fields from the update payload

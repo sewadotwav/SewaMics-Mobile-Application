@@ -8,6 +8,7 @@ interface SearchBarProps {
   onChangeText: (text: string) => void;
   onClearPress?: () => void;
   onFocus?: () => void;
+  onSubmitEditing?: () => void;
   autoFocus?: boolean;
 }
 
@@ -17,6 +18,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onChangeText,
   onClearPress,
   onFocus,
+  onSubmitEditing,
   autoFocus = false,
 }) => {
   return (
@@ -29,6 +31,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         onChangeText={onChangeText}
         returnKeyType="search"
         onFocus={onFocus}
+        onSubmitEditing={onSubmitEditing}
         autoFocus={autoFocus}
       />
       {value.length > 0 ? (

@@ -113,7 +113,11 @@ export const ProductDetailScreen = () => {
   };
 
   const handleAddToCart = async () => {
-    if (!user || !product) return;
+    if (!product) return;
+    if (!user) {
+      navigation.navigate("ProfileTab");
+      return;
+    }
     if (!selectedSize) {
       Alert.alert("Select a size", "Please choose a size before adding to cart.");
       return;
@@ -130,7 +134,11 @@ export const ProductDetailScreen = () => {
   };
 
   const handleBuyNow = () => {
-    if (!user || !product) return;
+    if (!product) return;
+    if (!user) {
+      navigation.navigate("ProfileTab");
+      return;
+    }
     if (!selectedSize) {
       Alert.alert("Select a size", "Please choose a size before buying.");
       return;

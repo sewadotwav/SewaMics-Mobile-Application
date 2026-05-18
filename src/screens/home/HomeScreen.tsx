@@ -86,7 +86,14 @@ export const HomeScreen = ({ navigation }: any) => {
   useEffect(() => {
     let isMounted = true;
     const fetchUserName = async () => {
-      if (user?.uid) {
+      if (user) {
+        // 1. Instantly use display name from Auth state if available
+        if (user.displayName) {
+          const firstName = user.displayName.split(" ")[0];
+          setUserName(firstName);
+        }
+        
+        // 2. Fetch Firestore profile for latest sync
         try {
           const profile = await getUserProfile(user.uid);
           if (isMounted && profile && profile.name) {
@@ -96,6 +103,8 @@ export const HomeScreen = ({ navigation }: any) => {
         } catch (error) {
           console.error("Error fetching user profile:", error);
         }
+      } else {
+        setUserName("Guest");
       }
     };
     fetchUserName();
@@ -156,7 +165,7 @@ export const HomeScreen = ({ navigation }: any) => {
           <SearchBar
             value={searchQuery}
             onChangeText={setSearchQuery}
-            onFocus={() => navigation.navigate("CatalogTab")}
+            onSubmitEditing={() => navigation.navigate("CatalogTab")}
           />
         </View>
 

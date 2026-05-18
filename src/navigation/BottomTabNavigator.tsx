@@ -121,6 +121,15 @@ export const BottomTabNavigator = () => {
     return () => { isMounted = false; clearInterval(interval); };
   }, [user?.uid]);
   
+  const authTabListener = ({ navigation }: any) => ({
+    tabPress: (e: any) => {
+      if (!user) {
+        e.preventDefault();
+        navigation.navigate("ProfileTab");
+      }
+    },
+  });
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -130,8 +139,6 @@ export const BottomTabNavigator = () => {
         tabBarStyle: {
           height: 60 + Math.max(insets.bottom, 16), // Dynamic height based on OS bottom buttons
           backgroundColor: "#ffffff",
-          borderTopColor: "#e5e7eb",
-          borderTopWidth: 1,
           paddingTop: 8,
           paddingBottom: Math.max(insets.bottom, 16), // Prevents OS buttons from overlapping
         },
@@ -166,8 +173,8 @@ export const BottomTabNavigator = () => {
     >
       <Tab.Screen name="HomeTab" component={HomeStack} options={{ tabBarLabel: "Home" }} />
       <Tab.Screen name="CatalogTab" component={CatalogStack} options={{ tabBarLabel: "Catalog" }} />
-      <Tab.Screen name="CartTab" component={CartStack} options={{ tabBarLabel: "Cart" }} />
-      <Tab.Screen name="OrdersTab" component={OrdersStack} options={{ tabBarLabel: "Orders" }} />
+      <Tab.Screen name="CartTab" component={CartStack} options={{ tabBarLabel: "Cart" }} listeners={authTabListener} />
+      <Tab.Screen name="OrdersTab" component={OrdersStack} options={{ tabBarLabel: "Orders" }} listeners={authTabListener} />
       <Tab.Screen name="ProfileTab" component={ProfileStack} options={{ tabBarLabel: "Profile" }} />
     </Tab.Navigator>
   );

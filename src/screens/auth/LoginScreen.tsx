@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontFamily: "Zalando-Medium", // 500
-    color: "#1f2937",
+    color: "#9d174d",
     marginBottom: 8,
   },
   input: {

@@ -42,7 +42,10 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   useEffect(() => {
     let isMounted = true;
     const fetchProfile = async () => {
-      if (!user?.uid) return;
+      if (!user?.uid) {
+        if (isMounted) setProfileLoading(false);
+        return;
+      }
       try {
         const data = await getUserProfile(user.uid);
         if (isMounted) setProfile(data);
@@ -105,6 +108,43 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       },
     });
   }, [logout, showAlert]);
+
+  if (!user) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../../assets/Brand/newSewaMicsLogo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <View style={styles.headerRight} />
+        </View>
+
+        <View style={styles.guestContainer}>
+          <Image
+            source={require("../../../assets/Brand/newSewaMicsLogo.png")}
+            style={styles.guestLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.guestTitle}>Explore SewaMics</Text>
+          <Text style={styles.guestSubtitle}>Sign in to create wishlists, customize orders, and chat with Clay!</Text>
+          
+          <TouchableOpacity
+            style={styles.guestBtn}
+            onPress={() => navigation.navigate("AuthRoot", { screen: "Splash" })}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.guestBtnText}>Log In or Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (profileLoading) {
     return <LoadingScreen message="Loading profile..." />;
@@ -249,14 +289,54 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
     backgroundColor: "#ffffff",
   },
   logoContainer: { width: 64, alignItems: "flex-start", justifyContent: "center" },
   logo: { width: 64, height: 48 },
   headerTitle: { fontSize: 18, fontFamily: "Zalando-SemiBold", color: "#9d174d", letterSpacing: -0.3, textAlign: "center", flex: 1 },
   headerRight: { width: 64 },
+
+  guestContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    backgroundColor: "#ffffff",
+  },
+  guestLogo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
+  },
+  guestTitle: {
+    fontSize: 24,
+    fontFamily: "Zalando-Bold",
+    color: "#9d174d",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  guestSubtitle: {
+    fontSize: 15,
+    fontFamily: "Zalando-Medium",
+    color: "#9d174d",
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: 36,
+    paddingHorizontal: 16,
+  },
+  guestBtn: {
+    width: "80%",
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#9d174d",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  guestBtnText: {
+    fontSize: 16,
+    fontFamily: "Zalando-Bold",
+    color: "#ffffff",
+  },
 
   avatarSection: { alignItems: "center", paddingTop: 24, paddingBottom: 8 },
   avatarContainer: {

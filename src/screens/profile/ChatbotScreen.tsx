@@ -211,7 +211,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
 
       {isSettingUp ? (
         <View style={styles.setupLoader}>
-          <ActivityIndicator size="large" color="#fa955d" />
+          <ActivityIndicator size="large" color="#9d174d" />
           <Text style={styles.setupText}>Connecting to Clay's brain...</Text>
         </View>
       ) : setupError ? (
@@ -237,7 +237,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
                 <View style={styles.loadingRow}>
                   <Image source={require("../../../assets/Brand/SewaMicsClay.png")} style={styles.mascotIcon} />
                   <View style={styles.loadingBubble}>
-                    <ActivityIndicator size="small" color="#fa955d" />
+                    <ActivityIndicator size="small" color="#9d174d" />
                   </View>
                 </View>
               ) : null
@@ -307,14 +307,14 @@ const styles = StyleSheet.create({
   botRow: { alignSelf: "flex-start" },
   mascotIcon: { width: 28, height: 28, borderRadius: 14, marginRight: 8, alignSelf: "flex-end", backgroundColor: "#fa955d20" },
   bubble: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 18 },
-  userBubble: { backgroundColor: "#fa955d", borderBottomRightRadius: 2 },
-  botBubble: { backgroundColor: "#f3f4f6", borderBottomLeftRadius: 2 },
+  userBubble: { backgroundColor: "#9d174d", borderBottomRightRadius: 2 },
+  botBubble: { backgroundColor: "#f3f4f6", borderBottomLeftRadius: 2, borderWidth: 1, borderColor: "#e5e7eb" },
   systemBubble: { backgroundColor: "#fee2e2", alignSelf: "center", borderBottomLeftRadius: 18 },
   messageText: { fontSize: 14, fontFamily: "Zalando-Medium", lineHeight: 20 },
   userText: { color: "#ffffff" },
-  botText: { color: "#1f2937" },
+  botText: { color: "#000000" }, // Black text for high readability
   loadingRow: { flexDirection: "row", marginVertical: 8, alignSelf: "flex-start" },
-  loadingBubble: { backgroundColor: "#f3f4f6", paddingHorizontal: 20, paddingVertical: 12, borderRadius: 18, borderBottomLeftRadius: 2 },
+  loadingBubble: { backgroundColor: "#f3f4f6", borderWidth: 1, borderColor: "#e5e7eb", paddingHorizontal: 20, paddingVertical: 12, borderRadius: 18, borderBottomLeftRadius: 2 },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",

@@ -75,7 +75,6 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
     snapshot.forEach((doc) => {
       if (!doc.exists()) return;
       const rawData = doc.data() as DocumentData;
-      console.log(`Raw Product Data for ${doc.id}:`, JSON.stringify(rawData));
 
       // Support common field name variants including a trailing space found in logs
       const priceValue = rawData.price ?? rawData.Price ?? rawData["price "] ?? 0;

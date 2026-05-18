@@ -212,12 +212,12 @@ export const SignupScreen = ({ navigation }: SignupScreenProps) => {
           <View style={styles.validationIndicator}>
             {passwordsMatch ? (
               <>
-                <Feather name="check" size={14} color="#10b981" />
+                <Feather name="check" size={14} color="#9d174d" />
                 <Text style={styles.matchTextValid}>Passwords match</Text>
               </>
             ) : (
               <>
-                <Feather name="x" size={14} color="#ef4444" />
+                <Feather name="x" size={14} color="#ff914d" />
                 <Text style={styles.matchTextInvalid}>Passwords don't match</Text>
               </>
             )}
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontFamily: "Zalando-Medium", // 500
-    color: "#1f2937",
+    color: "#9d174d",
     marginBottom: 8,
   },
   input: {
@@ -348,12 +348,12 @@ const styles = StyleSheet.create({
   },
   matchTextValid: {
     fontSize: 12,
-    color: "#10b981",
+    color: "#9d174d",
     fontFamily: "Zalando-Medium", // 500
   },
   matchTextInvalid: {
     fontSize: 12,
-    color: "#ef4444",
+    color: "#ff914d",
     fontFamily: "Zalando-Medium", // 500
   },
 

@@ -21,6 +21,7 @@ const Stack = createNativeStackNavigator();
 
 import { SignupScreen } from "../screens/auth/SignupScreen";
 import { SplashScreen } from "../screens/auth/SplashScreen";
+import { OTPVerificationScreen } from "../screens/auth/OTPVerificationScreen";
 
 // The authentication flow
 const AuthStack = () => {
@@ -57,7 +58,7 @@ const AppStack = () => {
 };
 
 export const RootNavigator = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isFullyVerified, loading } = useAuth();
 
   if (loading) {
     return <LoadingScreen />;
@@ -71,10 +72,13 @@ export const RootNavigator = () => {
         contentStyle: { backgroundColor: "#ffffff" },
       }}
     >
-      {isAuthenticated ? (
-        <Stack.Screen name="AppRoot" component={AppStack} />
+      {isAuthenticated && !isFullyVerified ? (
+        <Stack.Screen name="OTPVerification" component={OTPVerificationScreen} />
       ) : (
-        <Stack.Screen name="AuthRoot" component={AuthStack} />
+        <>
+          <Stack.Screen name="AppRoot" component={AppStack} />
+          <Stack.Screen name="AuthRoot" component={AuthStack} />
+        </>
       )}
     </Stack.Navigator>
   );

@@ -71,6 +71,13 @@ service cloud.firestore {
         && request.resource.data.email == resource.data.email;
 
       allow delete: if false; // Users cannot delete their own account document
+
+      // ─────────────────────────────────────────────
+      // PRIVATE USER SUBCOLLECTION (2FA, etc)
+      // ─────────────────────────────────────────────
+      match /private/{document=**} {
+        allow read, write: if isOwner(userId);
+      }
     }
 
     // ─────────────────────────────────────────────
