@@ -15,11 +15,13 @@ import {
   Platform,
   Alert,
   Image,
+  AppState,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const OTPVerificationScreen = () => {
   const { verifyOTPCode, resendOTPCode, logout, user } = useAuth();
@@ -28,17 +30,63 @@ export const OTPVerificationScreen = () => {
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  const expirationRef = useRef<number>(Date.now() + 300 * 1000);
 
   const inputRefs = useRef<TextInput[]>([]);
 
-  // Start 5-minute countdown
+  // Load or initialize absolute expiration timestamp
   useEffect(() => {
-    if (timeLeft <= 0) return;
+    let isMounted = true;
+    const loadExpiration = async () => {
+      if (!user?.uid) return;
+      try {
+        const stored = await AsyncStorage.getItem(`otp_expires_${user.uid}`);
+        if (stored) {
+          const exp = parseInt(stored, 10);
+          if (Date.now() < exp) {
+            expirationRef.current = exp;
+            if (isMounted) {
+              setTimeLeft(Math.max(0, Math.floor((exp - Date.now()) / 1000)));
+            }
+            return;
+          }
+        }
+        // Fallback / Initial: set fresh 5 minutes and store
+        const freshExp = Date.now() + 300 * 1000;
+        expirationRef.current = freshExp;
+        await AsyncStorage.setItem(`otp_expires_${user.uid}`, freshExp.toString());
+        if (isMounted) setTimeLeft(300);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    
+    loadExpiration();
+    return () => { isMounted = false; };
+  }, [user?.uid]);
+
+  // Active tick interval & AppState listener to handle waking up
+  useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      const remaining = Math.max(0, Math.floor((expirationRef.current - Date.now()) / 1000));
+      setTimeLeft(remaining);
+      if (remaining <= 0) {
+        clearInterval(interval);
+      }
     }, 1000);
-    return () => clearInterval(interval);
-  }, [timeLeft]);
+
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "active") {
+        const remaining = Math.max(0, Math.floor((expirationRef.current - Date.now()) / 1000));
+        setTimeLeft(remaining);
+      }
+    });
+
+    return () => {
+      clearInterval(interval);
+      subscription.remove();
+    };
+  }, []);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -90,6 +138,11 @@ export const OTPVerificationScreen = () => {
     setResending(true);
     try {
       await resendOTPCode();
+      const newExp = Date.now() + 300 * 1000;
+      expirationRef.current = newExp;
+      if (user?.uid) {
+        await AsyncStorage.setItem(`otp_expires_${user.uid}`, newExp.toString());
+      }
       setTimeLeft(300);
       setCode(["", "", "", "", "", ""]);
       showToast("A new 6-digit security code has been sent to your email.");

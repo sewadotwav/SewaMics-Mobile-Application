@@ -5,10 +5,6 @@
 // COPY-PASTE INSTRUCTIONS:
 //   Firebase Console → Firestore Database → Rules tab
 //   Paste the entire content below, then click "Publish".
-//
-// ADMIN SETUP:
-//   Admin privileges are granted via Firebase custom claims.
-//   See functions/setAdminClaim.ts to assign admin: true.
 // ============================================================
 
 rules_version = '2';
@@ -30,10 +26,31 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == uid;
     }
 
-    // Returns true if the signed-in user has the admin custom claim
+    // Returns true if the signed-in user has the admin custom claim OR is active in admins collection
     function isAdmin() {
-      return isAuthenticated() &&
-             request.auth.token.admin == true;
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        (exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.status == 'active')
+      );
+    }
+
+    // Resolves the role of the signed-in admin
+    function getAdminRole() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role;
+    }
+
+    // Role-specific helpers
+    function isSuperAdmin() {
+      return isAdmin() && (request.auth.token.role == 'super_admin' || getAdminRole() == 'super_admin');
+    }
+
+    function isInventoryManager() {
+      return isAdmin() && (request.auth.token.role == 'inventory_manager' || getAdminRole() == 'inventory_manager');
+    }
+
+    function isOrderManager() {
+      return isAdmin() && (request.auth.token.role == 'order_manager' || getAdminRole() == 'order_manager');
     }
 
     // Returns true if a field exists and is a non-empty string
@@ -47,34 +64,88 @@ service cloud.firestore {
     }
 
     // ─────────────────────────────────────────────
-    // USERS COLLECTION
-    // Path: /users/{userId}
-    //
-    // - Authenticated users can read/write ONLY their own document
-    // - Admins can read any user document (for order management)
-    // - No user can write another user's document
+    // ADMINS COLLECTION
+    // ─────────────────────────────────────────────
+    match /admins/{adminId} {
+      // Admins can read their own document; Super Admins can read all admin profiles
+      allow read: if isSuperAdmin() || isOwner(adminId);
+
+      // Only Super Admins can create admins
+      allow create: if isSuperAdmin()
+        && isNonEmptyString(request.resource.data.email)
+        && isNonEmptyString(request.resource.data.name)
+        && (request.resource.data.role in ['super_admin', 'inventory_manager', 'order_manager'])
+        && request.resource.data.status == 'active';
+
+      // Super Admins can update roles/status; Admins can update only their own name or preferences
+      allow update: if isSuperAdmin()
+        || (isOwner(adminId)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'preferences']));
+
+      // Super Admins can delete documents, except their own (prevent accidental self-deletion)
+      allow delete: if isSuperAdmin() && !isOwner(adminId);
+    }
+
+    // ─────────────────────────────────────────────
+    // SETTINGS COLLECTION
+    // ─────────────────────────────────────────────
+    match /settings/{settingId} {
+      // General settings/chatbot settings are read-only for public/clients and admins
+      allow read: if true;
+
+      // Only Super Admins can write or update configuration settings
+      allow write: if isSuperAdmin();
+    }
+
+    // ─────────────────────────────────────────────
+    // ACTIVITY LOGS COLLECTION (Immutable Audit Trail)
+    // ─────────────────────────────────────────────
+    match /activityLogs/{logId} {
+      // Read access is restricted to Super Admins
+      allow read: if isSuperAdmin();
+
+      // Active admins can append audit logs
+      allow create: if isAdmin()
+        && request.resource.data.adminId == request.auth.uid
+        && isNonEmptyString(request.resource.data.action)
+        && isNonEmptyString(request.resource.data.module)
+        && request.resource.data.timestamp == request.time;
+
+      // Logs can never be modified or deleted
+      allow update, delete: if false;
+    }
+
+    // ─────────────────────────────────────────────
+    // SALES REPORTS COLLECTION
+    // ─────────────────────────────────────────────
+    match /salesReports/{reportId} {
+      // All active admins can read analytical reports
+      allow read: if isAdmin();
+
+      // Only authorized admins can write/cache sales reports
+      allow write: if isSuperAdmin() || isInventoryManager() || isOrderManager();
+    }
+
+    // ─────────────────────────────────────────────
+    // USERS COLLECTION (Customers)
     // ─────────────────────────────────────────────
     match /users/{userId} {
-
-      allow read: if isOwner(userId) || isAdmin();
+      // Customers read their own; Super Admins & Order Managers read all
+      allow read: if isOwner(userId) || isSuperAdmin() || isOrderManager();
 
       allow create: if isOwner(userId)
         && isNonEmptyString(request.resource.data.uid)
         && isNonEmptyString(request.resource.data.email)
         && isNonEmptyString(request.resource.data.name)
-        // Ensure uid field matches the document path
         && request.resource.data.uid == userId;
 
       allow update: if isOwner(userId)
-        // Prevent users from changing their own uid or email via client
         && request.resource.data.uid == resource.data.uid
         && request.resource.data.email == resource.data.email;
 
-      allow delete: if false; // Users cannot delete their own account document
+      allow delete: if false; // Accounts cannot be deleted via client directly
 
-      // ─────────────────────────────────────────────
-      // PRIVATE USER SUBCOLLECTION (2FA, etc)
-      // ─────────────────────────────────────────────
+      // Private User Subcollection (2FA templates, private auth logs)
       match /private/{document=**} {
         allow read, write: if isOwner(userId);
       }
@@ -82,18 +153,13 @@ service cloud.firestore {
 
     // ─────────────────────────────────────────────
     // PRODUCTS COLLECTION
-    // Path: /products/{productId}
-    //
-    // - Anyone can READ products (public catalog — no auth required)
-    // - Only admins can CREATE, UPDATE, or DELETE products
     // ─────────────────────────────────────────────
     match /products/{productId} {
-
-      // Public read — unauthenticated users can browse the catalog
+      // Public catalog — anyone can browse mugs
       allow read: if true;
 
-      // Admins only: create a new product
-      allow create: if isAdmin()
+      // Admins (Super/Inventory) can create new products
+      allow create: if (isSuperAdmin() || isInventoryManager())
         && isNonEmptyString(request.resource.data.name)
         && isNonEmptyString(request.resource.data.category)
         && isNonEmptyString(request.resource.data.description)
@@ -101,32 +167,21 @@ service cloud.firestore {
         && isPositiveNumber(request.resource.data.stock)
         && request.resource.data.isActive is bool;
 
-      // Admins only: update an existing product (full edit)
-      allow update: if isAdmin()
-        // Prevent productId from being changed after creation
-        && request.resource.data.productId == resource.data.productId;
+      // Admins (Super/Inventory) can edit details; Clients can decrement stock on successful buy
+      allow update: if 
+        (isSuperAdmin() || isInventoryManager())
+        || (isAuthenticated()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock'])
+            && request.resource.data.stock >= 0);
 
-      // Authenticated users can update stock after a successful purchase or cancellation.
-      // Only the 'stock' field may change.
-      allow update: if isAuthenticated()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock'])
-        && request.resource.data.stock >= 0;
-
-      // Admins only: soft-delete by setting isActive: false (preferred)
-      // Hard delete is also permitted for admins
-      allow delete: if isAdmin();
+      // Only authorized admins can hard-delete products
+      allow delete: if isSuperAdmin() || isInventoryManager();
     }
 
     // ─────────────────────────────────────────────
     // CARTS COLLECTION
-    // Path: /carts/{userId}
-    //
-    // - Each cart document is keyed by the user's UID
-    // - Users can only read/write their own cart
-    // - Requires authentication
     // ─────────────────────────────────────────────
     match /carts/{userId} {
-
       allow read: if isOwner(userId);
 
       allow create: if isOwner(userId)
@@ -136,29 +191,20 @@ service cloud.firestore {
         && isPositiveNumber(request.resource.data.itemCount);
 
       allow update: if isOwner(userId)
-        // Prevent uid field from being changed
         && request.resource.data.uid == resource.data.uid;
 
-      allow delete: if isOwner(userId); // Allow cart clear on logout
+      allow delete: if isOwner(userId);
     }
 
     // ─────────────────────────────────────────────
     // ORDERS COLLECTION
-    // Path: /orders/{orderId}
-    //
-    // - Users can only read their own orders (filtered by userId field)
-    // - Users can CREATE an order (checkout)
-    // - Users CANNOT update or delete orders once placed
-    // - Admins can read all orders and update order/payment status
     // ─────────────────────────────────────────────
     match /orders/{orderId} {
+      // Customers read their own; Admins (Super/Order Managers) read all
+      allow read: if isSuperAdmin() || isOrderManager() ||
+                    (isAuthenticated() && resource.data.userId == request.auth.uid);
 
-      // Users see only their own orders; admins see all
-      allow read: if isAdmin() ||
-                    (isAuthenticated() &&
-                     resource.data.userId == request.auth.uid);
-
-      // Authenticated users can place an order
+      // Clients place order with default status 'pending'
       allow create: if isAuthenticated()
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.items is list
@@ -169,28 +215,20 @@ service cloud.firestore {
         && isNonEmptyString(request.resource.data.status)
         && isNonEmptyString(request.resource.data.paymentMethod)
         && isNonEmptyString(request.resource.data.paymentStatus)
-        // Initial order status must be 'pending'
         && request.resource.data.status == 'pending'
-        // paymentStatus is 'paid' when Stripe confirms before write,
-        // or 'pending' if using a deferred capture flow
-        && (request.resource.data.paymentStatus == 'paid' ||
-            request.resource.data.paymentStatus == 'pending');
+        && (request.resource.data.paymentStatus == 'paid' || request.resource.data.paymentStatus == 'pending');
 
-      // Only admins can update order status and payment status freely
-      allow update: if isAdmin()
-        // Prevent tampering with core order fields after creation
-        && request.resource.data.userId == resource.data.userId
-        && request.resource.data.totalAmount == resource.data.totalAmount
-        && request.resource.data.items == resource.data.items;
+      // Admins update status freely; Customers cancel before shipping
+      allow update: if 
+        isSuperAdmin() || isOrderManager()
+        || (isAuthenticated()
+            && resource.data.userId == request.auth.uid
+            && resource.data.status == 'pending'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'paymentStatus', 'cancelledAt'])
+            && request.resource.data.status == 'cancelled'
+            && request.resource.data.paymentStatus == 'refunded');
 
-      // Users can cancel their own orders (status to 'cancelled', paymentStatus to 'refunded')
-      allow update: if isAuthenticated()
-        && resource.data.userId == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'paymentStatus', 'cancelledAt'])
-        && request.resource.data.status == 'cancelled'
-        && request.resource.data.paymentStatus == 'refunded';
-
-      // No one can delete an order (preserve audit trail)
+      // No one can delete placed orders (audit integrity)
       allow delete: if false;
     }
 

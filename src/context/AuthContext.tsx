@@ -6,7 +6,7 @@
 // and user operations (login, signup, google auth).
 // ============================================================
 
-import React, { createContext, useState, useEffect, ReactNode, useCallback, useContext, useMemo } from "react";
+import React, { createContext, useState, useEffect, ReactNode, useCallback, useContext, useMemo, useRef } from "react";
 import { 
   User, 
   onAuthStateChanged, 
@@ -88,6 +88,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isFullyVerified, setIsFullyVerified] = useState<boolean>(false);
+  const isAuthenticating = useRef<boolean>(false);
 
   // Hook for Expo Google Auth Session
   const { signInWithGoogle } = useGoogleAuth();
@@ -106,7 +107,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Always check the verified session from AsyncStorage first.
       // This is the source of truth — independent of Firestore profile state.
       const verified = await AsyncStorage.getItem(`verified_session_${currentUser.uid}`);
-      const isVerified = verified === "true";
+      const isVerified = verified === "true" || isAuthenticating.current;
 
       // Attempt to load Firestore profile (best effort)
       try {
@@ -149,6 +150,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       clearError();
       if (!email || !pass) throw new Error("Email and password are required.");
       
+      isAuthenticating.current = true;
       const userCredential = await signInWithEmailAndPassword(auth, email.trim(), pass);
       await getUserProfile(userCredential.user.uid);
       setUser(userCredential.user);
@@ -159,6 +161,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (err: any) {
       setError(mapFirebaseError(err));
       throw err;
+    } finally {
+      isAuthenticating.current = false;
     }
   }, [clearError]);
 
@@ -208,12 +212,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const loginWithGoogle = useCallback(async () => {
     try {
       clearError();
+      isAuthenticating.current = true;
       await signInWithGoogle();
       // Google is auto-verified, session bypasses OTP
       setIsFullyVerified(true);
     } catch (err: any) {
       setError(mapFirebaseError(err));
       throw err;
+    } finally {
+      isAuthenticating.current = false;
     }
   }, [signInWithGoogle, clearError]);
 
