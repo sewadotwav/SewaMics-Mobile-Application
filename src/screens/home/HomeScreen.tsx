@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Home Screen
-// File: src/screens/home/HomeScreen.tsx
-// ============================================================
-
 import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
@@ -82,18 +77,18 @@ export const HomeScreen = ({ navigation }: any) => {
     }
   }, [imgIdx, slideAnim]);
 
-  // Fetch current user's profile
+
   useEffect(() => {
     let isMounted = true;
     const fetchUserName = async () => {
       if (user) {
-        // 1. Instantly use display name from Auth state if available
+
         if (user.displayName) {
           const firstName = user.displayName.split(" ")[0];
           setUserName(firstName);
         }
         
-        // 2. Fetch Firestore profile for latest sync
+
         try {
           const profile = await getUserProfile(user.uid);
           if (isMounted && profile && profile.name) {
@@ -117,7 +112,7 @@ export const HomeScreen = ({ navigation }: any) => {
     setRefreshing(false);
   };
 
-  // Locally filter products based on the search query
+
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
     return products.filter((p) =>
@@ -154,7 +149,7 @@ export const HomeScreen = ({ navigation }: any) => {
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 5 }]} // Reduced padding to remove dead space while keeping cards visible above tab bar
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 5 }]}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#9d174d" />
@@ -212,7 +207,7 @@ export const HomeScreen = ({ navigation }: any) => {
                     {
                       scaleX: slideAnim.interpolate({
                         inputRange: [0, 0.5, 1],
-                        outputRange: [1, 1.08, 1], // Simulates horizontal motion blur
+                        outputRange: [1, 1.08, 1],
                       }),
                     },
                   ],
@@ -257,7 +252,7 @@ export const HomeScreen = ({ navigation }: any) => {
                     {
                       scaleX: slideAnim.interpolate({
                         inputRange: [0, 0.5, 1],
-                        outputRange: [1, 1.08, 1], // Simulates horizontal motion blur
+                        outputRange: [1, 1.08, 1],
                       }),
                     },
                   ],
@@ -331,7 +326,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
 
-  // Header
+
   header: {
     height: 56,
     flexDirection: "row",
@@ -343,7 +338,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   logo: {
-    width: 64, // Increased logo size
+    width: 64,
     height: 48,
   },
   userPill: {
@@ -362,7 +357,7 @@ const styles = StyleSheet.create({
   },
   userPillText: {
     fontSize: 14,
-    fontFamily: "Zalando-Bold", // 700
+    fontFamily: "Zalando-Bold",
     letterSpacing: -0.5,
     color: "#001b3a",
     marginRight: 8,
@@ -376,14 +371,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  // Search Section Wrapper
+
   searchSection: {
     marginHorizontal: 16,
     marginTop: 8,
     marginBottom: 16,
   },
 
-  // Big Welcome Banner
+
   welcomeBanner: {
     marginHorizontal: 16,
     marginBottom: 12,
@@ -403,7 +398,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
 
-  // Hero Section
+
   heroContainer: {
     marginHorizontal: 16,
     marginBottom: 24,
@@ -416,7 +411,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 
-  // Featured Showcase
+
   featuredHeaderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -436,7 +431,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   featuredCard: {
-    width: "48%", // Use exact percentage instead of flex to fix Android image blowout
+    width: "48%",
     height: 160,
     backgroundColor: "#ffffff",
     borderWidth: 1,
@@ -451,7 +446,7 @@ const styles = StyleSheet.create({
 
 
 
-  // Product Showcase Typography
+
   productShowcaseHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -460,12 +455,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontFamily: "Zalando-Bold", // 700
+    fontFamily: "Zalando-Bold",
     letterSpacing: -0.5,
-    color: "#9d174d", // Updated to deep pink
+    color: "#9d174d",
   },
 
-  // 2-Column Grid Layout
+
   productGridContainer: {
     paddingHorizontal: 16,
   },
@@ -490,6 +485,6 @@ const styles = StyleSheet.create({
   emptyText: {
     color: "#6b7280",
     fontSize: 14,
-    fontFamily: "Zalando-Light", // 300
+    fontFamily: "Zalando-Light",
   },
 });

@@ -12,7 +12,7 @@ export const CheckoutStackNavigator = () => {
       screenOptions={{
         headerShown: false,
         animation: "slide_from_right",
-        gestureEnabled: false, // Prevent swiping back during checkout
+        gestureEnabled: false,
         contentStyle: { backgroundColor: "#ffffff" },
       }}
     >

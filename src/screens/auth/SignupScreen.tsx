@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Signup Screen
-// File: src/screens/auth/SignupScreen.tsx
-// ============================================================
-
 import React, { useState, useCallback, useMemo } from "react";
 import {
   View,
@@ -34,8 +29,8 @@ const validateEmail = (email: string): string | null => {
 const validatePassword = (password: string): string | null => {
   if (!password) return "Password is required.";
   if (password.length < 6) return "Password must be at least 6 characters.";
-  // As per previous requirements, you may add uppercase/lowercase/symbol validation here.
-  // We'll stick to basic length validation as requested for the prototype.
+
+
   return null;
 };
 // ─────────────────────────────────────────────────────────────
@@ -59,7 +54,7 @@ export const SignupScreen = ({ navigation }: SignupScreenProps) => {
   const [localLoading, setLocalLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
-  // Focus tracking for border colors (NO Android shadow/elevation bug)
+
   const [nameFocused, setNameFocused] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
@@ -67,12 +62,12 @@ export const SignupScreen = ({ navigation }: SignupScreenProps) => {
 
   const displayError = localError || authError;
 
-  // ─── Computed Properties ─────────────────────────────────
+
   const passwordsMatch = useMemo(() => {
     return password.length > 0 && confirmPassword.length > 0 && password === confirmPassword;
   }, [password, confirmPassword]);
 
-  // ─── Handlers ────────────────────────────────────────────
+
   const clearErrors = useCallback(() => {
     if (localError) setLocalError(null);
     if (authError) clearError();
@@ -99,9 +94,9 @@ export const SignupScreen = ({ navigation }: SignupScreenProps) => {
       setLocalLoading(true);
       setLocalError(null);
       await signupWithEmail(email, password, name);
-      // Auth context will navigate to AppRoot automatically on success
+
     } catch {
-      // Error is set in AuthContext
+
     } finally {
       setLocalLoading(false);
     }
@@ -114,7 +109,7 @@ export const SignupScreen = ({ navigation }: SignupScreenProps) => {
       setLocalError(null);
       await loginWithGoogle();
     } catch {
-      // Error is set in AuthContext
+
     } finally {
       setLocalLoading(false);
     }
@@ -124,7 +119,7 @@ export const SignupScreen = ({ navigation }: SignupScreenProps) => {
     navigation.navigate("Login");
   }, [navigation]);
 
-  // ─────────────────────────────────────────────────────────
+
 
   return (
     <AuthScreenWrapper
@@ -294,7 +289,7 @@ export const SignupScreen = ({ navigation }: SignupScreenProps) => {
 const styles = StyleSheet.create({
   label: {
     fontSize: 13,
-    fontFamily: "Zalando-Medium", // 500
+    fontFamily: "Zalando-Medium",
     color: "#9d174d",
     marginBottom: 8,
   },
@@ -306,7 +301,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    fontFamily: "Zalando-Regular", // 400
+    fontFamily: "Zalando-Regular",
     color: "#1f2937",
     backgroundColor: "#ffffff",
     marginBottom: 16,
@@ -314,7 +309,7 @@ const styles = StyleSheet.create({
   inputFocused: {
     borderColor: "#9d174d",
     borderWidth: 2,
-    // Explicitly avoiding elevation/shadow to prevent the Android focus jump bug
+
   },
   passwordContainer: {
     height: 48,
@@ -330,7 +325,7 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: "Zalando-Regular", // 400
+    fontFamily: "Zalando-Regular",
     color: "#1f2937",
     height: "100%",
   },
@@ -339,7 +334,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
 
-  // ── Password Validation ──
+
   validationIndicator: {
     flexDirection: "row",
     alignItems: "center",
@@ -349,15 +344,15 @@ const styles = StyleSheet.create({
   matchTextValid: {
     fontSize: 12,
     color: "#9d174d",
-    fontFamily: "Zalando-Medium", // 500
+    fontFamily: "Zalando-Medium",
   },
   matchTextInvalid: {
     fontSize: 12,
     color: "#ff914d",
-    fontFamily: "Zalando-Medium", // 500
+    fontFamily: "Zalando-Medium",
   },
 
-  // ── Remember Me ──
+
   rememberLeft: {
     flexDirection: "row",
     alignItems: "center",
@@ -386,19 +381,19 @@ const styles = StyleSheet.create({
   },
   rememberText: {
     fontSize: 13,
-    fontFamily: "Zalando-Light", // 300
+    fontFamily: "Zalando-Light",
     color: "#1f2937",
   },
 
-  // ── Error ──
+
   errorText: {
     fontSize: 13,
-    fontFamily: "Zalando-Regular", // 400
+    fontFamily: "Zalando-Regular",
     color: "#ef4444",
     marginBottom: 12,
   },
 
-  // ── Buttons ──
+
   signupButton: {
     height: 48,
     backgroundColor: "#9d174d",
@@ -413,10 +408,10 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: "#ffffff",
     fontSize: 16,
-    fontFamily: "Zalando-SemiBold", // 600
+    fontFamily: "Zalando-SemiBold",
   },
 
-  // ── OR Divider ──
+
   dividerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -429,12 +424,12 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     fontSize: 12,
-    fontFamily: "Zalando-Light", // 300
+    fontFamily: "Zalando-Light",
     color: "#9ca3af",
     marginHorizontal: 12,
   },
 
-  // ── Google Button ──
+
   googleButton: {
     height: 48,
     borderWidth: 1,
@@ -448,7 +443,7 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     fontSize: 16,
-    fontFamily: "Zalando-Medium", // 500
+    fontFamily: "Zalando-Medium",
     color: "#1f2937",
   },
 });

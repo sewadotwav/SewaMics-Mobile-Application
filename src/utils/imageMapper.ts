@@ -1,5 +1,5 @@
 export const ProductImages: Record<string, any> = {
-  // Products
+
   "coconut": require("../../assets/Products/coconut.jpg"),
   "eggplant": require("../../assets/Products/eggplant.jpg"),
   "fish": require("../../assets/Products/fish.jpg"),
@@ -11,7 +11,7 @@ export const ProductImages: Record<string, any> = {
   "strawberry": require("../../assets/Products/strawberry.jpg"),
   "tomato": require("../../assets/Products/tomato.jpg"),
   
-  // Featured / Fallbacks
+
   "bananafeatured": require("../../assets/Featured Products/featuredBanana.png"),
   "grapefeatured": require("../../assets/Featured Products/featuredGrapes.png"),
   "pumpkinfeatured": require("../../assets/Featured Products/featuredPumpkin.png"),
@@ -24,6 +24,6 @@ export const getProductImage = (imageKey: string | undefined) => {
   if (imageKey && ProductImages[imageKey]) {
     return ProductImages[imageKey];
   }
-  // Fallback if imageKey doesn't match
+
   return ProductImages["coconut"]; 
 };

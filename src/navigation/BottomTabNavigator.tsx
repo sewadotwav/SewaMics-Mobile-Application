@@ -1,11 +1,3 @@
-// ============================================================
-// SewaMics — Bottom Tab Navigator
-// File: src/navigation/BottomTabNavigator.tsx
-//
-// Implements the exact UI matching the prototype for the
-// main application tabs, including custom badges.
-// ============================================================
-
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -105,7 +97,7 @@ export const BottomTabNavigator = () => {
   const { user } = useAuth();
   const [cartCount, setCartCount] = useState(0);
 
-  // Fetch live cart count on mount and periodically
+
   useEffect(() => {
     if (!user?.uid) return;
     let isMounted = true;
@@ -116,7 +108,7 @@ export const BottomTabNavigator = () => {
       } catch {}
     };
     fetchCount();
-    // Poll every 3 seconds so badge stays fresh after add-to-cart
+
     const interval = setInterval(fetchCount, 3000);
     return () => { isMounted = false; clearInterval(interval); };
   }, [user?.uid]);
@@ -137,17 +129,17 @@ export const BottomTabNavigator = () => {
         tabBarActiveTintColor: "#9d174d",
         tabBarInactiveTintColor: "#9ca3af",
         tabBarStyle: {
-          height: 60 + Math.max(insets.bottom, 16), // Dynamic height based on OS bottom buttons
+          height: 60 + Math.max(insets.bottom, 16),
           backgroundColor: "#ffffff",
           paddingTop: 8,
-          paddingBottom: Math.max(insets.bottom, 16), // Prevents OS buttons from overlapping
+          paddingBottom: Math.max(insets.bottom, 16),
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "500",
         },
         tabBarItemStyle: {
-          paddingVertical: 4, // Helps create the 4px Icon-to-Label Spacing implicitly
+          paddingVertical: 4,
         },
         tabBarIcon: ({ color, size, focused }) => {
           let iconName: React.ComponentProps<typeof Feather>["name"] = "home";
@@ -183,14 +175,14 @@ export const BottomTabNavigator = () => {
 const styles = StyleSheet.create({
   placeholderContainer: {
     flex: 1,
-    backgroundColor: "#f3f4f6", // Using your Light Gray token
+    backgroundColor: "#f3f4f6",
     justifyContent: "center",
     alignItems: "center",
   },
   placeholderText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#6b7280", // Medium Gray
+    color: "#6b7280",
   },
   badgeContainer: {
     position: "absolute",
@@ -203,11 +195,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1.5,
-    borderColor: "#ffffff", // Creates a nice cutout effect around the badge
+    borderColor: "#ffffff",
   },
   badgeText: {
     color: "#ffffff",
-    fontSize: 10, // Adjusted slightly to fit the 18px circle perfectly
+    fontSize: 10,
     fontWeight: "700",
     textAlign: "center",
   },

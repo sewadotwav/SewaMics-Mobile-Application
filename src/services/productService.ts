@@ -2,7 +2,7 @@ import { collection, getDocs, query, where, limit, doc, getDoc, DocumentData } f
 import { db } from "../config/firebaseConfig";
 
 export interface Product {
-  id: string; // Document ID (or productID field)
+  id: string;
   category: string;
   currency: string;
   description: string;
@@ -63,10 +63,9 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
       q = query(q, where("category", "==", categoryFilter));
     }
 
-    // To avoid requiring a composite index in Firestore for every category,
-    // we remove orderBy from the query and sort client-side instead.
+
     if (maxLimit > 0) {
-      q = query(q, limit(maxLimit * 3)); // fetch a bit more to sort properly
+      q = query(q, limit(maxLimit * 3));
     }
 
     const snapshot = await getDocs(q);
@@ -76,7 +75,6 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
       if (!doc.exists()) return;
       const rawData = doc.data() as DocumentData;
 
-      // Support common field name variants including a trailing space found in logs
       const priceValue = rawData.price ?? rawData.Price ?? rawData["price "] ?? 0;
       const finalPrice = Number(priceValue);
 
@@ -96,10 +94,8 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
       });
     });
 
-    // Sort by rating descending client-side to avoid Firebase Index errors
-    products.sort((a, b) => b.rating - a.rating);
 
-    // Return only the requested limit
+    products.sort((a, b) => b.rating - a.rating);
     return products.slice(0, maxLimit);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -109,9 +105,8 @@ export const getProducts = async (categoryFilter?: string, maxLimit: number = 20
 
 export const getCategories = async (): Promise<string[]> => {
   try {
-    // In a production app with thousands of items, you might want a separate "categories" collection.
-    // For this prototype, we'll fetch all active products and extract unique categories.
-    // Since Firebase doesn't have a native SELECT DISTINCT, this is an acceptable approach for <100 items.
+
+
     const productsRef = collection(db, "products");
     const q = query(productsRef, where("isActive", "==", true));
     const snapshot = await getDocs(q);
@@ -120,13 +115,11 @@ export const getCategories = async (): Promise<string[]> => {
     snapshot.forEach((doc) => {
       const categoryRaw = doc.data().category;
       if (categoryRaw && typeof categoryRaw === "string") {
-        // Normalize: "fruits" -> "Fruits", "ANIMALS" -> "Animals"
         const normalized = categoryRaw.trim().charAt(0).toUpperCase() + categoryRaw.trim().slice(1).toLowerCase();
         categoriesSet.add(normalized);
       }
     });
 
-    // Sort categories, maybe ensure "Fruits" is first as per requirements
     const categories = Array.from(categoriesSet);
     categories.sort((a, b) => {
       if (a === "Fruits") return -1;
@@ -134,15 +127,11 @@ export const getCategories = async (): Promise<string[]> => {
       return a.localeCompare(b);
     });
 
-    // Fallback if empty
-    if (categories.length === 0) {
-      return ["Fruits", "Vegetables", "Animals"];
-    }
+    if (categories.length === 0) return ["Fruits", "Vegetables", "Animals"];
 
     return categories;
   } catch (error) {
     console.error("Error fetching categories:", error);
-    // Return defaults if error
     return ["Fruits", "Vegetables", "Animals"];
   }
 };

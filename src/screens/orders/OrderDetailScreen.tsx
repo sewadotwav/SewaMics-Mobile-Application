@@ -55,7 +55,7 @@ export const OrderDetailScreen = () => {
       if (docSnap.exists()) {
         setOrder({ id: docSnap.id, ...docSnap.data() });
       } else {
-        // Fallback or error
+
       }
     } catch (error) {
       console.error("Error fetching order detail", error);
@@ -67,7 +67,7 @@ export const OrderDetailScreen = () => {
   const confirmCancelOrder = () => {
     if (!order) return;
 
-    // Check 3 days constraint dynamically
+
     const orderTime = getSafeMillis(order.createdAt);
     const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
     const isPastThreeDays = (Date.now() - orderTime) > threeDaysInMs;
@@ -96,12 +96,12 @@ export const OrderDetailScreen = () => {
     if (!order) return;
     setCancelling(true);
     try {
-      // 1. Refund Stripe Payment
+
       if (order.stripePaymentIntentId) {
         try {
           await refundPaymentIntent(order.stripePaymentIntentId);
         } catch (stripeError: any) {
-          // If the charge was already refunded in Stripe, proceed gracefully to fix database sync issues
+
           if (stripeError.message && stripeError.message.includes("already been refunded")) {
             console.log("Stripe payment was already refunded. Continuing database sync.");
           } else {
@@ -110,7 +110,7 @@ export const OrderDetailScreen = () => {
         }
       }
 
-      // 2. Update Firestore Order Status
+
       const docRef = doc(db, "orders", order.id);
       await updateDoc(docRef, {
         status: "cancelled",
@@ -118,7 +118,7 @@ export const OrderDetailScreen = () => {
         cancelledAt: new Date(),
       });
 
-      // 3. Restore Stock for each item
+
       if (order.items && Array.isArray(order.items)) {
         await Promise.all(
           order.items.map((item: any) => {
@@ -131,10 +131,10 @@ export const OrderDetailScreen = () => {
         );
       }
 
-      // Refresh order details to show Cancelled badge
+
       await fetchOrderDetail();
       
-      // Notify successful cancellation with a premium dialog
+
       showAlert({
         title: "Order Cancelled Successfully",
         message: "Your order has been successfully cancelled and a full refund has been initiated to your payment card.",
@@ -181,9 +181,9 @@ export const OrderDetailScreen = () => {
   }
 
   const orderDate = order.createdAt ? getSafeDate(order.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Unknown date";
-  const last4 = "6522"; // Mock from prototype or fetch if saved
+  const last4 = "6522";
 
-  // Can cancel if order is in a cancellable status (not shipped or delivered)
+
   const isCancellable = order &&
     order.status !== "cancelled" &&
     order.status !== "shipped" &&

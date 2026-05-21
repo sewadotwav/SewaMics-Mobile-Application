@@ -1,11 +1,3 @@
-// ============================================================
-// SewaMics — Root Navigator
-// File: src/navigation/RootNavigator.tsx
-//
-// Handles app navigation flow depending on whether the user
-// is authenticated or not, splitting into AuthStack and AppStack.
-// ============================================================
-
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginScreen } from "../screens/auth/LoginScreen";

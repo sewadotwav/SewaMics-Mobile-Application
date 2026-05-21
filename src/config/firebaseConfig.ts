@@ -1,16 +1,3 @@
-// ============================================================
-// SewaMics — Firebase Configuration
-// File: src/config/firebaseConfig.ts
-//
-// SETUP INSTRUCTIONS:
-//   1. Copy your credentials from Firebase Console:
-//      https://console.firebase.google.com → Project Settings → Your apps
-//   2. Paste the values into your environment file:
-//      - React Admin Dashboard  → .env.local   (REACT_APP_ prefix)
-//      - Expo Mobile App        → .env.local   (EXPO_PUBLIC_ prefix)
-//   3. Never commit .env.local to version control.
-// ============================================================
-
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 // @ts-ignore - TS sometimes fails to find this export in Firebase v10 depending on tsconfig, but it works at runtime
 import { initializeAuth, getReactNativePersistence, Auth } from "firebase/auth";
@@ -25,11 +12,11 @@ import { getStorage, FirebaseStorage } from "firebase/storage";
 // ─────────────────────────────────────────────
 
 function getEnvVar(reactKey: string, expoKey: string): string {
-  // React / Create React App / Vite
+
   const reactValue =
     typeof process !== "undefined" ? process.env[reactKey] : undefined;
 
-  // Expo (EXPO_PUBLIC_ prefix — available via process.env in Expo SDK 49+)
+
   const expoValue =
     typeof process !== "undefined" ? process.env[expoKey] : undefined;
 
@@ -78,14 +65,14 @@ function buildFirebaseConfig() {
         "REACT_APP_FIREBASE_APP_ID",
         "EXPO_PUBLIC_FIREBASE_APP_ID"
       ),
-      // measurementId is optional — only needed for Analytics
+
       measurementId:
         process.env.REACT_APP_FIREBASE_MEASUREMENT_ID ??
         process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID ??
         undefined,
     };
   } catch (error) {
-    // Surface config errors clearly during development
+
     console.error("[SewaMics] Firebase configuration error:", error);
     throw error;
   }
@@ -98,7 +85,7 @@ function buildFirebaseConfig() {
 // ─────────────────────────────────────────────
 
 function initializeFirebase(): FirebaseApp {
-  // Prevent re-initialization on hot reload
+
   if (getApps().length > 0) {
     return getApps()[0];
   }
@@ -128,13 +115,13 @@ export const auth: Auth = (() => {
   const { getAuth } = require("firebase/auth");
   const existingApp = getApps().length > 0 ? getApps()[0] : app;
   
-  // We use initializeAuth to provide the persistence layer for React Native
+
   try {
     return initializeAuth(existingApp, {
       persistence: getReactNativePersistence(AsyncStorage),
     });
   } catch (e) {
-    // If already initialized, fallback to getAuth
+
     return getAuth(existingApp);
   }
 })();

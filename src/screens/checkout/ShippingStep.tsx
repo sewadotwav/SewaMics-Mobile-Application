@@ -53,7 +53,7 @@ export const ShippingStep: React.FC<ShippingStepProps> = ({ checkoutData, update
       }
       setFormVisible(false);
       await fetchAddresses();
-      setSelectedAddressId(address.id); // Auto-select the newly added/edited address
+      setSelectedAddressId(address.id);
     } catch (error) {
       console.error("Error saving address", error);
       alert("Failed to save address. Please try again.");
@@ -62,7 +62,7 @@ export const ShippingStep: React.FC<ShippingStepProps> = ({ checkoutData, update
 
   const handleDeleteAddress = async (address: Address) => {
     if (!user) return;
-    // Basic confirmation would ideally use Alert, but for simplicity here
+
     try {
       await deleteAddress(user.uid, address.id);
       if (selectedAddressId === address.id) setSelectedAddressId(null);
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   addressDetails: {
-    paddingLeft: 30, // Align with text next to radio
+    paddingLeft: 30,
     marginBottom: 12,
   },
   streetText: {

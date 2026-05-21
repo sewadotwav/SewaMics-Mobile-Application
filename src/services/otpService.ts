@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — OTP & 2FA Service
-// File: src/services/otpService.ts
-// ============================================================
-
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebaseConfig";
 
@@ -16,7 +11,7 @@ export const generateOTP = (): string => {
  * The code is configured to expire in 5 minutes.
  */
 export const storeOTP = async (uid: string, code: string): Promise<void> => {
-  const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes expiration
+  const expiresAt = Date.now() + 5 * 60 * 1000;
   const ref = doc(db, "users", uid, "private", "2fa");
   await setDoc(ref, {
     code,
@@ -34,7 +29,7 @@ export const verifyOTP = async (uid: string, enteredCode: string): Promise<boole
     if (!snap.exists()) return false;
 
     const { code, expiresAt } = snap.data();
-    if (Date.now() > expiresAt) return false; // Code expired
+    if (Date.now() > expiresAt) return false;
     return code === enteredCode.trim();
   } catch (error) {
     console.error("Error verifying OTP:", error);
@@ -52,7 +47,7 @@ export const sendOTPEmail = async (email: string, code: string): Promise<boolean
   const publicKey = process.env.EXPO_PUBLIC_EMAILJS_PUBLIC_KEY;
 
   if (!serviceId || !templateId || !publicKey || serviceId.includes("your_")) {
-    return false; // Keys not configured — do not send or log
+    return false;
   }
   
   try {
@@ -68,7 +63,7 @@ export const sendOTPEmail = async (email: string, code: string): Promise<boolean
         template_params: {
           email: email, 
           otp_code: code, 
-          time: new Date(Date.now() + 5 * 60 * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), // Matches {{time}} in user's EmailJS template
+          time: new Date(Date.now() + 5 * 60 * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       }),
     });

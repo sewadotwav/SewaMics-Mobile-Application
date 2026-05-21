@@ -1,11 +1,3 @@
-// ============================================================
-// SewaMics — Authentication Context
-// File: src/context/AuthContext.tsx
-//
-// Manages global authentication state, session persistence,
-// and user operations (login, signup, google auth).
-// ============================================================
-
 import React, { createContext, useState, useEffect, ReactNode, useCallback, useContext, useMemo, useRef } from "react";
 import { 
   User, 
@@ -90,7 +82,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isFullyVerified, setIsFullyVerified] = useState<boolean>(false);
   const isAuthenticating = useRef<boolean>(false);
 
-  // Hook for Expo Google Auth Session
+
   const { signInWithGoogle } = useGoogleAuth();
 
   const clearError = useCallback(() => setError(null), []);
@@ -104,22 +96,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return;
       }
 
-      // Always check the verified session from AsyncStorage first.
-      // This is the source of truth — independent of Firestore profile state.
+
+
       const verified = await AsyncStorage.getItem(`verified_session_${currentUser.uid}`);
       const isVerified = verified === "true" || isAuthenticating.current;
 
-      // Attempt to load Firestore profile (best effort)
+
       try {
         const profile = await getUserProfile(currentUser.uid);
         if (profile) {
           setUser(currentUser);
         } else {
-          // Profile missing in Firestore — user may still be verified from a previous session
+
           setUser(currentUser);
         }
       } catch {
-        setUser(currentUser); // Auth is valid even if Firestore is temporarily unavailable
+        setUser(currentUser);
       }
 
       setIsFullyVerified(isVerified);
@@ -155,7 +147,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await getUserProfile(userCredential.user.uid);
       setUser(userCredential.user);
       
-      // Standard logins bypass OTP and are marked as permanently verified
+
       await AsyncStorage.setItem(`verified_session_${userCredential.user.uid}`, "true");
       setIsFullyVerified(true);
     } catch (err: any) {
@@ -174,9 +166,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsFullyVerified(false);
 
       try {
-        // Attempt fresh registration
+
         const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), pass);
-        // Stamp the display name onto Firebase Auth immediately so ProfileScreen can use it as fallback
+
         await updateProfile(userCredential.user, { displayName: name.trim() });
         await createUserProfile(userCredential.user.uid, email.trim(), name.trim());
         setUser({ ...userCredential.user, displayName: name.trim() } as User);
@@ -185,16 +177,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         await storeOTP(userCredential.user.uid, code);
         await sendOTPEmail(email.trim(), code);
       } catch (createErr: any) {
-        // If the email is already registered but the user never verified OTP,
-        // sign them in silently and resend a fresh OTP code.
+
+
         if (createErr?.code === "auth/email-already-in-use") {
           const existingCred = await signInWithEmailAndPassword(auth, email.trim(), pass);
           const verified = await AsyncStorage.getItem(`verified_session_${existingCred.user.uid}`);
           if (verified === "true") {
-            // Already fully verified — this is a duplicate account error for real
+
             throw new Error("An account with this email is already active. Please log in instead.");
           }
-          // Unverified session — resend OTP and trap them on verification screen
+
           setUser(existingCred.user);
           const code = generateOTP();
           await storeOTP(existingCred.user.uid, code);
@@ -214,7 +206,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       clearError();
       isAuthenticating.current = true;
       await signInWithGoogle();
-      // Google is auto-verified, session bypasses OTP
+
       setIsFullyVerified(true);
     } catch (err: any) {
       setError(mapFirebaseError(err));
@@ -245,7 +237,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser({ ...auth.currentUser } as User);
   }, []);
 
-  // Listen to Firebase Auth state changes
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);

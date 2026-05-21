@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Notification Context
-// File: src/context/NotificationContext.tsx
-// ============================================================
-
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { CustomModal } from "../components/common/CustomModal";
 import { Toast } from "../components/common/Toast";
@@ -32,11 +27,11 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // Modal state
+
   const [modalVisible, setModalVisible] = useState(false);
   const [modalConfig, setModalConfig] = useState<AlertConfig | null>(null);
 
-  // Toast state
+
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 

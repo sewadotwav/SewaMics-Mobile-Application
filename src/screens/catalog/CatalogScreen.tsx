@@ -28,47 +28,47 @@ export const CatalogScreen = ({ navigation, route }: any) => {
     selectedCategory,
     setSelectedCategory,
     isLoading,
-  } = useProducts(""); // Pass empty string to fetch all if useProducts supports it, but wait, useProducts initializes with "Fruits" or first category. Let's adapt it.
+  } = useProducts("");
 
-  // State for Catalog
+
   const [searchTerm, setSearchTerm] = useState("");
   const [sortMenuVisible, setSortMenuVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState<string>("default");
 
-  // Listen to navigation route parameters for queries sent from HomeScreen
+
   useEffect(() => {
     if (route?.params?.search !== undefined) {
       setSearchTerm(route.params.search);
-      // Clear parameters to prevent re-applying old queries on subsequent switches
+
       navigation.setParams({ search: undefined });
     }
   }, [route?.params?.search, navigation]);
 
-  // Since useProducts sets a default category, if we want an "All" view, we need to handle it.
-  // For now, let's inject "All" into the category list client-side if it's not there.
+
+
   const displayCategories = ["All", ...categories.filter(c => c !== "All")];
   
-  // If useProducts didn't load "All", let's handle selected category state here to override it
+
   const [localCategory, setLocalCategory] = useState<string>("All");
 
-  // When "All" is selected, useProducts doesn't know what to do if it's strictly checking string.
-  // Actually, useProducts accepts `selectedCategory`. Let's handle fetch logic carefully.
-  // Wait, useProducts hook will fetch all if we pass an empty string, but the initial category sets to "Fruits".
-  // Let's rely on useProducts but force empty string when 'All'.
+
+
+
+
   useEffect(() => {
     if (localCategory === "All") {
-      setSelectedCategory(""); // fetch all (productService.ts ignores filter if empty)
+      setSelectedCategory("");
     } else {
       setSelectedCategory(localCategory);
     }
   }, [localCategory, setSelectedCategory]);
 
 
-  // Filtering & Sorting Logic
+
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
 
-    // Search Filter
+
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       result = result.filter(
@@ -78,7 +78,7 @@ export const CatalogScreen = ({ navigation, route }: any) => {
       );
     }
 
-    // Sorting
+
     switch (selectedSort) {
       case "price-asc":
         result.sort((a, b) => a.price - b.price);
@@ -93,7 +93,7 @@ export const CatalogScreen = ({ navigation, route }: any) => {
         result.sort((a, b) => (a.rating || 0) - (b.rating || 0));
         break;
       default:
-        break; // original order
+        break;
     }
 
     return result;
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   scrollContent: { paddingBottom: 10 },
   pageTitle: {
     fontSize: 28,
-    fontFamily: "Zalando-Bold", // 700
+    fontFamily: "Zalando-Bold",
     letterSpacing: -0.5,
     color: "#9d174d", 
     paddingHorizontal: 16,

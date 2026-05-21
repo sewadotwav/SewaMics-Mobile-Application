@@ -1,12 +1,3 @@
-// ============================================================
-// SewaMics — Firestore Schema Definitions
-// File: src/config/firestoreSchema.ts
-//
-// PURPOSE: Defines TypeScript interfaces for all Firestore
-// document types and exports collection name constants.
-// Does NOT write to or read from Firebase.
-// ============================================================
-
 import { Timestamp } from "firebase/firestore";
 
 // ─────────────────────────────────────────────
@@ -70,8 +61,8 @@ export interface CartItem {
   name: string;
   price: number;
   quantity: number;
-  image: string;        // imageKey used for local asset resolution
-  imageKey?: string;    // explicit imageKey alias (same value as image)
+  image: string;
+  imageKey?: string;
   selectedSize?: string;
   subtotal: number;
   addedAt: Timestamp;
@@ -83,7 +74,7 @@ export interface OrderItem {
   price: number;
   quantity: number;
   subtotal: number;
-  imageKey: string;     // stored so OrdersScreen can resolve product images
+  imageKey: string;
 }
 
 export interface ShippingAddress {
@@ -101,7 +92,7 @@ export interface ShippingAddress {
  * Created on sign-up (Email or Google).
  */
 export interface UserDocument {
-  uid: string; // primary key — matches Firebase Auth UID
+  uid: string;
   email: string;
   name: string;
   phone: string;
@@ -118,19 +109,19 @@ export interface UserDocument {
  * 10 ceramic mug SKUs.
  */
 export interface ProductDocument {
-  productId: string; // primary key
+  productId: string;
   name: string;
   category: string;
   price: number;
   currency: Currency;
-  images: string[]; // Firebase Storage URLs
+  images: string[];
   description: string;
   stock: number;
-  lowStockThreshold: number; // triggers low-stock alert in admin dashboard
-  isActive: boolean; // soft-delete / visibility toggle
-  rating: number; // 0–5
-  reviews: number; // total review count
-  specifications?: Record<string, string>; // e.g. { brand: "SewaMics", material: "Ceramic" }
+  lowStockThreshold: number;
+  isActive: boolean;
+  rating: number;
+  reviews: number;
+  specifications?: Record<string, string>;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -141,7 +132,7 @@ export interface ProductDocument {
  * Keyed by the same UID as users/{uid}.
  */
 export interface CartDocument {
-  uid: string; // primary key — references users.uid
+  uid: string;
   items: CartItem[];
   lastUpdated: Timestamp;
   cartTotal: number;
@@ -154,15 +145,15 @@ export interface CartDocument {
  * Shipping address is copied — not referenced — to preserve history.
  */
 export interface OrderDocument {
-  orderId: string; // primary key (auto-generated)
-  userId: string; // references users.uid
+  orderId: string;
+  userId: string;
   items: OrderItem[];
   subtotal: number;
   shippingFee: number;
   totalAmount: number;
   currency: "PHP";
   status: OrderStatus;
-  shippingAddress: ShippingAddress; // snapshot — decoupled from user's live address
+  shippingAddress: ShippingAddress;
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
   createdAt: Timestamp;

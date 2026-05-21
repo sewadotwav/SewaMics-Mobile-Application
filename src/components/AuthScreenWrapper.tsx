@@ -1,12 +1,3 @@
-// ============================================================
-// SewaMics — Auth Screen Wrapper
-// File: src/components/AuthScreenWrapper.tsx
-//
-// Reusable layout wrapper for Login and Signup screens.
-// Matches the prototype exactly with logo, title, subtitle,
-// keyboard handling, and safe area support.
-// ============================================================
-
 import React, { ReactNode } from "react";
 import {
   View,
@@ -119,7 +110,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
 
-  // ── Back Button ──
+
   backButton: {
     width: 36,
     height: 36,
@@ -129,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  // ── Logo ──
+
   logoContainer: {
     alignItems: "center",
     marginTop: 24,
@@ -142,17 +133,17 @@ const styles = StyleSheet.create({
     height: 90,
   },
 
-  // ── Title ──
+
   title: {
     fontSize: 36,
     fontFamily: "Zalando-Bold",
-    color: "#9d174d", // Updated to brand purple
+    color: "#9d174d",
     textAlign: "left",
     marginTop: 20,
     marginHorizontal: 16,
   },
 
-  // ── Subtitle ──
+
   subtitle: {
     fontSize: 13,
     fontFamily: "Zalando-Light",
@@ -164,13 +155,13 @@ const styles = StyleSheet.create({
     lineHeight: 13 * 1.5,
   },
 
-  // ── Form Content ──
+
   formContainer: {
     paddingHorizontal: 32,
     paddingTop: 28,
   },
 
-  // ── Bottom Text ──
+
   bottomArea: {
     paddingBottom: 20,
     paddingHorizontal: 16,

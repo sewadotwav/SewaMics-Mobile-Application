@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Login Screen
-// File: src/screens/auth/LoginScreen.tsx
-// ============================================================
-
 import React, { useState, useCallback } from "react";
 import {
   View,
@@ -54,7 +49,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
   const displayError = localError || authError;
 
-  // ─── Handlers ────────────────────────────────────────────
+
   const handleEmailChange = useCallback((text: string) => {
     setEmail(text);
     if (localError) setLocalError(null);
@@ -84,9 +79,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       setLocalLoading(true);
       setLocalError(null);
       await loginWithEmail(email, password);
-      // Navigation is handled automatically by RootNavigator on auth state change
+
     } catch {
-      // Error is set in AuthContext
+
     } finally {
       setLocalLoading(false);
     }
@@ -99,7 +94,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       setLocalError(null);
       await loginWithGoogle();
     } catch {
-      // Error is set in AuthContext
+
     } finally {
       setLocalLoading(false);
     }
@@ -108,7 +103,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const handleNavigateSignup = useCallback(() => {
     navigation.navigate("Signup");
   }, [navigation]);
-  // ─────────────────────────────────────────────────────────
+
 
   return (
     <AuthScreenWrapper
@@ -222,7 +217,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 const styles = StyleSheet.create({
   label: {
     fontSize: 13,
-    fontFamily: "Zalando-Medium", // 500
+    fontFamily: "Zalando-Medium",
     color: "#9d174d",
     marginBottom: 8,
   },
@@ -234,7 +229,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    fontFamily: "Zalando-Regular", // 400
+    fontFamily: "Zalando-Regular",
     color: "#1f2937",
     backgroundColor: "#ffffff",
     marginBottom: 16,
@@ -257,7 +252,7 @@ const styles = StyleSheet.create({
   passwordInput: {
     flex: 1,
     fontSize: 16,
-    fontFamily: "Zalando-Regular", // 400
+    fontFamily: "Zalando-Regular",
     color: "#1f2937",
     height: "100%",
   },
@@ -265,7 +260,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
 
-  // ── Remember Me ──
+
   rememberLeft: {
     flexDirection: "row",
     alignItems: "center",
@@ -294,19 +289,19 @@ const styles = StyleSheet.create({
   },
   rememberText: {
     fontSize: 13,
-    fontFamily: "Zalando-Light", // 300
+    fontFamily: "Zalando-Light",
     color: "#1f2937",
   },
 
-  // ── Error ──
+
   errorText: {
     fontSize: 13,
-    fontFamily: "Zalando-Regular", // 400
+    fontFamily: "Zalando-Regular",
     color: "#ef4444",
     marginBottom: 12,
   },
 
-  // ── Login Button ──
+
   loginButton: {
     height: 48,
     backgroundColor: "#9d174d",
@@ -321,10 +316,10 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: "#ffffff",
     fontSize: 16,
-    fontFamily: "Zalando-SemiBold", // 600
+    fontFamily: "Zalando-SemiBold",
   },
 
-  // ── OR Divider ──
+
   dividerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -338,12 +333,12 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     fontSize: 12,
-    fontFamily: "Zalando-Light", // 300
+    fontFamily: "Zalando-Light",
     color: "#9ca3af",
     marginHorizontal: 12,
   },
 
-  // ── Google Button ──
+
   googleButton: {
     height: 48,
     borderWidth: 1,
@@ -357,7 +352,7 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     fontSize: 16,
-    fontFamily: "Zalando-Medium", // 500
+    fontFamily: "Zalando-Medium",
     color: "#1f2937",
   },
 });

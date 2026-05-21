@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Mobile Splash Screen
-// File: src/screens/auth/SplashScreen.tsx
-// ============================================================
-
 import React, { useEffect, useRef } from "react";
 import {
   View,
@@ -23,7 +18,7 @@ export const SplashScreen = () => {
   const floatAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Floating animation logic — same as admin screen
+
     Animated.loop(
       Animated.sequence([
         Animated.timing(floatAnim, {

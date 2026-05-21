@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 14,
-    fontFamily: "Zalando-SemiBold", // 600
+    fontFamily: "Zalando-SemiBold",
     letterSpacing: -0.3,
   },
   tabTextActive: {

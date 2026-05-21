@@ -5,7 +5,7 @@ import { getProductImage } from "../../utils/imageMapper";
 import { useWishlist } from "../../context/WishlistContext";
 
 interface ProductCardProps {
-  product: any; // using any for now, or ProductDocument if imported
+  product: any;
   onPress: (productId: string) => void;
   style?: object;
 }
@@ -63,7 +63,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
 const styles = StyleSheet.create({
   productCard: {
-    width: "48%", // default width for 2-column grid
+    width: "48%",
     marginBottom: 24,
   },
   productImageContainer: {
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 15,
-    fontFamily: "Zalando-Medium", // 500 as requested
+    fontFamily: "Zalando-Medium",
     lineHeight: 18,
     letterSpacing: -0.2,
     color: "#1f2937",

@@ -1,12 +1,3 @@
-// ============================================================
-// SewaMics — Stripe Service
-// File: src/services/stripeService.ts
-//
-// Responsible ONLY for creating PaymentIntents server-side style.
-// Card confirmation is handled entirely by @stripe/stripe-react-native
-// SDK in ReviewStep.tsx (confirmPayment hook) — PCI-compliant.
-// ============================================================
-
 const STRIPE_SECRET_KEY = process.env.EXPO_PUBLIC_STRIPE_SECRET_KEY || "";
 const STRIPE_API_URL = "https://api.stripe.com/v1";
 

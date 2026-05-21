@@ -11,12 +11,12 @@ export const FloatingMascotBubble = () => {
       Animated.loop(
         Animated.sequence([
           Animated.timing(bounceAnim, {
-            toValue: -8, // Jump up 8px
+            toValue: -8,
             duration: 1200,
             useNativeDriver: true,
           }),
           Animated.timing(bounceAnim, {
-            toValue: 0, // Fall back down
+            toValue: 0,
             duration: 1000,
             useNativeDriver: true,
           }),
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#fa955d", // Brand tangerine orange highlight
+    borderColor: "#fa955d",
   },
   image: {
     width: 52,

@@ -35,7 +35,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ address, onSave, onCan
     }
 
     const newAddress: Address = {
-      id: address?.id || Math.random().toString(36).substring(2, 10), // Generate ID for new
+      id: address?.id || Math.random().toString(36).substring(2, 10),
       street: street.trim(),
       city: city.trim(),
       province: province.trim(),

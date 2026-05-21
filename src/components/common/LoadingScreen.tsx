@@ -18,7 +18,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   const rotation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Continuous rotation animation
+
     const rotate = () => {
       rotation.setValue(0);
       Animated.timing(rotation, {
@@ -60,13 +60,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   swirl: {
-    width: 60, // Slightly bigger than standard ActivityIndicator (approx 40-50)
+    width: 60,
     height: 60,
     marginBottom: 20,
   },
   message: {
     fontSize: 16,
-    fontFamily: "Zalando-Medium", // 500 weight as requested
+    fontFamily: "Zalando-Medium",
     color: "#1f2937",
     textAlign: "center",
   },

@@ -50,7 +50,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch wishlist from Firestore on login
+
   useEffect(() => {
     if (!user?.uid) {
       setWishlistItems([]);
@@ -78,13 +78,13 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     return () => { isMounted = false; };
   }, [user?.uid]);
 
-  // Check if a product is in the wishlist
+
   const isInWishlist = useCallback(
     (productId: string) => wishlistItems.some((item) => item.id === productId),
     [wishlistItems]
   );
 
-  // Add or remove a product from the wishlist
+
   const toggleWishlist = useCallback(
     async (product: Product) => {
       if (!user?.uid) return;
@@ -92,7 +92,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
       const productRef = doc(db, "users", user.uid, "wishlist", product.id);
       const alreadyIn = wishlistItems.some((item) => item.id === product.id);
 
-      // Optimistic update
+
       if (alreadyIn) {
         setWishlistItems((prev) => prev.filter((item) => item.id !== product.id));
         await deleteDoc(productRef);

@@ -52,7 +52,7 @@ export const addAddress = async (userId: string, address: Address): Promise<void
 
     let addresses = (userDoc.data().addresses as Address[]) || [];
     
-    // If the new address is default, unset all others
+
     if (address.isDefault) {
       addresses = addresses.map(addr => ({ ...addr, isDefault: false }));
     }
@@ -79,7 +79,7 @@ export const updateAddress = async (userId: string, addressId: string, updates: 
     
     if (index === -1) throw new Error("Address not found");
 
-    // If the update sets isDefault to true, unset all others
+
     let updatedAddresses = [...addresses];
     if (updates.isDefault) {
       updatedAddresses = updatedAddresses.map(addr => ({ ...addr, isDefault: false }));

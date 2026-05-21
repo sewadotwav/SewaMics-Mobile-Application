@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Profile Screen (No Dark Mode)
-// File: src/screens/profile/ProfileScreen.tsx
-// ============================================================
-
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -38,7 +33,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [profileLoading, setProfileLoading] = useState(true);
   const [imageUploading, setImageUploading] = useState(false);
 
-  // ── Fetch Firestore Profile ───────────────────────────────────
+
   useEffect(() => {
     let isMounted = true;
     const fetchProfile = async () => {
@@ -59,7 +54,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     return () => { isMounted = false; };
   }, [user]);
 
-  // ── Profile Picture Handler ───────────────────────────────────
+
   const handleProfilePictureChange = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -92,7 +87,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     }
   }, [user]);
 
-  // ── Logout Handler ────────────────────────────────────────────
+
   const handleLogout = useCallback(() => {
     showAlert({
       title: "Log Out",

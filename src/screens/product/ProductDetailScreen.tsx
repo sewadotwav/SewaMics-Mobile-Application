@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Product Detail Screen
-// File: src/screens/product/ProductDetailScreen.tsx
-// ============================================================
-
 import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
@@ -57,7 +52,7 @@ export const ProductDetailScreen = () => {
     weight: "Weight",
   };
 
-  // ── Fetch product ─────────────────────────────────────────────
+
   useEffect(() => {
     if (!productId) return;
     setLoading(true);
@@ -84,11 +79,11 @@ export const ProductDetailScreen = () => {
     const fetchOtherProducts = async () => {
       try {
         const products = await getProducts();
-        // Filter out current product
+
         const filtered = products.filter(p => p.id !== productId);
-        // Randomize the list (Fisher-Yates shuffle style)
+
         const randomized = filtered.sort(() => Math.random() - 0.5);
-        // Take only 6
+
         setOtherProducts(randomized.slice(0, 6));
       } catch (err) {
         console.error("Error fetching other products:", err);
@@ -99,7 +94,7 @@ export const ProductDetailScreen = () => {
     fetchOtherProducts();
   }, [productId]);
 
-  // ── Handlers ──────────────────────────────────────────────────
+
   const handleIncreaseQuantity = () => {
     if (product && quantity < product.stock) setQuantity(quantity + 1);
   };
@@ -160,7 +155,7 @@ export const ProductDetailScreen = () => {
       });
   };
 
-  // ── Shared Header ─────────────────────────────────────────────
+
   const Header = () => (
     <View style={styles.header}>
       <TouchableOpacity
@@ -179,7 +174,7 @@ export const ProductDetailScreen = () => {
     </View>
   );
 
-  // ── Render States ─────────────────────────────────────────────
+
   if (loading) return <LoadingScreen />;
 
   if (error || !product) {
@@ -474,7 +469,7 @@ export const ProductDetailScreen = () => {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#ffffff" },
 
-  // Header — matches ProfileScreen / EditProfileScreen standard
+
   header: {
     height: 56,
     flexDirection: "row",
@@ -489,10 +484,10 @@ const styles = StyleSheet.create({
   logo: { width: 64, height: 48 },
   headerRight: { width: 40 },
 
-  // Scroll
-  scrollContent: { paddingBottom: 75 }, // Extra padding to accommodate floating buttons
 
-  // Product Image
+  scrollContent: { paddingBottom: 75 },
+
+
   imageContainer: {
     width: "100%",
     height: 320,
@@ -516,7 +511,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
 
-  // Product Info
+
   infoSection: {
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -574,7 +569,7 @@ const styles = StyleSheet.create({
   stockText: {
     fontSize: 12,
     fontFamily: "Zalando-Regular",
-    color: "#9ca3af", // gray as in UI prototype
+    color: "#9ca3af",
   },
   tagsRow: {
     flexDirection: "row",
@@ -594,7 +589,7 @@ const styles = StyleSheet.create({
     color: "#d97706",
   },
 
-  // Size + Quantity — single horizontal row
+
   sizeQtyRow: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -623,7 +618,7 @@ const styles = StyleSheet.create({
   sizeButton: {
     height: 36,
     paddingHorizontal: 16,
-    borderRadius: 24, // pill shape, matching category tabs
+    borderRadius: 24,
     borderWidth: 1.5,
     borderColor: "#e5e7eb",
     backgroundColor: "#ffffff",
@@ -650,7 +645,7 @@ const styles = StyleSheet.create({
   qtyButton: {
     width: 36,
     height: 36,
-    borderRadius: 18, // perfect circle
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -671,7 +666,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // Product Description — plain, no card
+
   descriptionSection: {
     paddingHorizontal: 16,
     paddingTop: 20,
@@ -690,7 +685,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
 
-  // Specifications
+
   specSection: {
     paddingHorizontal: 16,
     paddingTop: 8,
@@ -738,7 +733,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
 
-  // Browse More Items
+
   moreItemsSection: {
     paddingTop: 8,
     paddingBottom: 40,
@@ -761,7 +756,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   smallCard: {
-    width: 110, // Shows approx 3.25 cards
+    width: 110,
     backgroundColor: "#ffffff",
     borderRadius: 12,
     overflow: "hidden",
@@ -803,10 +798,10 @@ const styles = StyleSheet.create({
     color: "#ff914d",
   },
 
-  // Sticky Bottom Action Bar
+
   stickyBar: {
     position: "absolute",
-    bottom: 20, // Float slightly above the very bottom
+    bottom: 20,
     left: 0,
     right: 0,
     flexDirection: "row",
@@ -815,7 +810,7 @@ const styles = StyleSheet.create({
   },
   cartButton: {
     flex: 1,
-    height: 54, // Slightly taller for better touch target when floating
+    height: 54,
     borderRadius: 27,
     borderWidth: 2,
     borderColor: "#9d174d",
@@ -823,7 +818,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    // Floating shadow
+
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -842,7 +837,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#9d174d",
     justifyContent: "center",
     alignItems: "center",
-    // Floating shadow
+
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -858,7 +853,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
 
-  // Error State
+
   errorContainer: {
     flex: 1,
     justifyContent: "center",

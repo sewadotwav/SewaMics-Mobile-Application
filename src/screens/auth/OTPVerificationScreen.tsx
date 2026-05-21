@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — OTP Verification Screen
-// File: src/screens/auth/OTPVerificationScreen.tsx
-// ============================================================
-
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -29,12 +24,12 @@ export const OTPVerificationScreen = () => {
   const [code, setCode] = useState<string[]>(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(300);
   const expirationRef = useRef<number>(Date.now() + 300 * 1000);
 
   const inputRefs = useRef<TextInput[]>([]);
 
-  // Load or initialize absolute expiration timestamp
+
   useEffect(() => {
     let isMounted = true;
     const loadExpiration = async () => {
@@ -51,7 +46,7 @@ export const OTPVerificationScreen = () => {
             return;
           }
         }
-        // Fallback / Initial: set fresh 5 minutes and store
+
         const freshExp = Date.now() + 300 * 1000;
         expirationRef.current = freshExp;
         await AsyncStorage.setItem(`otp_expires_${user.uid}`, freshExp.toString());
@@ -65,7 +60,7 @@ export const OTPVerificationScreen = () => {
     return () => { isMounted = false; };
   }, [user?.uid]);
 
-  // Active tick interval & AppState listener to handle waking up
+
   useEffect(() => {
     const interval = setInterval(() => {
       const remaining = Math.max(0, Math.floor((expirationRef.current - Date.now()) / 1000));
@@ -283,7 +278,7 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: "#9d174d", // Clean pink border matching brand
+    borderColor: "#9d174d",
     textAlign: "center",
     fontSize: 20,
     fontFamily: "Zalando-Bold",
@@ -305,12 +300,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     borderRadius: 25,
-    backgroundColor: "#9d174d", // Pink brand action button
+    backgroundColor: "#9d174d",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 24,
   },
-  verifyDisabled: { backgroundColor: "#fbcfe8" }, // light pink disabled state
+  verifyDisabled: { backgroundColor: "#fbcfe8" },
   verifyText: {
     fontSize: 16,
     fontFamily: "Zalando-Bold",

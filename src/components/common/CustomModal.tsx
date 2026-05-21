@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Custom Alert Modal
-// File: src/components/common/CustomModal.tsx
-// ============================================================
-
 import React from "react";
 import {
   View,

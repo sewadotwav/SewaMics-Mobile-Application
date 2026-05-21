@@ -10,10 +10,10 @@ import { ReviewStep } from "./ReviewStep";
 export interface CheckoutData {
   selectedAddress: any;
   paymentMethod: string;
-  cardDetails: any;          // { cardholderName, last4 } — no raw numbers stored
-  paymentMethodId: string | null; // Stripe PaymentMethod ID created in PaymentStep
-  clientSecret: string | null;    // Stripe PaymentIntent client_secret created in ReviewStep
-  selectedItems?: string[];       // Array of selected product IDs
+  cardDetails: any;
+  paymentMethodId: string | null;
+  clientSecret: string | null;
+  selectedItems?: string[];
 }
 
 export const CheckoutScreen = () => {

@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Edit Profile Screen
-// File: src/screens/profile/EditProfileScreen.tsx
-// ============================================================
-
 import React, { useState, useEffect } from "react";
 import {
   View, Text, StyleSheet, ScrollView, TextInput,
@@ -67,7 +62,7 @@ export const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
         name: name.trim(),
         phone: phone.trim(),
       });
-      // Synchronize changes to Firebase Auth and trigger instant global state updates
+
       if (updateAuthProfile) {
         await updateAuthProfile(name.trim());
       } else {

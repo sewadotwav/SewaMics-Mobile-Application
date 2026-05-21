@@ -1,12 +1,3 @@
-// ============================================================
-// SewaMics — Payment Step
-// File: src/screens/checkout/PaymentStep.tsx
-//
-// Uses @stripe/stripe-react-native CardField for PCI-compliant
-// card data collection. Raw card numbers are never stored or
-// transmitted by our code — the SDK handles tokenization.
-// ============================================================
-
 import React, { useState, useRef, useEffect } from "react";
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
@@ -79,7 +70,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
   }, []);
 
   const handleContinueReview = async () => {
-    // Validate cardholder name
+
     if (!cardholderName.trim()) {
       setNameError("Cardholder name is required");
       return;
@@ -91,9 +82,9 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
 
     setProcessing(true);
     try {
-      // Use the Stripe SDK to create a PaymentMethod from the CardForm.
-      // We pass paymentMethodData here to bind the cardholder's name, which Stripe seamlessly
-      // merges with the native CardForm details without overwriting.
+
+
+
       const { paymentMethod, error } = await createPaymentMethod({
         paymentMethodType: "Card",
         paymentMethodData: {
@@ -109,8 +100,8 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
         return;
       }
 
-      // Store the PaymentMethod ID and safe display info (last 4 digits only).
-      // The full card number is NEVER stored anywhere in the app.
+
+
       updateCheckoutData({
         paymentMethod: "credit_card",
         cardDetails: {
@@ -119,7 +110,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
           brand: paymentMethod.Card?.brand ?? "card",
         },
         paymentMethodId: paymentMethod.id,
-        clientSecret: null, // Created in ReviewStep with the real order amount
+        clientSecret: null,
       });
 
       updateCurrentStep("review");
@@ -361,7 +352,7 @@ const styles = StyleSheet.create({
   },
   errorText: { color: "#ef4444", fontSize: 12, fontFamily: "Zalando-Regular", marginTop: 4 },
   hintText: { color: "#9ca3af", fontSize: 11, fontFamily: "Zalando-Regular", marginTop: 6 },
-  // CardForm takes full width at stacked multi-line height (280 to prevent clipping)
+
   cardForm: { width: "100%", height: 280 },
   secureNotice: {
     flexDirection: "row",
@@ -371,7 +362,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   secureText: { fontSize: 11, fontFamily: "Zalando-Regular", color: "#9d174d", flex: 1 },
-  // High-Fidelity Virtual Credit Card Mockup Styles
+
   vCardWrapper: {
     marginHorizontal: 16,
     marginVertical: 12,

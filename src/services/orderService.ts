@@ -1,14 +1,3 @@
-// ============================================================
-// SewaMics — Order Service
-// File: src/services/orderService.ts
-//
-// Manages order documents in Firestore.
-// Collection: orders/{orderId}
-//
-// Orders are append-only — once created, only status can be
-// updated. Core fields (items, amounts, address) are immutable
-// to preserve the audit trail.
-// ============================================================
 
 import {
   collection,
@@ -33,10 +22,6 @@ import {
   ShippingAddress,
 } from "../config/firestoreSchema";
 
-// ─────────────────────────────────────────────
-// CONSTANTS
-// ─────────────────────────────────────────────
-
 const ALLOWED_STATUSES: OrderStatus[] = [
   "pending",
   "processing",
@@ -45,24 +30,7 @@ const ALLOWED_STATUSES: OrderStatus[] = [
   "cancelled",
 ];
 
-// ─────────────────────────────────────────────
-// SERVICE FUNCTIONS
-// ─────────────────────────────────────────────
-
-/**
- * Creates a new order document in Firestore.
- *
- * Generates a Firestore auto-ID for the orderId, writes it back
- * into the document, and returns it to the caller for navigation
- * to the order confirmation screen.
- *
- * @param userId          - Firebase Auth UID of the user placing the order
- * @param items           - Array of CartItems from the user's cart
- * @param totalAmount     - Final total including shipping (must be > 0)
- * @param shippingAddress - Delivery address selected at checkout
- * @returns The auto-generated orderId string
- * @throws If any validation fails or on Firestore write failure
- */
+/** Creates an order and returns its auto-generated Firestore ID. */
 export async function createOrder(
   userId: string,
   items: CartItem[],
@@ -70,7 +38,7 @@ export async function createOrder(
   shippingAddress: Address
 ): Promise<string> {
   try {
-    // ── Validate inputs ────────────────────────────────────
+
     if (!userId || userId.trim() === "") {
       throw new Error("[orderService] userId must not be empty.");
     }
@@ -90,42 +58,38 @@ export async function createOrder(
       );
     }
 
-    // ── Map CartItem[] → OrderItem snapshot ───────────────
-    // Snapshot preserves price/name at time of purchase,
-    // decoupling the order from future product changes.
+
     const orderItems = items.map((item) => ({
-      productId: item.productId,
+      productID: item.productId,
       name: item.name,
       price: item.price,
       quantity: item.quantity,
       subtotal: item.subtotal,
+      imageKey: item.imageKey ?? "",
     }));
 
-    // ── Map Address → ShippingAddress snapshot ─────────────
-    // Strip identity fields (id, type, isDefault) — only
-    // the delivery location is relevant to the order.
+
     const snapshotAddress: ShippingAddress = {
       street: shippingAddress.street,
       city: shippingAddress.city,
       province: shippingAddress.province,
     };
 
-    // ── Generate auto-ID and write order ───────────────────
     const ordersRef = collection(db, COLLECTIONS.ORDERS);
-    const newOrderRef = doc(ordersRef); // Firestore-generated ID
+    const newOrderRef = doc(ordersRef);
     const now = Timestamp.now();
 
     const orderData: OrderDocument = {
       orderId: newOrderRef.id,
       userId,
       items: orderItems,
-      subtotal: totalAmount,     // caller is responsible for pre-calc
-      shippingFee: 0,            // included in totalAmount from caller
+      subtotal: totalAmount,
+      shippingFee: 0,
       totalAmount,
       currency: "PHP",
       status: "pending",
       shippingAddress: snapshotAddress,
-      paymentMethod: "credit_card", // default — updated post-payment
+      paymentMethod: "credit_card",
       paymentStatus: "pending",
       createdAt: now,
       shippedAt: null,
@@ -148,18 +112,7 @@ export async function createOrder(
   }
 }
 
-// ─────────────────────────────────────────────
 
-/**
- * Fetches a single order by its Firestore document ID.
- *
- * Returns null if the order doesn't exist — no error thrown,
- * since a missing order may be a valid state (e.g. stale link).
- *
- * @param orderId - Auto-generated Firestore document ID of the order
- * @returns The OrderDocument, or null if not found
- * @throws On Firestore read failure
- */
 export async function getOrderById(
   orderId: string
 ): Promise<OrderDocument | null> {
@@ -181,18 +134,7 @@ export async function getOrderById(
   }
 }
 
-// ─────────────────────────────────────────────
 
-/**
- * Fetches all orders belonging to a specific user.
- *
- * Results are sorted by createdAt descending (newest first).
- * Returns an empty array if the user has placed no orders.
- *
- * @param userId - Firebase Auth UID of the user
- * @returns Array of OrderDocuments sorted newest-first
- * @throws On Firestore read failure
- */
 export async function getUserOrders(userId: string): Promise<OrderDocument[]> {
   try {
     const ordersRef = collection(db, COLLECTIONS.ORDERS);
@@ -218,28 +160,12 @@ export async function getUserOrders(userId: string): Promise<OrderDocument[]> {
   }
 }
 
-// ─────────────────────────────────────────────
-
-/**
- * Updates the status of an existing order.
- *
- * Validates that the new status is one of the allowed values
- * before writing. Core order fields are not affected.
- *
- * @param orderId - Firestore document ID of the order to update
- * @param status  - New order status (must be a valid OrderStatus value)
- * @throws If the order does not exist
- * @throws If the status value is not in the allowed list
- * @throws On Firestore write failure
- *
- * TODO: Add admin check before allowing status update
- */
+// TODO: Add admin auth check before allowing status update
 export async function updateOrderStatus(
   orderId: string,
   status: OrderStatus
 ): Promise<void> {
   try {
-    // Validate status value
     if (!ALLOWED_STATUSES.includes(status)) {
       throw new Error(
         `[orderService] Invalid status "${status}". ` +
@@ -269,22 +195,7 @@ export async function updateOrderStatus(
   }
 }
 
-// ─────────────────────────────────────────────
-
-/**
- * Cancels an order by setting its status to 'cancelled'.
- *
- * Only orders currently in 'pending' status can be cancelled.
- * Orders that are already processing, shipped, or delivered
- * cannot be cancelled through the app.
- *
- * @param orderId - Firestore document ID of the order to cancel
- * @throws If the order does not exist
- * @throws If the order status is not 'pending'
- * @throws On Firestore write failure
- *
- * TODO: Check userId matches auth user before allowing cancel
- */
+// TODO: Verify userId matches auth user before allowing cancel
 export async function cancelOrder(orderId: string): Promise<void> {
   try {
     const orderRef = doc(db, COLLECTIONS.ORDERS, orderId);

@@ -11,7 +11,7 @@ export const useProducts = (initialCategory?: string) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch categories once on mount
+
   useEffect(() => {
     let isMounted = true;
     
@@ -33,12 +33,12 @@ export const useProducts = (initialCategory?: string) => {
     return () => { isMounted = false; };
   }, [initialCategory]);
 
-  // Fetch products whenever selected category changes
+
   const fetchProducts = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      // Limit to 100 as per requirements to show all products
+
       const fetchedProducts = await getProducts(selectedCategory || undefined, 100);
       setProducts(fetchedProducts);
     } catch (err: any) {

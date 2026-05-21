@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Toast Notification
-// File: src/components/common/Toast.tsx
-// ============================================================
-
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { Feather } from "@expo/vector-icons";
@@ -52,7 +47,7 @@ export const Toast = ({ visible, message, onHide, duration = 2000 }: ToastProps)
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 120, // above sticky bar
+    bottom: 120,
     left: 20,
     right: 20,
     alignItems: "center",
@@ -61,7 +56,7 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(243, 244, 246, 0.95)", // Light gray opaque
+    backgroundColor: "rgba(243, 244, 246, 0.95)",
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 30,
@@ -74,6 +69,6 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 14,
     fontFamily: "Zalando-SemiBold",
-    color: "#9d174d", // Purple
+    color: "#9d174d",
   },
 });

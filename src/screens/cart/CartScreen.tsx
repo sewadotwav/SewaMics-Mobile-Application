@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Cart Screen
-// File: src/screens/cart/CartScreen.tsx
-// ============================================================
-
 import React, { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -43,10 +38,10 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [actionLoading, setActionLoading] = useState<string | null>(null); // productId being acted on
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [uncheckedItemIds, setUncheckedItemIds] = useState<Set<string>>(new Set());
 
-  // ── Fetch cart ────────────────────────────────────────────────
+
   const fetchCart = useCallback(async () => {
     if (!user?.uid) return;
     try {
@@ -60,7 +55,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
     }
   }, [user?.uid]);
 
-  // Re-fetch every time the tab is focused (so add-to-cart reflects immediately)
+
   useFocusEffect(
     useCallback(() => {
       fetchCart();
@@ -72,7 +67,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
     fetchCart();
   };
 
-  // ── Handlers ──────────────────────────────────────────────────
+
   const handleRemove = async (productId: string) => {
     showAlert({
       title: "Remove Item",
@@ -144,12 +139,12 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
     });
   };
 
-  // ── Derived values ────────────────────────────────────────────
+
   const checkedCartItems = cartItems.filter(item => !uncheckedItemIds.has(item.productId));
   const subtotal = checkedCartItems.reduce((sum, item) => sum + item.subtotal, 0);
   const totalAmount = subtotal + (checkedCartItems.length > 0 ? DELIVERY_FEE : 0);
 
-  // ── Render ────────────────────────────────────────────────────
+
   if (loading) return <LoadingScreen message="Loading your cart..." />;
 
   return (
@@ -169,7 +164,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
         contentContainerStyle={[
           { flexGrow: 1 },
           styles.scrollContent,
-          cartItems.length > 0 && { paddingBottom: 250 }, // Extra space for sticky footer
+          cartItems.length > 0 && { paddingBottom: 250 },
         ]}
         refreshControl={
           <RefreshControl
@@ -229,7 +224,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
                   <View style={styles.thumbnailWrapper}>
                     <Image
                       source={getProductImage(
-                        item.productId.split("-")[0] // derive imageKey from productId
+                        item.productId.split("-")[0]
                       )}
                       style={styles.thumbnail}
                       resizeMode="cover"
@@ -338,7 +333,7 @@ export const CartScreen = ({ navigation }: CartScreenProps) => {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#ffffff" },
 
-  // Header — white, no gray
+
   header: {
     height: 56,
     flexDirection: "row",
@@ -367,13 +362,13 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
 
-  // Scroll
+
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 8,
   },
 
-  // Cart Items Container 
+
   cartContainer: {
     flex: 1,
     backgroundColor: "#ffffff",
@@ -383,7 +378,7 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
 
-  // Empty state
+
   emptyState: {
     flex: 1,
     justifyContent: "center",
@@ -421,7 +416,7 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
 
-  // Cart Item Row
+
   cartItem: {
     position: "relative",
     flexDirection: "row",
@@ -456,7 +451,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#f3f4f6",
   },
 
-  // Circular thumbnail
+
   thumbnailWrapper: {
     width: 64,
     height: 64,
@@ -466,7 +461,7 @@ const styles = StyleSheet.create({
   },
   thumbnail: { width: "100%", height: "100%" },
 
-  // Item info
+
   itemInfo: { flex: 1 },
   itemName: {
     fontSize: 14,
@@ -489,7 +484,7 @@ const styles = StyleSheet.create({
     color: "#9d174d",
   },
 
-  // Quantity stepper
+
   qtyRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -518,13 +513,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // Item right (price + remove)
+
   itemRight: {
     alignItems: "flex-end",
     gap: 8,
   },
   priceCapsule: {
-    // No background, flat text
+
   },
   priceText: {
     fontSize: 16,
@@ -535,7 +530,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
 
-  // Summary card — purple themed, flat floating, opaque
+
   summaryCard: {
     marginHorizontal: 16,
     marginBottom: 16,
@@ -591,6 +586,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   paymentButton: {
-    // CTAButton handles all internal styling
+
   },
 });

@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Wishlist Screen (Connected to WishlistContext)
-// File: src/screens/profile/WishlistScreen.tsx
-// ============================================================
-
 import React from "react";
 import {
   View,
@@ -41,7 +36,7 @@ export const WishlistScreen = ({ navigation }: WishlistScreenProps) => {
       {isLoading ? (
         <LoadingScreen message="Loading your wishlist..." />
       ) : wishlistItems.length === 0 ? (
-        // ── Empty State ──────────────────────────────────────────
+
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           <View style={styles.emptyContainer}>
           <View style={styles.emptyIconWrapper}>
@@ -62,7 +57,7 @@ export const WishlistScreen = ({ navigation }: WishlistScreenProps) => {
           </View>
         </ScrollView>
       ) : (
-        // ── Product Grid ─────────────────────────────────────────
+
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.gridContent}
@@ -129,7 +124,7 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 18, fontFamily: "Zalando-SemiBold", color: "#1f2937", letterSpacing: -0.3 },
   headerRight: { width: 40 },
 
-  // Empty State
+
   emptyContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 32, paddingBottom: 40 },
   emptyIconWrapper: {
     width: 100, height: 100, borderRadius: 50,
@@ -144,7 +139,7 @@ const styles = StyleSheet.create({
   },
   browseButtonText: { color: "#ffffff", fontSize: 16, fontFamily: "Zalando-SemiBold" },
 
-  // Product Grid (mirrors HomeScreen)
+
   gridContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100 },
   productGrid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
   productCard: { width: "48%", marginBottom: 24 },

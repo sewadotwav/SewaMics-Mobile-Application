@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Help & Support Screen (No Dark Mode)
-// File: src/screens/profile/HelpSupportScreen.tsx
-// ============================================================
-
 import React, { useState } from "react";
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking,

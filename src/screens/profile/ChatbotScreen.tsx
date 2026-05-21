@@ -37,7 +37,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
   const flatListRef = useRef<FlatList>(null);
   const [systemInstructionCache, setSystemInstructionCache] = useState<string>("");
 
-  // Pre-fetch dynamic instructions and local history when the screen opens
+
   useEffect(() => {
     let isMounted = true;
     const initializeChat = async () => {
@@ -70,14 +70,14 @@ export const ChatbotScreen = ({ navigation }: any) => {
     return () => { isMounted = false; };
   }, [historyKey]);
 
-  // Save chat history to local storage whenever it updates
+
   useEffect(() => {
     if (!isSettingUp && messages.length > 0) {
       AsyncStorage.setItem(historyKey, JSON.stringify(messages));
     }
   }, [messages, isSettingUp, historyKey]);
 
-  // ── RATE LIMIT CHECKS (Local safeguard) ──────────────────────────
+
   const checkRateLimits = async (): Promise<boolean> => {
     try {
       const now = Date.now();
@@ -89,13 +89,13 @@ export const ChatbotScreen = ({ navigation }: any) => {
 
       const activeTimestamps = timestamps.filter(t => t > oneDayAgo);
 
-      // Check RPM (Limit: 5/minute)
+
       const recentMinutes = activeTimestamps.filter(t => t > oneMinuteAgo);
       if (recentMinutes.length >= 5) {
         return false;
       }
 
-      // Check RPD (Limit: 30/day)
+
       if (activeTimestamps.length >= 30) {
         return false;
       }
@@ -109,7 +109,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
     }
   };
 
-  // ── SEND MESSAGE TO GEMINI FLASH ─────────────────────────────────────
+
   const handleSendMessage = async () => {
     if (!inputText.trim() || isLoading || setupError) return;
 
@@ -119,14 +119,14 @@ export const ChatbotScreen = ({ navigation }: any) => {
       sender: "user",
     };
 
-    // 1. Instantly append the user's message and clear input
+
     setMessages(prev => [...prev, userMessage]);
     setInputText("");
 
-    // 2. Perform the rate limit check
+
     const allowed = await checkRateLimits();
     if (!allowed) {
-      // Premium delayed response to simulate natural Mascot sleeping
+
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
@@ -145,7 +145,7 @@ export const ChatbotScreen = ({ navigation }: any) => {
     setIsLoading(true);
 
     try {
-      // Structure the conversation history exactly how Gemini API requires it
+
       const conversationHistory = messages
         .filter(msg => msg.id !== "welcome" && msg.sender !== "system")
         .map(msg => ({
@@ -153,10 +153,10 @@ export const ChatbotScreen = ({ navigation }: any) => {
           parts: [{ text: msg.text }],
         }));
       
-      // Add the newest message
+
       conversationHistory.push({ role: "user", parts: [{ text: userMessage.text }] });
 
-      // Call the Live API via the Service
+
       const data = await generateGeminiResponse(conversationHistory, systemInstructionCache);
       const botResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I encountered a glitch!";
 
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   systemBubble: { backgroundColor: "#fee2e2", alignSelf: "center", borderBottomLeftRadius: 18 },
   messageText: { fontSize: 14, fontFamily: "Zalando-Medium", lineHeight: 20 },
   userText: { color: "#ffffff" },
-  botText: { color: "#000000" }, // Black text for high readability
+  botText: { color: "#000000" },
   loadingRow: { flexDirection: "row", marginVertical: 8, alignSelf: "flex-start" },
   loadingBubble: { backgroundColor: "#f9fafb", borderWidth: 1, borderColor: "#f3f4f6", paddingHorizontal: 20, paddingVertical: 12, borderRadius: 18, borderBottomLeftRadius: 2 },
   inputContainer: {
@@ -351,14 +351,14 @@ const styles = StyleSheet.create({
     fontFamily: "Zalando-Medium",
     color: "#1f2937",
     borderWidth: 1.5,
-    borderColor: "#fa955d", // Tangerine orange border
+    borderColor: "#fa955d",
     marginRight: 10,
   },
   sendBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "#fa955d", // Changed to orange
+    backgroundColor: "#fa955d",
     justifyContent: "center",
     alignItems: "center",
   },

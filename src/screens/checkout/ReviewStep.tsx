@@ -55,7 +55,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
   }, [user]);
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shippingFee = 50.00; // Fixed for now
+  const shippingFee = 50.00;
   const totalAmount = subtotal + shippingFee;
 
   const handleSubmitOrder = async () => {
@@ -63,7 +63,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
       setError("Please agree to Terms of Use and Privacy Policy");
       return;
     }
-    // Guard: need user, address, and a Stripe PaymentMethod from the previous step
+
     if (!user || !checkoutData.paymentMethodId || !checkoutData.selectedAddress) {
       setError("Missing required checkout information. Please go back and try again.");
       return;
@@ -73,14 +73,14 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
     setError(null);
 
     try {
-      // 1. Create a PaymentIntent with the REAL order total (amount in centavos)
+
       const clientSecret = await createPaymentIntent(
         Math.round(totalAmount * 100),
         "php"
       );
 
-      // 2. Confirm the PaymentIntent using the SDK with the already-created PaymentMethod.
-      //    The SDK handles 3D Secure authentication automatically if required.
+
+
       const { paymentIntent, error: stripeError } = await confirmPayment(clientSecret, {
         paymentMethodType: "Card",
         paymentMethodData: {
@@ -100,7 +100,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
         return;
       }
 
-      // 3. Create Order in Firestore
+
       const orderId = `VRD${Math.random().toString(36).substring(2, 11).toUpperCase()}`;
       const orderData = {
         orderID: orderId,
@@ -112,7 +112,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
           quantity: item.quantity,
           price: item.price,
           subtotal: item.price * item.quantity,
-          imageKey: item.image ?? "",   // 'image' field stores the imageKey in cartService
+          imageKey: item.image ?? "",
         })),
         subtotal,
         shippingFee,
@@ -134,7 +134,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
 
       await setDoc(doc(db, "orders", orderId), orderData);
 
-      // 3. Decrement stock for each purchased item
+
       await Promise.all(
         cartItems.map(item =>
           updateDoc(doc(db, "products", item.productId), {
@@ -143,14 +143,14 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({ checkoutData, updateCurr
         )
       );
 
-      // 4. Remove checked out items from Cart
+
       await Promise.all(
         cartItems.map(item => 
           removeFromCart(user.uid, item.productId).catch(e => console.warn(`Cart remove failed for ${item.productId}:`, e))
         )
       );
 
-      // 4. Navigate
+
       navigation.navigate("OrderConfirmation", { orderId });
     } catch (err: any) {
       setError(err.message || "An error occurred");

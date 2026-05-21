@@ -1,8 +1,3 @@
-// ============================================================
-// SewaMics — Orders Screen
-// File: src/screens/orders/OrdersScreen.tsx
-// ============================================================
-
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
@@ -64,18 +59,18 @@ export const OrdersScreen = () => {
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
   useFocusEffect(useCallback(() => { fetchOrders(); }, [fetchOrders]));
 
-  // ── Filter by active tab ──────────────────────────────────
+
   const filtered = activeTab === "all"
     ? orders
     : orders.filter(o => (o.status || "pending") === activeTab);
 
-  // ── Count per status for tab badges ──────────────────────
+
   const countFor = (key: string) =>
     key === "all"
       ? orders.length
       : orders.filter(o => (o.status || "pending") === key).length;
 
-  // ── Render helpers ────────────────────────────────────────
+
   const renderStatusBadge = (status: string) => {
     const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending;
     return (
@@ -93,7 +88,7 @@ export const OrdersScreen = () => {
     const firstItem = items[0] ?? null;
     const extraCount = items.length - 1;
 
-    // Smart fallback for old broken test orders that were saved before the schema fix
+
     let resolvedImageKey = firstItem?.imageKey || firstItem?.productID || firstItem?.productId;
     if (!resolvedImageKey || resolvedImageKey.startsWith("product-")) {
       const lowerName = (firstItem?.name || "").toLowerCase();
@@ -151,12 +146,12 @@ export const OrdersScreen = () => {
     );
   };
 
-  // ── Loading state ─────────────────────────────────────────
+
   if (loading && orders.length === 0) {
     return <LoadingScreen message="Loading your orders..." />;
   }
 
-  // ── Empty state ───────────────────────────────────────────
+
   if (!loading && orders.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -182,7 +177,7 @@ export const OrdersScreen = () => {
     );
   }
 
-  // ── Main list ─────────────────────────────────────────────
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       {/* Header */}
@@ -260,7 +255,7 @@ const styles = StyleSheet.create({
 
   centerContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
 
-  // ── Tabs ──────────────────────────────────────────────────
+
   tabBarWrapper: { borderBottomWidth: 0 },
   tabBar: { paddingHorizontal: 16, paddingVertical: 10, gap: 8 },
   tab: {
@@ -281,7 +276,7 @@ const styles = StyleSheet.create({
   tabBadgeText: { fontSize: 10, fontFamily: "Zalando-Bold", color: "#6b7280" },
   tabBadgeTextActive: { color: "#ffffff" },
 
-  // ── Order card ────────────────────────────────────────────
+
   listContent: { padding: 16, gap: 12 },
   orderCard: {
     flexDirection: "row",
@@ -328,7 +323,7 @@ const styles = StyleSheet.create({
   statusText: { fontSize: 11, fontFamily: "Zalando-SemiBold" },
   totalText: { fontSize: 15, fontFamily: "Zalando-Bold", color: "#9d174d" },
 
-  // ── Empty state ───────────────────────────────────────────
+
   emptyContainer: { flex: 1, justifyContent: "center", alignItems: "center", padding: 32 },
   emptyIconWrap: {
     width: 96, height: 96, borderRadius: 48,

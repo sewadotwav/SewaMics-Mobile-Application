@@ -20,13 +20,13 @@ export const OrderConfirmationScreen = () => {
     }).start();
   }, [scaleAnim]);
 
-  // Calculate estimated delivery: 5 days from now
+
   const estDate = new Date();
   estDate.setDate(estDate.getDate() + 5);
   const estimatedDelivery = estDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   const handleTrackOrder = () => {
-    // Navigate to Orders tab
+
     navigation.reset({
       index: 0,
       routes: [
@@ -37,7 +37,7 @@ export const OrderConfirmationScreen = () => {
               {
                 name: "BottomTabs",
                 state: {
-                  index: 3, // Index of OrdersTab
+                  index: 3,
                   routes: [
                     { name: "HomeTab" },
                     { name: "CatalogTab" },
